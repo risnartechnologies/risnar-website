@@ -8,8 +8,9 @@ export const metadata = {
 
 /* =========================
    ROOT LAYOUT (SERVER COMPONENT)
+   - Global layout wrapper
+   - Navbar + Footer persistent
    - Responsive-safe styles
-   - Mobile-friendly button sizing
    ========================= */
 export default function RootLayout({
   children,
@@ -18,21 +19,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-  <head>
-    <link rel="icon" href="/favicon.ico" />
-  </head>
-  <body
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+
+      <body
         style={{
           margin: 0,
           fontFamily: "Arial, sans-serif",
         }}
       >
-        {/* NAVBAR STYLES (GLOBAL, RESPONSIVE) */}
+        {/* =========================
+            GLOBAL BUTTON STYLES
+           ========================= */}
         <style>{`
-          /* =========================
-            SHARED BUTTON STYLE
-            Used by Navbar + Footer
-            ========================= */
           .ui-btn {
             padding: 8px 16px;
             border-radius: 8px;
@@ -60,7 +60,6 @@ export default function RootLayout({
             transform: scale(0.97);
           }
 
-          /* Mobile */
           @media (max-width: 600px) {
             .ui-btn {
               padding: 6px 12px;
@@ -75,9 +74,10 @@ export default function RootLayout({
         {/* PAGE CONTENT */}
         <main style={{ minHeight: "100vh" }}>
           {children}
-          {/* FOOTER */}
-          <Footer />
         </main>
+
+        {/* FOOTER (moved outside main) */}
+        <Footer />
       </body>
     </html>
   );

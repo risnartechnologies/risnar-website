@@ -1,71 +1,70 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 /* =========================
-   NAVBAR (CLIENT COMPONENT)
-   - Responsive fix applied
-   - No absolute positioning (prevents overflow on mobile)
-   - Center alignment maintained
+   NAVBAR (FULLY RESPONSIVE)
+   - Works on all pages
+   - Mobile-safe wrapping
+   - Shared button style (ui-btn)
    ========================= */
+
 export default function Navbar() {
-  const pathname = usePathname();
+  const menu = [
+    { label: "Home", href: "/" },
+    { label: "Apps", href: "/apps" },
+    { label: "Websites", href: "/websites" },
+    { label: "Contact", href: "/contact" },
+  ];
 
   return (
     <nav
       style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "12px 20px", // reduced for mobile
         borderBottom: "1px solid #eee",
-        position: "sticky",
-        top: 0,
         background: "#fff",
-        zIndex: 1000,
-        flexWrap: "wrap", // allows wrapping on small screens
-        gap: "10px",
       }}
     >
-      {/* LEFT: Show only if NOT homepage */}
-      {pathname !== "/" && (
+      <div
+        style={{
+          maxWidth: "1100px",
+          margin: "0 auto",
+          padding: "12px 16px",
+          display: "flex",
+          flexWrap: "wrap", // ✅ KEY FIX
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "10px",
+        }}
+      >
+        {/* LOGO */}
         <div
           style={{
-            position: "absolute",
-            left: "20px",
             fontWeight: "bold",
             fontSize: "16px",
+            whiteSpace: "nowrap",
           }}
         >
           RISNAR Technologies
         </div>
-      )}
 
-      {/* NAV LINKS */}
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          flexWrap: "wrap", // mobile-friendly
-          justifyContent: "center",
-        }}
-      >
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span className="ui-btn">Home</span>
-        </Link>
-
-        <Link href="/apps" style={{ textDecoration: "none" }}>
-          <span className="ui-btn">Apps</span>
-        </Link>
-
-        <Link href="/websites" style={{ textDecoration: "none" }}>
-          <span className="ui-btn">Websites</span>
-        </Link>
-
-        <Link href="/contact" style={{ textDecoration: "none" }}>
-          <span className="ui-btn">Contact</span>
-        </Link>
+        {/* MENU */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap", // ✅ KEY FIX
+            gap: "8px",
+            justifyContent: "center",
+            flex: "1 1 auto",
+          }}
+        >
+          {menu.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              style={{ textDecoration: "none" }}
+            >
+              <span className="ui-btn">{item.label}</span>
+            </Link>
+          ))}
+        </div>
       </div>
     </nav>
   );

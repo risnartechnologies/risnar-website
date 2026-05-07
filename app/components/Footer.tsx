@@ -73,14 +73,14 @@ export default function Footer() {
         {/* RIGHT */}
         <div style={{ flex: "1 1 220px" }}>
           <a
-            href="mailto:risnartechnologies@gmail.com"
+            href="mailto:contact@risnar.com"
             style={{
               color: "#333",
               textDecoration: "none",
               wordBreak: "break-word",
             }}
           >
-            risnartechnologies@gmail.com
+            contact@risnar.com
           </a>
         </div>
       </div>

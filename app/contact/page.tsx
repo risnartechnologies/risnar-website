@@ -20,7 +20,7 @@ export default function ContactPage() {
     );
 
     // Open default email client with prefilled data
-    window.location.href = `mailto:risnartechnologies@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:contact@risnar.com?subject=${subject}&body=${body}`;
 
     // Reset form fields after click
     setName("");

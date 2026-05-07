@@ -121,7 +121,7 @@ export default async function PrivacyPolicy({ params }: any) {
       </p>
 
       <h2 style={{ marginTop: "30px" }}>5. Contact</h2>
-      <p>Email: risnartechnologies@gmail.com</p>
+      <p>Email: contact@risnar.com</p>
     </main>
   );
 }

@@ -69,10 +69,10 @@ export default function PrivacyPage() {
       <p>
         Email:{" "}
         <a
-          href="mailto:risnartechnologies@gmail.com"
+          href="mailto:contact@risnar.com"
           style={{ color: "#000", textDecoration: "none", fontWeight: "500" }}
         >
-          risnartechnologies@gmail.com
+          contact@risnar.com
         </a>
       </p>
 

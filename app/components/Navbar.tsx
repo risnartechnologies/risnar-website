@@ -1,13 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 /* =========================
-   NAVBAR (FULLY RESPONSIVE)
-   - Works on all pages
+   NAVBAR (FULLY RESPONSIVE - FIXED)
+   - Logo hidden on homepage
+   - Logo center aligned on mobile/tablet (non-home pages)
+   - Desktop layout unchanged
    - Mobile-safe wrapping
    - Shared button style (ui-btn)
    ========================= */
 
 export default function Navbar() {
+  const pathname = usePathname();
+
+  const isHome = pathname === "/";
+
   const menu = [
     { label: "Home", href: "/" },
     { label: "Apps", href: "/apps" },
@@ -28,31 +37,34 @@ export default function Navbar() {
           margin: "0 auto",
           padding: "12px 16px",
           display: "flex",
-          flexWrap: "wrap", // ✅ KEY FIX
+          flexDirection: "column", // ✅ enables stacking on mobile
           alignItems: "center",
-          justifyContent: "space-between",
           gap: "10px",
         }}
       >
-        {/* LOGO */}
-        <div
-          style={{
-            fontWeight: "bold",
-            fontSize: "16px",
-            whiteSpace: "nowrap",
-          }}
-        >
-          RISNAR Technologies
-        </div>
+        {/* LOGO (HIDDEN ON HOME) */}
+        {!isHome && (
+          <div
+            className="navbar-logo"
+            style={{
+              fontWeight: "bold",
+              fontSize: "16px",
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            RISNAR Technologies
+          </div>
+        )}
 
         {/* MENU */}
         <div
           style={{
             display: "flex",
-            flexWrap: "wrap", // ✅ KEY FIX
+            flexWrap: "wrap",
             gap: "8px",
             justifyContent: "center",
-            flex: "1 1 auto",
+            width: "100%",
           }}
         >
           {menu.map((item) => (
@@ -66,6 +78,29 @@ export default function Navbar() {
           ))}
         </div>
       </div>
+
+      {/* =========================
+          RESPONSIVE OVERRIDE
+          Desktop restores row layout
+         ========================= */}
+      <style>{`
+        @media (min-width: 768px) {
+          nav > div {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+          }
+
+          .navbar-logo {
+            text-align: left !important;
+            width: auto !important;
+          }
+
+          nav > div > div:last-child {
+            justify-content: flex-end !important;
+          }
+        }
+      `}</style>
     </nav>
   );
 }

@@ -91,13 +91,31 @@ export default async function PrivacyPolicy({ params }: any) {
         <li>Improve app performance</li>
         <li>Fix bugs and crashes</li>
         <li>Enhance user experience</li>
+        <li>Deliver notifications, reminders, and scheduled alerts</li>
       </ul>
 
       <p>
         We do not sell, rent, or share your data with third parties.
       </p>
 
-      <h2 style={{ marginTop: "30px" }}>3. Third-Party Services</h2>
+      <h2 style={{ marginTop: "30px" }}>3. Notifications and Device Scheduling</h2>
+      <p>
+        Some features of the app may use local notifications, device scheduling,
+        alarm services, or exact alarm functionality to deliver reminders,
+        notifications, and other time-based alerts.
+      </p>
+
+      <p>
+        These features may continue to function even when the app is not actively
+        in use, subject to your device settings and permissions.
+      </p>
+
+      <p>
+        Alarm, scheduling, and notification permissions are used solely for
+        providing app functionality and do not themselves collect personal data.
+      </p>
+
+      <h2 style={{ marginTop: "30px" }}>4. Third-Party Services</h2>
       <ul>
         <li>Google Play Services</li>
         <li>Firebase Crashlytics / Analytics</li>
@@ -114,13 +132,19 @@ export default async function PrivacyPolicy({ params }: any) {
         </a>
       </p>
 
-      <h2 style={{ marginTop: "30px" }}>4. Children’s Privacy</h2>
+      <h2 style={{ marginTop: "30px" }}>5. Children’s Privacy</h2>
       <p>
         This app is safe for all ages. We do not knowingly collect personal
         information from children under 13.
       </p>
 
-      <h2 style={{ marginTop: "30px" }}>5. Contact</h2>
+      <h2 style={{ marginTop: "30px" }}>6. Changes to This Privacy Policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time. Any changes will be
+        posted on this page with immediate effect.
+      </p>
+
+      <h2 style={{ marginTop: "30px" }}>7. Contact</h2>
       <p>Email: contact@risnar.com</p>
     </main>
   );

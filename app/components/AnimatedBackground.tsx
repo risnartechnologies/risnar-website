@@ -34,6 +34,7 @@ export default function AnimatedBackground() {
           filter: blur(80px);
           opacity: 0.4;
           animation: float 18s ease-in-out infinite;
+          will-change: transform;
         }
 
         .orb-1 {
@@ -65,6 +66,7 @@ export default function AnimatedBackground() {
         .grid {
           position: absolute;
           inset: 0;
+
           background-image:
             linear-gradient(
               rgba(255, 255, 255, 0.03) 1px,
@@ -79,6 +81,12 @@ export default function AnimatedBackground() {
           background-size: 60px 60px;
 
           mask-image: radial-gradient(
+            circle at center,
+            black,
+            transparent 90%
+          );
+
+          -webkit-mask-image: radial-gradient(
             circle at center,
             black,
             transparent 90%

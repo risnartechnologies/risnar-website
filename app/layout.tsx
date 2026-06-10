@@ -1,5 +1,5 @@
 import "./globals.css";
-import AnimatedBackground from "./components/AnimatedBackground";
+import AnimatedBackground from "./components/Animated_Background";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 

@@ -1,92 +1,243 @@
 export const metadata = {
-  title: "Privacy Policy - Risnar Technologies",
-  description: "Privacy policy for Risnar Technologies website",
+  title: "Privacy Policy - RISNAR Technologies",
+  description:
+    "Privacy policy for the RISNAR Technologies website",
 };
 
 /* =========================
    PRIVACY POLICY PAGE
-   - Responsive spacing
-   - Improved readability
-   - Consistent typography
+   - Matches site design
+   - Glassmorphism card
+   - Responsive layout
+   - Consistent styling
+   - Existing functionality preserved
    ========================= */
 export default function PrivacyPage() {
   return (
     <main
       style={{
-        padding: "50px 20px",
-        maxWidth: "800px",
+        maxWidth: "1100px",
         margin: "0 auto",
+        padding: "60px 20px",
         fontFamily: "Arial, sans-serif",
-        lineHeight: "1.7",
-        color: "#333",
       }}
     >
-      {/* TITLE */}
-      <h1
+      {/* =========================
+          HERO
+         ========================= */}
+      <section
         style={{
-          marginBottom: "20px",
           textAlign: "center",
+          marginBottom: "40px",
         }}
       >
-        Privacy Policy
-      </h1>
-
-      {/* INTRO */}
-      <p>
-        This Privacy Policy explains how <strong>Risnar Technologies</strong>{" "}
-        collects, uses, and protects your information when you use our website.
-      </p>
-
-      {/* SECTION 1 */}
-      <h2 style={{ marginTop: "30px" }}>1. Information We Collect</h2>
-      <p>
-        We do not collect personally identifiable information directly. However,
-        limited technical information may be collected automatically, such as:
-      </p>
-      <ul style={{ paddingLeft: "20px" }}>
-        <li>Browser type and version</li>
-        <li>Device information</li>
-        <li>Pages visited</li>
-      </ul>
-
-      {/* SECTION 2 */}
-      <h2 style={{ marginTop: "30px" }}>2. How We Use Information</h2>
-      <ul style={{ paddingLeft: "20px" }}>
-        <li>Improve website performance</li>
-        <li>Enhance user experience</li>
-        <li>Fix issues and bugs</li>
-      </ul>
-
-      {/* SECTION 3 */}
-      <h2 style={{ marginTop: "30px" }}>3. Third-Party Services</h2>
-      <p>
-        We may use trusted third-party services such as hosting providers or
-        analytics tools that may collect limited technical data.
-      </p>
-
-      {/* SECTION 4 */}
-      <h2 style={{ marginTop: "30px" }}>4. Contact</h2>
-      <p>
-        Email:{" "}
-        <a
-          href="mailto:contact@risnar.com"
-          style={{ color: "#000", textDecoration: "none", fontWeight: "500" }}
+        <h1
+          style={{
+            fontSize: "48px",
+            color: "#ffffff",
+            marginBottom: "16px",
+          }}
         >
-          contact@risnar.com
-        </a>
-      </p>
+          Privacy Policy
+        </h1>
 
-      {/* FOOTNOTE */}
-      <p
+        <p
+          style={{
+            color: "#cbd5e1",
+            fontSize: "18px",
+            maxWidth: "700px",
+            margin: "0 auto",
+            lineHeight: "1.8",
+          }}
+        >
+          Your privacy matters to us. This policy explains how
+          RISNAR Technologies handles information when you use
+          our website and services.
+        </p>
+      </section>
+
+      {/* =========================
+          POLICY CARD
+         ========================= */}
+      <section
         style={{
-          marginTop: "40px",
-          color: "#777",
-          fontSize: "14px",
-          textAlign: "center",
+          border: "1px solid rgba(255,255,255,0.15)",
+          borderRadius: "16px",
+          background: "rgba(255,255,255,0.03)",
+          backdropFilter: "blur(12px)",
+          padding: "40px",
+          color: "#e2e8f0",
+          lineHeight: "1.9",
         }}
       >
-        Last updated: 2026
-      </p>
+        {/* INTRO */}
+        <p>
+          This Privacy Policy explains how{" "}
+          <strong>
+            RISNAR Technologies
+          </strong>{" "}
+          collects, uses, and protects information when you
+          visit or interact with our website.
+        </p>
+
+        <p>
+          By using this website, you agree to the terms of
+          this Privacy Policy.
+        </p>
+
+        {/* SECTION 1 */}
+        <h2
+          style={{
+            marginTop: "40px",
+            color: "#ffffff",
+          }}
+        >
+          1. Information We Collect
+        </h2>
+
+        <p>
+          We do not intentionally collect personally
+          identifiable information through this website.
+          However, limited technical information may be
+          collected automatically, including:
+        </p>
+
+        <ul>
+          <li>Browser type and version</li>
+          <li>Device information</li>
+          <li>Pages visited</li>
+          <li>Referring website information</li>
+          <li>Basic analytics and usage statistics</li>
+        </ul>
+
+        {/* SECTION 2 */}
+        <h2
+          style={{
+            marginTop: "40px",
+            color: "#ffffff",
+          }}
+        >
+          2. How We Use Information
+        </h2>
+
+        <p>
+          Any information collected is used solely to:
+        </p>
+
+        <ul>
+          <li>Improve website performance</li>
+          <li>Enhance user experience</li>
+          <li>Fix issues and bugs</li>
+          <li>Monitor website reliability</li>
+          <li>Maintain website security</li>
+        </ul>
+
+        {/* SECTION 3 */}
+        <h2
+          style={{
+            marginTop: "40px",
+            color: "#ffffff",
+          }}
+        >
+          3. Third-Party Services
+        </h2>
+
+        <p>
+          We may use trusted third-party services such as
+          hosting providers, analytics platforms, or
+          infrastructure providers that may process limited
+          technical information necessary for website
+          operation.
+        </p>
+
+        <p>
+          These providers operate under their own privacy
+          policies and terms.
+        </p>
+
+        {/* SECTION 4 */}
+        <h2
+          style={{
+            marginTop: "40px",
+            color: "#ffffff",
+          }}
+        >
+          4. Data Security
+        </h2>
+
+        <p>
+          We take reasonable measures to protect website
+          data and maintain the security of our systems.
+          However, no method of transmission or storage can
+          be guaranteed to be completely secure.
+        </p>
+
+        {/* SECTION 5 */}
+        <h2
+          style={{
+            marginTop: "40px",
+            color: "#ffffff",
+          }}
+        >
+          5. External Links
+        </h2>
+
+        <p>
+          Our website may contain links to external websites,
+          products, or services. We are not responsible for
+          the content, privacy practices, or policies of
+          third-party websites.
+        </p>
+
+        {/* SECTION 6 */}
+        <h2
+          style={{
+            marginTop: "40px",
+            color: "#ffffff",
+          }}
+        >
+          6. Changes to This Privacy Policy
+        </h2>
+
+        <p>
+          We may update this Privacy Policy from time to
+          time. Any changes will be posted on this page and
+          become effective immediately upon publication.
+        </p>
+
+        {/* SECTION 7 */}
+        <h2
+          style={{
+            marginTop: "40px",
+            color: "#ffffff",
+          }}
+        >
+          7. Contact Us
+        </h2>
+
+        <p>
+          Email:{" "}
+          <a
+            href="mailto:contact@risnar.com"
+            style={{
+              color: "#60a5fa",
+              textDecoration: "none",
+            }}
+          >
+            contact@risnar.com
+          </a>
+        </p>
+
+        {/* FOOTNOTE */}
+        <p
+          style={{
+            marginTop: "40px",
+            color: "#94a3b8",
+          }}
+        >
+          <strong>Last Updated:</strong> 10 June 2026
+        </p>
+      </section>
     </main>
   );
 }

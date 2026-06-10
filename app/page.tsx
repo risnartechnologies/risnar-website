@@ -6,8 +6,6 @@ export default function Home() {
       <main
         style={{
           fontFamily: "Arial, sans-serif",
-          background:
-            "linear-gradient(180deg, #0f172a 0%, #111827 100%)",
           color: "#ffffff",
         }}
       >
@@ -21,20 +19,41 @@ export default function Home() {
           margin: "0 auto",
         }}
       >
-        <Image
-          src="/logo.png"
-          alt="Risnar Technologies"
-          width={300}
-          height={120}
-          priority
-          sizes="(max-width: 768px) 200px, 300px"
-          style={{
-            width: "100%",
-            maxWidth: "220px",
-            height: "auto",
-            marginBottom: "24px",
-          }}
-        />
+<div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: "24px",
+  }}
+>
+  <Image
+    src="/logo.png"
+    alt="Risnar Technologies"
+    width={320}
+    height={88}
+    priority
+    sizes="220px"
+    style={{
+      display: "block",
+    }}
+  />
+
+  <div
+    style={{
+      width: "320px",
+      textAlign: "center",
+      color: "#fafafa",
+      fontSize: "30px",
+      fontWeight: 500,
+      letterSpacing: "3px",
+      marginTop: "1px",
+      textTransform: "uppercase",
+    }}
+  >
+    Technologies
+  </div>
+</div>
 
       <h1
         style={{
@@ -50,15 +69,15 @@ export default function Home() {
         That Grow Businesses
       </h1>
 
-      <p
-        style={{
-          fontSize: "20px",
-          color: "#555",
-          maxWidth: "700px",
-          margin: "0 auto 30px",
-          lineHeight: 1.7,
-        }}
-      >
+        <p
+          style={{
+            fontSize: "20px",
+            color: "#cbd5e1",
+            maxWidth: "700px",
+            margin: "0 auto 30px",
+            lineHeight: 1.7,
+          }}
+        >
         RISNAR Technologies builds high-performance mobile apps,
         websites, SaaS platforms and digital products for startups,
         creators and businesses.
@@ -72,21 +91,21 @@ export default function Home() {
           flexWrap: "wrap",
         }}
       >
-        <Link href="/apps">
-          <button
-            style={{
-              padding: "14px 28px",
-              fontSize: "16px",
-              backgroundColor: "#000",
-              color: "#fff",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-            }}
-          >
-            Explore Products
-          </button>
-        </Link>
+<Link href="/portfolio">
+  <button
+    style={{
+      padding: "14px 28px",
+      fontSize: "16px",
+      backgroundColor: "#000",
+      color: "#fff",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+    }}
+  >
+    Explore Portfolio
+  </button>
+</Link>
 
         <Link href="/contact">
           <button
@@ -125,7 +144,7 @@ export default function Home() {
               marginBottom: "40px",
             }}
           >
-            Featured Products
+            Our Portfolio
           </h2>
 
         <div
@@ -158,85 +177,98 @@ export default function Home() {
           },
         ].map((product) => (
 
-      <div
-        key={product.name}
-        className="product-card"
-        style={{
-          background: "#fff",
-          border: "1px solid #eee",
-          borderRadius: "20px",
-          padding: "28px",
-          textAlign: "center",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-          transition: "all 0.25s ease",
-          cursor: "pointer",
-        }}
-      >
-        <div
-          style={{
-            width: "72px",
-            height: "72px",
-            borderRadius: "18px",
-            background: "#f5f5f5",
-            margin: "0 auto 18px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
-          <Image
-            src={
-              product.name === "Lalify"
-                ? "/lalify.svg"
-                : product.name === "Mathuvo"
-                ? "/mathuvo.svg"
-                : product.name === "GridZio"
-                ? "/gridzio.svg"
-                : product.name === "XO Arena"
-                ? "/tic-tac-toe.svg"
-                : "/logo.png"
-            }
-            alt={product.name}
-            width={48}
-            height={48}
-          />
-        </div>
+<div
+  key={product.name}
+  className="product-card"
+  style={{
+    border: "1px solid rgba(255,255,255,0.65)",
+    borderRadius: "16px",
+    padding: "24px",
+    textAlign: "center",
+    background: "transparent",
+    transition: "all 0.25s ease",
+  }}
+>
+  <div
+    style={{
+      width: "72px",
+      height: "72px",
+      margin: "0 auto 20px",
+      overflow: "hidden",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    <Image
+      src={
+        product.name === "Lalify"
+          ? "/lalify.svg"
+          : product.name === "Mathuvo"
+          ? "/mathuvo.svg"
+          : product.name === "GridZio"
+          ? "/gridzio.svg"
+          : product.name === "XO Arena"
+          ? "/tic-tac-toe.svg"
+          : "/adcampin.png"
+      }
+      alt={product.name}
+      width={56}
+      height={56}
+    />
+  </div>
 
-        <h3
-          style={{
-            marginBottom: "12px",
-            fontSize: "22px",
-          }}
-        >
-          {product.name}
-        </h3>
+  <h3
+    style={{
+      color: "#ffffff",
+      marginBottom: "12px",
+      fontSize: "22px",
+    }}
+  >
+    {product.name}
+  </h3>
 
-      <p
-        style={{
-          color: "#666",
-          minHeight: "70px",
-          lineHeight: 1.6,
-        }}
-      >
-        {product.desc}
-      </p>
+  <p
+    style={{
+      color: "#94a3b8",
+      minHeight: "70px",
+      lineHeight: 1.7,
+    }}
+  >
+    {product.desc}
+  </p>
 
-        <Link href="/apps">
-          <button
-            style={{
-              padding: "10px 18px",
-              borderRadius: "8px",
-              border: "none",
-              background: "#000",
-              color: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            View Product
-          </button>
-        </Link>
-      </div>
+<a
+  href={
+    product.name === "Lalify"
+      ? "https://play.google.com/store/apps/details?id=com.adcampin.lalify"
+      : product.name === "Mathuvo"
+      ? "https://play.google.com/store/apps/details?id=com.adcampin.mathuvo"
+      : product.name === "GridZio"
+      ? "https://play.google.com/store/apps/details?id=com.risnar.gridzio"
+      : product.name === "XO Arena"
+      ? "https://play.google.com/store/apps/details?id=com.adcampin.tictactoe_new"
+      : "https://adcampin.com"
+  }
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <button
+    style={{
+      padding: "10px 18px",
+      borderRadius: "8px",
+      border: "none",
+      background: "#000",
+      color: "#fff",
+      cursor: "pointer",
+    }}
+  >
+    {product.name === "Adcampin"
+      ? "Visit Website"
+      : "Download App"}
+  </button>
+</a>
+</div>
     ))}
   </div>
 </section>
@@ -286,43 +318,45 @@ export default function Home() {
         desc: "AI-powered products and intelligent automation for modern businesses.",
       },
     ].map((item) => (
-      <div
-        key={item.title}
-        style={{
-          background: "#fff",
-          border: "1px solid #eee",
-          borderRadius: "20px",
-          padding: "28px",
-          textAlign: "center",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "42px",
-            marginBottom: "16px",
-          }}
-        >
-          {item.icon}
-        </div>
+<div
+  key={item.title}
+  style={{
+    border: "1px solid rgba(255,255,255,0.65)",
+    borderRadius: "16px",
+    padding: "24px",
+    textAlign: "center",
+    background: "transparent",
+    transition: "all 0.25s ease",
+  }}
+>
+  <div
+    style={{
+      fontSize: "42px",
+      marginBottom: "16px",
+    }}
+  >
+    {item.icon}
+  </div>
 
-        <h3
-          style={{
-            marginBottom: "12px",
-          }}
-        >
-          {item.title}
-        </h3>
+  <h3
+    style={{
+      color: "#ffffff",
+      marginBottom: "12px",
+      fontSize: "22px",
+    }}
+  >
+    {item.title}
+  </h3>
 
-        <p
-          style={{
-            color: "#666",
-            lineHeight: 1.6,
-          }}
-        >
-          {item.desc}
-        </p>
-      </div>
+  <p
+    style={{
+      color: "#94a3b8",
+      lineHeight: 1.7,
+    }}
+  >
+    {item.desc}
+  </p>
+</div>
     ))}
   </div>
 </section>
@@ -330,25 +364,25 @@ export default function Home() {
       <section
         style={{
           padding: "60px 20px",
-          background: "#f5f5f5",
+          background: "transparent",
         }}
       >
-        <div
-          style={{
-            border: "1px solid #eee",
-            borderRadius: "12px",
-            padding: "24px",
-            background: "#fff",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-            transition: "all 0.25s ease",
-            cursor: "pointer",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "20px",
-            maxWidth: "1000px",
-            margin: "0 auto",
-          }}
-        >
+          <div
+            style={{
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "20px",
+              padding: "24px",
+              background: "rgba(255,255,255,0.04)",
+              backdropFilter: "blur(12px)",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.35)",
+              transition: "all 0.25s ease",
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "20px",
+              maxWidth: "1000px",
+              margin: "0 auto",
+            }}
+          >
           <style>{`
             .feature-card:hover {
               transform: translateY(-6px);
@@ -358,7 +392,7 @@ export default function Home() {
           `}</style>
         <div
           style={{
-            background: "#fff",
+            background: "transparent",
             padding: "20px",
             borderRadius: "12px",
             textAlign: "center",
@@ -373,14 +407,14 @@ export default function Home() {
           >
             5+
           </h3>
-          <p style={{ color: "#555", margin: 0 }}>
+          <p style={{ color: "#cbd5e1", margin: 0 }}>
             Products Built
           </p>
         </div>
 
         <div
           style={{
-            background: "#fff",
+            background: "transparent",
             padding: "20px",
             borderRadius: "12px",
             textAlign: "center",
@@ -395,14 +429,14 @@ export default function Home() {
           >
             4
           </h3>
-          <p style={{ color: "#555", margin: 0 }}>
+          <p style={{ color: "#cbd5e1", margin: 0 }}>
             Published Apps
           </p>
         </div>
 
         <div
           style={{
-            background: "#fff",
+            background: "transparent",
             padding: "20px",
             borderRadius: "12px",
             textAlign: "center",
@@ -417,14 +451,14 @@ export default function Home() {
           >
             100%
           </h3>
-          <p style={{ color: "#555", margin: 0 }}>
+          <p style={{ color: "#cbd5e1", margin: 0 }}>
             In-House Development
           </p>
         </div>
 
         <div
           style={{
-            background: "#fff",
+            background: "transparent",
             padding: "20px",
             borderRadius: "12px",
             textAlign: "center",
@@ -439,7 +473,7 @@ export default function Home() {
           >
             24×7
           </h3>
-          <p style={{ color: "#555", margin: 0 }}>
+          <p style={{ color: "#cbd5e1", margin: 0 }}>
             Continuous Product Support
           </p>
         </div>
@@ -464,7 +498,7 @@ export default function Home() {
 
       <p
         style={{
-          color: "#666",
+          color: "#cbd5e1",
           maxWidth: "700px",
           margin: "0 auto 40px",
           lineHeight: 1.7,
@@ -526,19 +560,20 @@ export default function Home() {
               bg: "#FDECEA",
             },
           ].map((tech) => (
-            <span
-              key={tech.name}
-              style={{
-                padding: "8px 14px",
-                borderRadius: "999px",
-                background: tech.bg,
-                fontSize: "14px",
-                fontWeight: "500",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
+              <span
+                key={tech.name}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: "999px",
+                  background: tech.bg,
+                  color: "#111827",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
               <img
                 src={tech.logo}
                 alt={tech.name}
@@ -567,15 +602,15 @@ export default function Home() {
     Let's Build Your Next Product
   </h2>
 
-  <p
-    style={{
-      color: "#666",
-      fontSize: "18px",
-      lineHeight: 1.8,
-      maxWidth: "700px",
-      margin: "0 auto 30px",
-    }}
-  >
+    <p
+      style={{
+        color: "#cbd5e1",
+        fontSize: "18px",
+        lineHeight: 1.8,
+        maxWidth: "700px",
+        margin: "0 auto 30px",
+      }}
+    >
     Whether you need a mobile app, business website,
     SaaS platform or AI-powered solution, RISNAR
     Technologies can help bring your idea to life.

@@ -3,8 +3,11 @@ export default function Footer() {
     <footer
       style={{
         marginTop: "60px",
-        borderTop: "1px solid #eee",
-        background: "#fafafa",
+        borderTop: "1px solid rgba(255,255,255,0.08)",
+        background: "transparent",
+        color: "#ffffff",
+        position: "relative",
+        zIndex: 1,
       }}
     >
       {/* =========================
@@ -31,11 +34,21 @@ export default function Footer() {
             textAlign: "left",
           }}
         >
-          <div style={{ fontWeight: "bold", marginBottom: "6px" }}>
+          <div
+            style={{
+              fontWeight: "bold",
+              marginBottom: "6px",
+              color: "#ffffff",
+            }}
+          >
             RISNAR Technologies
           </div>
 
-          <div style={{ color: "#666" }}>
+          <div
+            style={{
+              color: "rgba(255,255,255,0.70)",
+            }}
+          >
             Building high-quality mobile & web products.
           </div>
         </div>
@@ -51,18 +64,17 @@ export default function Footer() {
           }}
         >
           {[
-            { label: "Home", href: "/" },
-            { label: "Apps", href: "/apps" },
-            { label: "Websites", href: "/websites" },
-            { label: "Contact", href: "/contact" },
-            { label: "Privacy", href: "/privacy" },
+          { label: "Home", href: "/" },
+          { label: "Portfolio", href: "/portfolio" },
+          { label: "Contact", href: "/contact" },
+          { label: "Privacy", href: "/privacy" },
           ].map((item) => (
             <a
               key={item.label}
               href={item.href}
-              className="ui-btn" // ✅ unified style (no inline override)
+              className="ui-btn"
               style={{
-                fontSize: "13px", // keep only size override
+                fontSize: "13px",
               }}
             >
               {item.label}
@@ -71,11 +83,15 @@ export default function Footer() {
         </div>
 
         {/* RIGHT */}
-        <div style={{ flex: "1 1 220px" }}>
+        <div
+          style={{
+            flex: "1 1 220px",
+          }}
+        >
           <a
             href="mailto:contact@risnar.com"
             style={{
-              color: "#333",
+              color: "rgba(255,255,255,0.85)",
               textDecoration: "none",
               wordBreak: "break-word",
             }}
@@ -90,11 +106,12 @@ export default function Footer() {
          ========================= */}
       <div
         style={{
-          borderTop: "1px solid #eee",
+          borderTop:
+            "1px solid rgba(255,255,255,0.08)",
           textAlign: "center",
           padding: "12px",
           fontSize: "13px",
-          color: "#777",
+          color: "rgba(255,255,255,0.60)",
         }}
       >
         © 2026 RISNAR Technologies. All rights reserved.

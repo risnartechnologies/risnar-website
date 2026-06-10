@@ -16,7 +16,7 @@ export const apps = [
   {
     slug: "gridzio",
     name: "GridZio – Memory Match Game",
-    description: "Improve memory and challenge your mind",
+    description: "Improve memory & challenge your mind",
     playStore: "https://play.google.com/store/apps/details?id=com.risnar.gridzio",
     logo: "/gridzio.svg",
   },

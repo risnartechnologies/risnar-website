@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /* =========================
-   NAVBAR (FULLY RESPONSIVE - FIXED)
-   - Logo hidden on homepage
-   - Logo center aligned on mobile/tablet (non-home pages)
-   - Desktop layout unchanged
-   - Mobile-safe wrapping
-   - Shared button style (ui-btn)
+   NAVBAR (DARK THEME)
+   - Homepage logo hidden
+   - Mobile responsive
+   - Glassmorphism dark navbar
+   - Active page highlighting
+   - Transparent background support
+   - Existing functionality preserved
    ========================= */
 
 export default function Navbar() {
@@ -19,16 +20,22 @@ export default function Navbar() {
 
   const menu = [
     { label: "Home", href: "/" },
-    { label: "Apps", href: "/apps" },
-    { label: "Websites", href: "/websites" },
+    { label: "Portfolio", href: "/portfolio" },
     { label: "Contact", href: "/contact" },
+    { label: "Privacy", href: "/privacy" },
   ];
 
   return (
     <nav
       style={{
-        borderBottom: "1px solid #eee",
-        background: "#fff",
+        borderBottom:
+          "1px solid rgba(255,255,255,0.08)",
+        background: "transparent",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
       }}
     >
       <div
@@ -37,12 +44,14 @@ export default function Navbar() {
           margin: "0 auto",
           padding: "12px 16px",
           display: "flex",
-          flexDirection: "column", // ✅ enables stacking on mobile
+          flexDirection: "column",
           alignItems: "center",
           gap: "10px",
         }}
       >
-        {/* LOGO (HIDDEN ON HOME) */}
+        {/* =========================
+            LOGO (HIDDEN ON HOME)
+           ========================= */}
         {!isHome && (
           <div
             className="navbar-logo"
@@ -51,13 +60,16 @@ export default function Navbar() {
               fontSize: "16px",
               textAlign: "center",
               width: "100%",
+              color: "#ffffff",
             }}
           >
             RISNAR Technologies
           </div>
         )}
 
-        {/* MENU */}
+        {/* =========================
+            MENU
+           ========================= */}
         <div
           style={{
             display: "flex",
@@ -67,21 +79,46 @@ export default function Navbar() {
             width: "100%",
           }}
         >
-          {menu.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              style={{ textDecoration: "none" }}
-            >
-              <span className="ui-btn">{item.label}</span>
-            </Link>
-          ))}
+          {menu.map((item) => {
+            const isActive =
+              pathname === item.href;
+
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                style={{
+                  textDecoration: "none",
+                }}
+              >
+                <span
+                  className="ui-btn"
+                  style={{
+                    background: isActive
+                      ? "rgba(59,130,246,0.18)"
+                      : "rgba(255,255,255,0.04)",
+
+                    color: "#ffffff",
+
+                    border: isActive
+                      ? "1px solid #3b82f6"
+                      : "1px solid rgba(255,255,255,0.10)",
+
+                    boxShadow: isActive
+                      ? "0 0 20px rgba(59,130,246,0.18)"
+                      : "none",
+                  }}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </div>
 
       {/* =========================
           RESPONSIVE OVERRIDE
-          Desktop restores row layout
          ========================= */}
       <style>{`
         @media (min-width: 768px) {

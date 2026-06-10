@@ -3,10 +3,12 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-          <main
+      <main
         style={{
           fontFamily: "Arial, sans-serif",
-          background: "red",
+          background:
+            "linear-gradient(180deg, #0f172a 0%, #111827 100%)",
+          color: "#ffffff",
         }}
       >
       

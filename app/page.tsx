@@ -3,7 +3,12 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main style={{ fontFamily: "Arial, sans-serif" }}>
+          <main
+        style={{
+          fontFamily: "Arial, sans-serif",
+          background: "red",
+        }}
+      >
       
       {/* HERO */}
       <section

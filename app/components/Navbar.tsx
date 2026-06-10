@@ -15,6 +15,7 @@ import {
    - Mobile responsive
    - Glassmorphism navbar
    - Active page highlighting
+   - Added About page link
    - Existing functionality preserved
    ========================= */
 
@@ -52,28 +53,32 @@ export default function Navbar() {
       );
   }, []);
 
-const menu = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Portfolio",
-    href: "/portfolio",
-  },
-  {
-    label: "Services",
-    href: "/services",
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-  },
-  {
-    label: "Privacy",
-    href: "/privacy",
-  },
-];
+  const menu = [
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "About",
+      href: "/about",
+    },
+    {
+      label: "Portfolio",
+      href: "/portfolio",
+    },
+    {
+      label: "Services",
+      href: "/services",
+    },
+    {
+      label: "Contact",
+      href: "/contact",
+    },
+    {
+      label: "Privacy",
+      href: "/privacy",
+    },
+  ];
 
   return (
     <>
@@ -237,13 +242,6 @@ const menu = [
                 );
               }
             )}
-
-            <div
-              style={{
-                display: "inline-flex",
-              }}
-            >
-            </div>
           </div>
         </div>
 

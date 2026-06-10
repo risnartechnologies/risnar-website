@@ -3,6 +3,7 @@ import AnimatedBackground from "./components/Animated_Background";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LeadFormModal from "@/app/components/LeadFormModal";
+import OrganizationSchema from "@/app/components/OrganizationSchema";
 
 export const metadata = {
   title: "Risnar Technologies",
@@ -17,6 +18,7 @@ export const metadata = {
    - Navbar + Footer persistent
    - Global floating CTA
    - LocalBusiness SEO schema
+   - Organization SEO schema
    - Responsive-safe styles
    - Allows global background from CSS
    ========================= */
@@ -100,6 +102,11 @@ export default function RootLayout({
             "transparent",
         }}
       >
+        {/* =========================
+            ORGANIZATION SCHEMA
+           ========================= */}
+        <OrganizationSchema />
+
         {/* =========================
             GLOBAL BUTTON STYLES
            ========================= */}

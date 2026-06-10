@@ -2,6 +2,27 @@ import Link from "next/link";
 import Image from "next/image";
 import LeadFormModal from "@/app/components/LeadFormModal";
 
+export const metadata = {
+  title:
+    "RISNAR Technologies | App Development, Website Development, AI Solutions & SEO",
+
+  description:
+    "RISNAR Technologies provides mobile app development, website development, AI solutions and SEO services for startups, businesses and entrepreneurs.",
+
+  keywords: [
+    "App Development",
+    "Website Development",
+    "Flutter Development",
+    "AI Solutions",
+    "SEO Services",
+    "Mobile App Development Jaipur",
+    "Website Development Jaipur",
+    "Flutter Developer Jaipur",
+    "Real Estate Website Development Jaipur",
+    "RISNAR Technologies",
+  ],
+};
+
 export default function Home() {
   return (
       <main

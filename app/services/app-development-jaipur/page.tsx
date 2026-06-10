@@ -68,7 +68,112 @@ export default function AppDevelopmentJaipurPage() {
     "Reach mobile-first audiences",
   ];
 
+  const faqs = [
+  {
+    question:
+      "How much does app development cost in Jaipur?",
+    answer:
+      "The cost depends on project complexity, features and integrations. Simple apps may cost less while enterprise applications require larger budgets.",
+  },
+  {
+    question:
+      "Do you develop Flutter applications?",
+    answer:
+      "Yes. We specialize in Flutter app development for Android and iOS using a single codebase.",
+  },
+  {
+    question:
+      "How long does app development take?",
+    answer:
+      "Most projects take between 4 and 16 weeks depending on requirements and scope.",
+  },
+  {
+    question:
+      "Do you publish apps on Google Play Store?",
+    answer:
+      "Yes. We assist with testing, optimization and Play Store publishing.",
+  },
+  {
+    question:
+      "Do you provide app maintenance?",
+    answer:
+      "Yes. We provide updates, bug fixes, monitoring and long-term maintenance support.",
+  },
+  {
+    question:
+      "Can you build startup MVP applications?",
+    answer:
+      "Yes. We help startups validate ideas through fast MVP development and iterative improvements.",
+  },
+];
+
   return (
+  <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type":
+                "ListItem",
+              position: 1,
+              name: "Home",
+              item:
+                "https://risnar.com",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 2,
+              name: "Services",
+              item:
+                "https://risnar.com/services",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 3,
+              name:
+                "App Development Jaipur",
+              item:
+                "https://risnar.com/services/app-development-jaipur",
+            },
+          ],
+        }),
+      }}
+    />
+
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "FAQPage",
+          mainEntity:
+            faqs.map((faq) => ({
+              "@type":
+                "Question",
+              name:
+                faq.question,
+              acceptedAnswer:
+                {
+                  "@type":
+                    "Answer",
+                  text:
+                    faq.answer,
+                },
+            })),
+        }),
+      }}
+    />
+
     <main
       style={{
         maxWidth: "1100px",
@@ -77,8 +182,45 @@ export default function AppDevelopmentJaipurPage() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* HERO */}
-      <section
+{/* BREADCRUMB */}
+<div
+  style={{
+    marginBottom: "24px",
+    color: "#94a3b8",
+    fontSize: "14px",
+  }}
+>
+  <Link
+    href="/"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Home
+  </Link>
+
+  {" > "}
+
+  <Link
+    href="/services"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Services
+  </Link>
+
+  {" > "}
+
+  <span>
+    App Development Jaipur
+  </span>
+</div>
+
+{/* HERO */}
+<section
         style={{
           textAlign: "center",
           marginBottom: "60px",
@@ -538,6 +680,65 @@ export default function AppDevelopmentJaipurPage() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section
+        style={{
+          marginBottom: "60px",
+        }}
+      >
+        <h2
+          style={{
+            color: "#ffffff",
+            textAlign: "center",
+            marginBottom: "30px",
+          }}
+        >
+          Frequently Asked Questions
+        </h2>
+
+        <div
+          style={{
+            display: "grid",
+            gap: "20px",
+          }}
+        >
+          {faqs.map((faq) => (
+            <div
+              key={faq.question}
+              style={{
+                border:
+                  "1px solid rgba(255,255,255,0.15)",
+                borderRadius: "16px",
+                background:
+                  "rgba(255,255,255,0.03)",
+                backdropFilter:
+                  "blur(12px)",
+                padding: "24px",
+              }}
+            >
+              <h3
+                style={{
+                  color: "#ffffff",
+                  marginTop: 0,
+                }}
+              >
+                {faq.question}
+              </h3>
+
+              <p
+                style={{
+                  color: "#cbd5e1",
+                  lineHeight: "1.8",
+                  marginBottom: 0,
+                }}
+              >
+                {faq.answer}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA */}
       <section
         style={{
@@ -575,6 +776,7 @@ export default function AppDevelopmentJaipurPage() {
 
         <LeadFormModal />
       </section>
-    </main>
+        </main>
+  </>
   );
 }

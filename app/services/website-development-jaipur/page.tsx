@@ -51,16 +51,121 @@ description:
 ];
 
 const process = [
-"Requirement Analysis",
-"UI/UX Planning",
-"Flutter Development",
-"Testing & QA",
-"Play Store Deployment",
-"Support & Maintenance",
+  "Requirement Analysis",
+  "UI/UX Planning",
+  "Flutter Development",
+  "Testing & QA",
+  "Play Store Deployment",
+  "Support & Maintenance",
+];
+
+const faqs = [
+  {
+    question:
+      "How much does website development cost in Jaipur?",
+    answer:
+      "Website development costs depend on project scope, design requirements, features and integrations. We provide customized quotations based on business needs.",
+  },
+  {
+    question:
+      "Do you build custom business websites?",
+    answer:
+      "Yes. We create custom business websites tailored to your industry, branding and business goals.",
+  },
+  {
+    question:
+      "Will my website be mobile responsive?",
+    answer:
+      "Yes. Every website we build is fully responsive and optimized for mobile, tablet and desktop devices.",
+  },
+  {
+    question:
+      "Do you provide website maintenance services?",
+    answer:
+      "Yes. We offer ongoing maintenance, updates, security monitoring and technical support.",
+  },
+  {
+    question:
+      "Can you develop e-commerce websites?",
+    answer:
+      "Yes. We build e-commerce platforms, online stores and custom shopping experiences for businesses.",
+  },
+  {
+    question:
+      "Do you optimize websites for SEO?",
+    answer:
+      "Yes. Our websites are developed with SEO best practices including performance optimization, clean structure and technical SEO foundations.",
+  },
 ];
 
 return (
-<main
+  <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type":
+                "ListItem",
+              position: 1,
+              name: "Home",
+              item:
+                "https://risnar.com",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 2,
+              name: "Services",
+              item:
+                "https://risnar.com/services",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 3,
+              name:
+                "Website Development Jaipur",
+              item:
+                "https://risnar.com/services/website-development-jaipur",
+            },
+          ],
+        }),
+      }}
+    />
+
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "FAQPage",
+          mainEntity:
+            faqs.map((faq) => ({
+              "@type":
+                "Question",
+              name:
+                faq.question,
+              acceptedAnswer:
+                {
+                  "@type":
+                    "Answer",
+                  text:
+                    faq.answer,
+                },
+            })),
+        }),
+      }}
+    />
+
+    <main
 style={{
 maxWidth: "1100px",
 margin: "0 auto",
@@ -68,6 +173,43 @@ padding: "60px 20px",
 fontFamily: "Arial, sans-serif",
 }}
 >
+{/* BREADCRUMB */}
+<div
+  style={{
+    marginBottom: "24px",
+    color: "#94a3b8",
+    fontSize: "14px",
+  }}
+>
+  <Link
+    href="/"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Home
+  </Link>
+
+  {" > "}
+
+  <Link
+    href="/services"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Services
+  </Link>
+
+  {" > "}
+
+  <span>
+    Website Development Jaipur
+  </span>
+</div>
+
 {/* HERO */}
 <section
 style={{
@@ -334,27 +476,27 @@ Flutter Developer Jaipur </h1>
             gap: "20px",
           }}
         >
-          <Link
-            href="/services/flutter-developer-jaipur"
-            style={{
-              textDecoration: "none",
-            }}
-          >
-            <div
-              style={{
-                border:
-                  "1px solid rgba(255,255,255,0.15)",
-                borderRadius: "16px",
-                background:
-                  "rgba(255,255,255,0.03)",
-                backdropFilter: "blur(12px)",
-                padding: "24px",
-                color: "#ffffff",
-              }}
-            >
-              Flutter Developer Jaipur
-            </div>
-          </Link>
+      <Link
+        href="/services/app-development-jaipur"
+        style={{
+          textDecoration: "none",
+        }}
+      >
+        <div
+          style={{
+            border:
+              "1px solid rgba(255,255,255,0.15)",
+            borderRadius: "16px",
+            background:
+              "rgba(255,255,255,0.03)",
+            backdropFilter: "blur(12px)",
+            padding: "24px",
+            color: "#ffffff",
+          }}
+        >
+          App Development Jaipur
+        </div>
+      </Link>
 
           <Link
             href="/services/website-development-jaipur"
@@ -402,8 +544,67 @@ Flutter Developer Jaipur </h1>
         </div>
       </section>
 
-      {/* CTA */}
-      <section
+{/* FAQ */}
+<section
+  style={{
+    marginBottom: "60px",
+  }}
+>
+  <h2
+    style={{
+      color: "#ffffff",
+      textAlign: "center",
+      marginBottom: "30px",
+    }}
+  >
+    Frequently Asked Questions
+  </h2>
+
+  <div
+    style={{
+      display: "grid",
+      gap: "20px",
+    }}
+  >
+    {faqs.map((faq) => (
+      <div
+        key={faq.question}
+        style={{
+          border:
+            "1px solid rgba(255,255,255,0.15)",
+          borderRadius: "16px",
+          background:
+            "rgba(255,255,255,0.03)",
+          backdropFilter:
+            "blur(12px)",
+          padding: "24px",
+        }}
+      >
+        <h3
+          style={{
+            color: "#ffffff",
+            marginTop: 0,
+          }}
+        >
+          {faq.question}
+        </h3>
+
+        <p
+          style={{
+            color: "#cbd5e1",
+            lineHeight: "1.8",
+            marginBottom: 0,
+          }}
+        >
+          {faq.answer}
+        </p>
+      </div>
+    ))}
+  </div>
+</section>
+
+{/* CTA */}
+<section
     style={{
       textAlign: "center",
       border:
@@ -439,6 +640,7 @@ Flutter Developer Jaipur </h1>
 
     <LeadFormModal />
   </section>
-</main>
-);
+    </main>
+  </>
+  );
 }

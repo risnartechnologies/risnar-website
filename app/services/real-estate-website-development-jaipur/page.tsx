@@ -76,45 +76,150 @@ export default function RealEstateWebsiteDevelopmentJaipurPage() {
     "Property Comparison",
   ];
 
-  const process = [
-    {
-      title: "Business Discovery",
-      description:
-        "Understand your real estate business model, target audience and lead generation goals.",
-    },
-    {
-      title: "Website Planning",
-      description:
-        "Define website structure, property categories and conversion strategy.",
-    },
-    {
-      title: "Design & Branding",
-      description:
-        "Create a premium design that builds trust and credibility with buyers.",
-    },
-    {
-      title: "Development",
-      description:
-        "Build the website using modern technologies focused on speed and scalability.",
-    },
-    {
-      title: "SEO Setup",
-      description:
-        "Implement technical SEO foundations for better search engine visibility.",
-    },
-    {
-      title: "Launch",
-      description:
-        "Deploy the website and configure analytics, forms and lead tracking.",
-    },
-    {
-      title: "Growth Support",
-      description:
-        "Continuous updates, SEO improvements and feature enhancements.",
-    },
-  ];
+const process = [
+  {
+    title: "Business Discovery",
+    description:
+      "Understand your real estate business model, target audience and lead generation goals.",
+  },
+  {
+    title: "Website Planning",
+    description:
+      "Define website structure, property categories and conversion strategy.",
+  },
+  {
+    title: "Design & Branding",
+    description:
+      "Create a premium design that builds trust and credibility with buyers.",
+  },
+  {
+    title: "Development",
+    description:
+      "Build the website using modern technologies focused on speed and scalability.",
+  },
+  {
+    title: "SEO Setup",
+    description:
+      "Implement technical SEO foundations for better search engine visibility.",
+  },
+  {
+    title: "Launch",
+    description:
+      "Deploy the website and configure analytics, forms and lead tracking.",
+  },
+  {
+    title: "Growth Support",
+    description:
+      "Continuous updates, SEO improvements and feature enhancements.",
+  },
+];
 
-  return (
+const faqs = [
+  {
+    question:
+      "Why does a real estate business need a website?",
+    answer:
+      "A professional website helps real estate businesses generate leads, showcase properties, build credibility and attract buyers through Google search.",
+  },
+  {
+    question:
+      "Can you create property listing websites?",
+    answer:
+      "Yes. We build property listing websites with search filters, property details, enquiry forms and lead management features.",
+  },
+  {
+    question:
+      "Do you provide SEO for real estate websites?",
+    answer:
+      "Yes. Every website is built with SEO best practices to improve visibility and generate organic traffic.",
+  },
+  {
+    question:
+      "Can brokers and property consultants use these websites?",
+    answer:
+      "Yes. Our solutions are suitable for brokers, agents, developers, builders and real estate agencies.",
+  },
+  {
+    question:
+      "Do you integrate WhatsApp and CRM systems?",
+    answer:
+      "Yes. We can integrate WhatsApp, CRM systems and lead tracking tools to improve enquiry management.",
+  },
+  {
+    question:
+      "How much does a real estate website cost in Jaipur?",
+    answer:
+      "Pricing depends on features, property management requirements and integrations. We provide customized quotations based on project scope.",
+  },
+];
+
+ return (
+  <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type":
+                "ListItem",
+              position: 1,
+              name: "Home",
+              item:
+                "https://risnar.com",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 2,
+              name: "Services",
+              item:
+                "https://risnar.com/services",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 3,
+              name:
+                "Real Estate Website Development Jaipur",
+              item:
+                "https://risnar.com/services/real-estate-website-development-jaipur",
+            },
+          ],
+        }),
+      }}
+    />
+
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "FAQPage",
+          mainEntity:
+            faqs.map((faq) => ({
+              "@type":
+                "Question",
+              name:
+                faq.question,
+              acceptedAnswer:
+                {
+                  "@type":
+                    "Answer",
+                  text:
+                    faq.answer,
+                },
+            })),
+        }),
+      }}
+    />
+
     <main
       style={{
         maxWidth: "1100px",
@@ -123,8 +228,45 @@ export default function RealEstateWebsiteDevelopmentJaipurPage() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* HERO */}
-      <section
+{/* BREADCRUMB */}
+<div
+  style={{
+    marginBottom: "24px",
+    color: "#94a3b8",
+    fontSize: "14px",
+  }}
+>
+  <Link
+    href="/"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Home
+  </Link>
+
+  {" > "}
+
+  <Link
+    href="/services"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Services
+  </Link>
+
+  {" > "}
+
+  <span>
+    Real Estate Website Development Jaipur
+  </span>
+</div>
+
+{/* HERO */}
+<section
         style={{
           textAlign: "center",
           marginBottom: "60px",
@@ -527,27 +669,27 @@ export default function RealEstateWebsiteDevelopmentJaipurPage() {
             </div>
           </Link>
 
-          <Link
-            href="/services/real-estate-website-development-jaipur"
-            style={{
-              textDecoration: "none",
-            }}
-          >
-            <div
-              style={{
-                border:
-                  "1px solid rgba(255,255,255,0.15)",
-                borderRadius: "16px",
-                background:
-                  "rgba(255,255,255,0.03)",
-                backdropFilter: "blur(12px)",
-                padding: "24px",
-                color: "#ffffff",
-              }}
-            >
-              Real Estate Website Development Jaipur
-            </div>
-          </Link>
+<Link
+  href="/services/app-development-jaipur"
+  style={{
+    textDecoration: "none",
+  }}
+>
+  <div
+    style={{
+      border:
+        "1px solid rgba(255,255,255,0.15)",
+      borderRadius: "16px",
+      background:
+        "rgba(255,255,255,0.03)",
+      backdropFilter: "blur(12px)",
+      padding: "24px",
+      color: "#ffffff",
+    }}
+  >
+    App Development Jaipur
+  </div>
+</Link>
         </div>
       </section>
 
@@ -588,6 +730,7 @@ export default function RealEstateWebsiteDevelopmentJaipurPage() {
 
         <LeadFormModal />
       </section>
-    </main>
+        </main>
+  </>
   );
 }

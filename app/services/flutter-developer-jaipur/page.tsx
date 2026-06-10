@@ -98,22 +98,127 @@ export default function FlutterDeveloperJaipurPage() {
     },
   ];
 
-  const technologies = [
-    "Flutter",
-    "Dart",
-    "Firebase",
-    "Supabase",
-    "REST APIs",
-    "Node.js",
-    "Next.js",
-    "Google Play",
-    "Push Notifications",
-    "Cloud Functions",
-    "SQLite",
-    "GitHub",
-  ];
+const technologies = [
+  "Flutter",
+  "Dart",
+  "Firebase",
+  "Supabase",
+  "REST APIs",
+  "Node.js",
+  "Next.js",
+  "Google Play",
+  "Push Notifications",
+  "Cloud Functions",
+  "SQLite",
+  "GitHub",
+];
+
+const faqs = [
+  {
+    question:
+      "Why choose Flutter for app development?",
+    answer:
+      "Flutter allows businesses to build Android and iOS applications from a single codebase, reducing development time and maintenance costs.",
+  },
+  {
+    question:
+      "Do you build both Android and iOS apps using Flutter?",
+    answer:
+      "Yes. Flutter enables us to develop applications for Android and iOS simultaneously while maintaining a consistent user experience.",
+  },
+  {
+    question:
+      "How much does Flutter app development cost in Jaipur?",
+    answer:
+      "Costs depend on app complexity, features and integrations. We provide customized estimates based on project requirements.",
+  },
+  {
+    question:
+      "Is Flutter suitable for startups?",
+    answer:
+      "Yes. Flutter is an excellent choice for startups because it enables faster development and lower costs while supporting future scalability.",
+  },
+  {
+    question:
+      "Can you migrate an existing app to Flutter?",
+    answer:
+      "Yes. We can modernize and migrate existing applications to Flutter while preserving important functionality.",
+  },
+  {
+    question:
+      "Do you provide Flutter app maintenance and support?",
+    answer:
+      "Yes. We offer long-term maintenance, bug fixes, feature upgrades and performance optimization services.",
+  },
+];
 
   return (
+  <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type":
+                "ListItem",
+              position: 1,
+              name: "Home",
+              item:
+                "https://risnar.com",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 2,
+              name: "Services",
+              item:
+                "https://risnar.com/services",
+            },
+            {
+              "@type":
+                "ListItem",
+              position: 3,
+              name:
+                "Flutter Developer Jaipur",
+              item:
+                "https://risnar.com/services/flutter-developer-jaipur",
+            },
+          ],
+        }),
+      }}
+    />
+
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context":
+            "https://schema.org",
+          "@type":
+            "FAQPage",
+          mainEntity:
+            faqs.map((faq) => ({
+              "@type":
+                "Question",
+              name:
+                faq.question,
+              acceptedAnswer:
+                {
+                  "@type":
+                    "Answer",
+                  text:
+                    faq.answer,
+                },
+            })),
+        }),
+      }}
+    />
+
     <main
       style={{
         maxWidth: "1100px",
@@ -122,8 +227,45 @@ export default function FlutterDeveloperJaipurPage() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* HERO */}
-      <section
+{/* BREADCRUMB */}
+<div
+  style={{
+    marginBottom: "24px",
+    color: "#94a3b8",
+    fontSize: "14px",
+  }}
+>
+  <Link
+    href="/"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Home
+  </Link>
+
+  {" > "}
+
+  <Link
+    href="/services"
+    style={{
+      color: "#94a3b8",
+      textDecoration: "none",
+    }}
+  >
+    Services
+  </Link>
+
+  {" > "}
+
+  <span>
+    Flutter Developer Jaipur
+  </span>
+</div>
+
+{/* HERO */}
+<section
         style={{
           textAlign: "center",
           marginBottom: "60px",
@@ -486,27 +628,27 @@ export default function FlutterDeveloperJaipurPage() {
             gap: "20px",
           }}
         >
-          <Link
-            href="/services/flutter-developer-jaipur"
+        <Link
+          href="/services/app-development-jaipur"
+          style={{
+            textDecoration: "none",
+          }}
+        >
+          <div
             style={{
-              textDecoration: "none",
+              border:
+                "1px solid rgba(255,255,255,0.15)",
+              borderRadius: "16px",
+              background:
+                "rgba(255,255,255,0.03)",
+              backdropFilter: "blur(12px)",
+              padding: "24px",
+              color: "#ffffff",
             }}
           >
-            <div
-              style={{
-                border:
-                  "1px solid rgba(255,255,255,0.15)",
-                borderRadius: "16px",
-                background:
-                  "rgba(255,255,255,0.03)",
-                backdropFilter: "blur(12px)",
-                padding: "24px",
-                color: "#ffffff",
-              }}
-            >
-              Flutter Developer Jaipur
-            </div>
-          </Link>
+            App Development Jaipur
+          </div>
+        </Link>
 
           <Link
             href="/services/website-development-jaipur"
@@ -554,6 +696,65 @@ export default function FlutterDeveloperJaipurPage() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section
+        style={{
+          marginBottom: "60px",
+        }}
+      >
+        <h2
+          style={{
+            color: "#ffffff",
+            textAlign: "center",
+            marginBottom: "30px",
+          }}
+        >
+          Frequently Asked Questions
+        </h2>
+
+        <div
+          style={{
+            display: "grid",
+            gap: "20px",
+          }}
+        >
+          {faqs.map((faq) => (
+            <div
+              key={faq.question}
+              style={{
+                border:
+                  "1px solid rgba(255,255,255,0.15)",
+                borderRadius: "16px",
+                background:
+                  "rgba(255,255,255,0.03)",
+                backdropFilter:
+                  "blur(12px)",
+                padding: "24px",
+              }}
+            >
+              <h3
+                style={{
+                  color: "#ffffff",
+                  marginTop: 0,
+                }}
+              >
+                {faq.question}
+              </h3>
+
+              <p
+                style={{
+                  color: "#cbd5e1",
+                  lineHeight: "1.8",
+                  marginBottom: 0,
+                }}
+              >
+                {faq.answer}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA */}
       <section
         style={{
@@ -591,6 +792,7 @@ export default function FlutterDeveloperJaipurPage() {
 
         <LeadFormModal />
       </section>
-    </main>
+       </main>
+  </>
   );
 }

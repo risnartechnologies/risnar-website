@@ -97,53 +97,50 @@ ${message}
           MODAL
          ========================= */}
       {isOpen && (
+      <div
+        style={{
+          position: "fixed",
+
+          inset: 0,
+
+          background:
+            "rgba(0,0,0,0.65)",
+
+          overflowY: "auto",
+
+          padding: "40px 20px",
+
+          zIndex: 99999,
+
+          display: "flex",
+
+          justifyContent:
+            "center",
+        }}
+      >
         <div
           style={{
-            position: "fixed",
+            width: "100%",
+            maxWidth: "600px",
 
-            inset: 0,
+            border:
+              "1px solid rgba(255,255,255,0.15)",
+
+            borderRadius:
+              "20px",
 
             background:
-              "rgba(0,0,0,0.65)",
+              "rgba(5,8,22,0.96)",
 
-            display: "flex",
+            backdropFilter:
+              "blur(16px)",
 
-            alignItems:
-              "center",
+            padding: "30px",
 
-            justifyContent:
-              "center",
-
-            padding: "20px",
-
-            overflowY: "auto",
-
-            zIndex: 99999,
+            marginTop: "40px",
+            marginBottom: "40px",
           }}
         >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "600px",
-              maxHeight: "90vh",
-
-              overflowY: "auto",
-
-              border:
-                "1px solid rgba(255,255,255,0.15)",
-
-              borderRadius:
-                "20px",
-
-              background:
-                "rgba(5,8,22,0.96)",
-
-              backdropFilter:
-                "blur(16px)",
-
-              padding: "30px",
-            }}
-          >
             {/* HEADER */}
             <div
               style={{

@@ -53,6 +53,35 @@ export default function ServicesPage() {
     },
   ];
 
+const jaipurServices = [
+  {
+    title: "Flutter Developer Jaipur",
+    description:
+      "Hire experienced Flutter developers in Jaipur for cross-platform mobile apps.",
+    href: "/services/flutter-developer-jaipur",
+  },
+  {
+    title: "App Development Jaipur",
+    description:
+      "Custom Android and Flutter app development services for Jaipur businesses.",
+    href: "/services/app-development-jaipur",
+  },
+  {
+    title: "Website Development Jaipur",
+    description:
+      "Professional business websites, portals and web applications in Jaipur.",
+    href: "/services/website-development-jaipur",
+  },
+  {
+    title:
+      "Real Estate Website Development Jaipur",
+    description:
+      "Property listing websites and real estate portals designed for growth.",
+    href:
+      "/services/real-estate-website-development-jaipur",
+  },
+];
+
   return (
     <main
       style={{
@@ -172,10 +201,88 @@ export default function ServicesPage() {
         ))}
       </section>
 
-      {/* =========================
-          CTA
-         ========================= */}
-      <section
+{/* =========================
+    POPULAR JAIPUR SERVICES
+   ========================= */}
+<section
+  style={{
+    marginTop: "80px",
+  }}
+>
+  <h2
+    style={{
+      color: "#ffffff",
+      textAlign: "center",
+      marginBottom: "30px",
+      fontSize: "36px",
+    }}
+  >
+    Popular Jaipur Services
+  </h2>
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(2, minmax(0, 1fr))",
+      gap: "24px",
+    }}
+  >
+    {jaipurServices.map(
+      (service) => (
+        <div
+          key={`popular-${service.title}`}
+          style={{
+            border:
+              "1px solid rgba(255,255,255,0.15)",
+            borderRadius: "16px",
+            background:
+              "rgba(255,255,255,0.03)",
+            backdropFilter:
+              "blur(12px)",
+            padding: "24px",
+          }}
+        >
+          <h3
+            style={{
+              color: "#ffffff",
+              marginTop: 0,
+              marginBottom: "12px",
+            }}
+          >
+            {service.title}
+          </h3>
+
+          <p
+            style={{
+              color: "#cbd5e1",
+              lineHeight: "1.8",
+              marginBottom: "20px",
+            }}
+          >
+            {service.description}
+          </p>
+
+          <Link
+            href={service.href}
+            style={{
+              textDecoration: "none",
+            }}
+          >
+            <span className="ui-btn">
+              Learn More
+            </span>
+          </Link>
+        </div>
+      )
+    )}
+  </div>
+</section>
+
+{/* =========================
+    CTA
+   ========================= */}
+<section
         style={{
           textAlign: "center",
           marginTop: "80px",
@@ -214,13 +321,21 @@ export default function ServicesPage() {
       <LeadFormModal />
       </section>
 
-      <style>{`
-        @media (max-width: 768px) {
-          section:nth-of-type(2) {
-            grid-template-columns: 1fr !important;
-          }
+    <style>{`
+      @media (max-width: 768px) {
+        section:nth-of-type(2) {
+          grid-template-columns: 1fr !important;
         }
-      `}</style>
+
+        section:nth-of-type(3) > div {
+          grid-template-columns: 1fr !important;
+        }
+
+        section:nth-of-type(4) > div {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    `}</style>
     </main>
   );
 }

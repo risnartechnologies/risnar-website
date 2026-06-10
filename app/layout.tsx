@@ -6,7 +6,8 @@ import LeadFormModal from "@/app/components/LeadFormModal";
 
 export const metadata = {
   title: "Risnar Technologies",
-  description: "Portfolio of apps by Risnar Technologies",
+  description:
+    "Portfolio, app development, website development, AI solutions and SEO services by Risnar Technologies",
 };
 
 /* =========================
@@ -14,6 +15,8 @@ export const metadata = {
    - Global layout wrapper
    - Loads globals.css
    - Navbar + Footer persistent
+   - Global floating CTA
+   - LocalBusiness SEO schema
    - Responsive-safe styles
    - Allows global background from CSS
    ========================= */
@@ -22,17 +25,79 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const localBusinessSchema = {
+    "@context":
+      "https://schema.org",
+
+    "@type":
+      "LocalBusiness",
+
+    name:
+      "RISNAR Technologies",
+
+    url:
+      "https://risnar.com",
+
+    image:
+      "https://risnar.com/logo.png",
+
+    email:
+      "contact@risnar.com",
+
+    address: {
+      "@type":
+        "PostalAddress",
+
+      addressLocality:
+        "Jaipur",
+
+      addressRegion:
+        "Rajasthan",
+
+      addressCountry:
+        "IN",
+    },
+
+    areaServed:
+      "India",
+
+    serviceType: [
+      "App Development",
+      "Website Development",
+      "AI Solutions",
+      "SEO Solutions",
+    ],
+  };
+
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="icon"
+          href="/favicon.ico"
+        />
+
+        {/* =========================
+            LOCAL BUSINESS SCHEMA
+           ========================= */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html:
+              JSON.stringify(
+                localBusinessSchema
+              ),
+          }}
+        />
       </head>
 
       <body
         style={{
           margin: 0,
-          fontFamily: "Arial, sans-serif",
-          background: "transparent",
+          fontFamily:
+            "Arial, sans-serif",
+          background:
+            "transparent",
         }}
       >
         {/* =========================
@@ -74,25 +139,43 @@ export default function RootLayout({
           }
         `}</style>
 
-      <AnimatedBackground />
+        {/* =========================
+            ANIMATED BACKGROUND
+           ========================= */}
+        <AnimatedBackground />
 
-      {/* NAVBAR */}
-      <Navbar />
+        {/* =========================
+            NAVBAR
+           ========================= */}
+        <Navbar />
 
-      <div
-        style={{
-          position: "fixed",
-          right: "20px",
-          bottom: "90px",
-          zIndex: 999,
-        }}
-      >
-        <LeadFormModal />
-      </div>
+        {/* =========================
+            FLOATING CTA
+           ========================= */}
+        <div
+          style={{
+            position:
+              "fixed",
 
-      {children}
+            right: "20px",
 
-      <Footer />
+            bottom: "90px",
+
+            zIndex: 999,
+          }}
+        >
+          <LeadFormModal />
+        </div>
+
+        {/* =========================
+            PAGE CONTENT
+           ========================= */}
+        {children}
+
+        {/* =========================
+            FOOTER
+           ========================= */}
+        <Footer />
       </body>
     </html>
   );

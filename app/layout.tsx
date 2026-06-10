@@ -1,3 +1,4 @@
+import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -9,8 +10,10 @@ export const metadata = {
 /* =========================
    ROOT LAYOUT (SERVER COMPONENT)
    - Global layout wrapper
+   - Loads globals.css
    - Navbar + Footer persistent
    - Responsive-safe styles
+   - Allows global background from CSS
    ========================= */
 export default function RootLayout({
   children,
@@ -27,6 +30,7 @@ export default function RootLayout({
         style={{
           margin: 0,
           fontFamily: "Arial, sans-serif",
+          background: "transparent",
         }}
       >
         {/* =========================
@@ -72,11 +76,15 @@ export default function RootLayout({
         <Navbar />
 
         {/* PAGE CONTENT */}
-        <main style={{ minHeight: "100vh" }}>
+        <main
+          style={{
+            minHeight: "100vh",
+          }}
+        >
           {children}
         </main>
 
-        {/* FOOTER (moved outside main) */}
+        {/* FOOTER */}
         <Footer />
       </body>
     </html>

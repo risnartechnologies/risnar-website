@@ -1,4 +1,5 @@
 import "./globals.css";
+import AnimatedBackground from "./components/AnimatedBackground";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -72,8 +73,10 @@ export default function RootLayout({
           }
         `}</style>
 
-        {/* NAVBAR */}
-        <Navbar />
+      <AnimatedBackground />
+
+      {/* NAVBAR */}
+      <Navbar />
 
         {/* PAGE CONTENT */}
         <main

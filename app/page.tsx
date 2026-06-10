@@ -8,9 +8,9 @@ export default function Home() {
       {/* HERO */}
       <section
         style={{
-          padding: "20px 20px 40px",
+          padding: "60px 20px 100px",
           textAlign: "center",
-          maxWidth: "900px",
+          maxWidth: "1100px",
           margin: "0 auto",
         }}
       >
@@ -23,43 +23,302 @@ export default function Home() {
           sizes="(max-width: 768px) 200px, 300px"
           style={{
             width: "100%",
-            maxWidth: "300px",
+            maxWidth: "220px",
             height: "auto",
-            marginBottom: "6px",
+            marginBottom: "24px",
           }}
         />
 
-        <h1 style={{ fontSize: "42px", margin: 0 }}>
-          Technologies
-        </h1>
+      <h1
+        style={{
+          fontSize: "clamp(42px, 8vw, 72px)",
+          fontWeight: 800,
+          lineHeight: 1.05,
+          margin: "0 0 20px",
+          letterSpacing: "-2px",
+        }}
+      >
+        Apps & Websites
+        <br />
+        That Grow Businesses
+      </h1>
 
-        <p
-          style={{
-            fontSize: "18px",
-            color: "#555",
-            marginBottom: "25px",
-          }}
-        >
-          We build high-quality mobile apps & web tools used by thousands of users.
-        </p>
+      <p
+        style={{
+          fontSize: "20px",
+          color: "#555",
+          maxWidth: "700px",
+          margin: "0 auto 30px",
+          lineHeight: 1.7,
+        }}
+      >
+        RISNAR Technologies builds high-performance mobile apps,
+        websites, SaaS platforms and digital products for startups,
+        creators and businesses.
+      </p>
 
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          justifyContent: "center",
+          flexWrap: "wrap",
+        }}
+      >
         <Link href="/apps">
           <button
             style={{
-              padding: "12px 24px",
+              padding: "14px 28px",
               fontSize: "16px",
               backgroundColor: "#000",
               color: "#fff",
               border: "none",
-              borderRadius: "6px",
+              borderRadius: "8px",
               cursor: "pointer",
             }}
           >
-            Explore Our Apps
+            Explore Products
           </button>
         </Link>
-      </section>
 
+        <Link href="/contact">
+          <button
+            style={{
+              padding: "14px 28px",
+              fontSize: "16px",
+              backgroundColor: "#fff",
+              color: "#000",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              cursor: "pointer",
+            }}
+          >
+            Get Free Quote
+          </button>
+        </Link>
+      </div>
+      </section>
+      <style>{`
+      .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+      }
+    `}</style>
+      <section
+          style={{
+            padding: "20px",
+            maxWidth: "1100px",
+            margin: "0 auto 40px",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "36px",
+              textAlign: "center",
+              marginBottom: "40px",
+            }}
+          >
+            Featured Products
+          </h2>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: "20px",
+          }}
+        >
+        {[
+          {
+            name: "Lalify",
+            desc: "Language learning app for French, German and Spanish learners.",
+          },
+          {
+            name: "Mathuvo",
+            desc: "Fun mathematics learning game designed for all age groups.",
+          },
+          {
+            name: "GridZio",
+            desc: "Memory and card matching puzzle game with engaging gameplay.",
+          },
+          {
+            name: "XO Arena",
+            desc: "Modern Tic Tac Toe game with AI and multiplayer modes.",
+          },
+          {
+            name: "Adcampin",
+            desc: "Advertising and digital marketing platform built for businesses.",
+          },
+        ].map((product) => (
+
+      <div
+        key={product.name}
+        className="product-card"
+        style={{
+          background: "#fff",
+          border: "1px solid #eee",
+          borderRadius: "20px",
+          padding: "28px",
+          textAlign: "center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+          transition: "all 0.25s ease",
+          cursor: "pointer",
+        }}
+      >
+        <div
+          style={{
+            width: "72px",
+            height: "72px",
+            borderRadius: "18px",
+            background: "#f5f5f5",
+            margin: "0 auto 18px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
+          }}
+        >
+          <Image
+            src={
+              product.name === "Lalify"
+                ? "/lalify.svg"
+                : product.name === "Mathuvo"
+                ? "/mathuvo.svg"
+                : product.name === "GridZio"
+                ? "/gridzio.svg"
+                : product.name === "XO Arena"
+                ? "/tic-tac-toe.svg"
+                : "/logo.png"
+            }
+            alt={product.name}
+            width={48}
+            height={48}
+          />
+        </div>
+
+        <h3
+          style={{
+            marginBottom: "12px",
+            fontSize: "22px",
+          }}
+        >
+          {product.name}
+        </h3>
+
+      <p
+        style={{
+          color: "#666",
+          minHeight: "70px",
+          lineHeight: 1.6,
+        }}
+      >
+        {product.desc}
+      </p>
+
+        <Link href="/apps">
+          <button
+            style={{
+              padding: "10px 18px",
+              borderRadius: "8px",
+              border: "none",
+              background: "#000",
+              color: "#fff",
+              cursor: "pointer",
+            }}
+          >
+            View Product
+          </button>
+        </Link>
+      </div>
+    ))}
+  </div>
+</section>
+      <section
+  style={{
+    padding: "20px 20px 60px",
+    maxWidth: "1100px",
+    margin: "0 auto",
+  }}
+>
+  <h2
+    style={{
+      fontSize: "36px",
+      textAlign: "center",
+      marginBottom: "40px",
+    }}
+  >
+    What We Build
+  </h2>
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+      gap: "20px",
+    }}
+  >
+    {[
+      {
+        icon: "📱",
+        title: "Mobile Apps",
+        desc: "Android and cross-platform mobile applications built for performance and growth.",
+      },
+      {
+        icon: "🌐",
+        title: "Websites",
+        desc: "Modern business websites designed for speed, SEO and lead generation.",
+      },
+      {
+        icon: "⚙️",
+        title: "SaaS Platforms",
+        desc: "Scalable web platforms and business tools tailored to your workflow.",
+      },
+      {
+        icon: "🤖",
+        title: "AI Solutions",
+        desc: "AI-powered products and intelligent automation for modern businesses.",
+      },
+    ].map((item) => (
+      <div
+        key={item.title}
+        style={{
+          background: "#fff",
+          border: "1px solid #eee",
+          borderRadius: "20px",
+          padding: "28px",
+          textAlign: "center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+        }}
+      >
+        <div
+          style={{
+            fontSize: "42px",
+            marginBottom: "16px",
+          }}
+        >
+          {item.icon}
+        </div>
+
+        <h3
+          style={{
+            marginBottom: "12px",
+          }}
+        >
+          {item.title}
+        </h3>
+
+        <p
+          style={{
+            color: "#666",
+            lineHeight: 1.6,
+          }}
+        >
+          {item.desc}
+        </p>
+      </div>
+    ))}
+  </div>
+</section>
       {/* FEATURES (RESPONSIVE GRID FIX APPLIED) */}
       <section
         style={{
@@ -90,50 +349,93 @@ export default function Home() {
               border-color: #ddd;
             }
           `}</style>
-          {/* Card 1 */}
-          <div className="feature-card"
+        <div
+          style={{
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            textAlign: "center",
+          }}
+        >
+          <h3
             style={{
-              background: "#fff",
-              padding: "20px",
-              borderRadius: "12px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              fontSize: "42px",
+              margin: "0 0 8px",
+              fontWeight: 800,
             }}
           >
-            <h3 style={{ marginBottom: "10px" }}>📱 Mobile First</h3>
-            <p style={{ color: "#555" }}>
-              We build apps optimized for performance and usability.
-            </p>
-          </div>
+            5+
+          </h3>
+          <p style={{ color: "#555", margin: 0 }}>
+            Products Built
+          </p>
+        </div>
 
-          {/* Card 2 */}
-          <div className="feature-card"
+        <div
+          style={{
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            textAlign: "center",
+          }}
+        >
+          <h3
             style={{
-              background: "#fff",
-              padding: "20px",
-              borderRadius: "12px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              fontSize: "42px",
+              margin: "0 0 8px",
+              fontWeight: 800,
             }}
           >
-            <h3 style={{ marginBottom: "10px" }}>⚡ Fast & Lightweight</h3>
-            <p style={{ color: "#555" }}>
-              Optimized for speed and low resource usage.
-            </p>
-          </div>
+            4
+          </h3>
+          <p style={{ color: "#555", margin: 0 }}>
+            Published Apps
+          </p>
+        </div>
 
-          {/* Card 3 */}
-          <div className="feature-card"
+        <div
+          style={{
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            textAlign: "center",
+          }}
+        >
+          <h3
             style={{
-              background: "#fff",
-              padding: "20px",
-              borderRadius: "12px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+              fontSize: "42px",
+              margin: "0 0 8px",
+              fontWeight: 800,
             }}
           >
-            <h3 style={{ marginBottom: "10px" }}>🌍 Global Reach</h3>
-            <p style={{ color: "#555" }}>
-              Our apps are used by users across multiple countries.
-            </p>
-          </div>
+            100%
+          </h3>
+          <p style={{ color: "#555", margin: 0 }}>
+            In-House Development
+          </p>
+        </div>
+
+        <div
+          style={{
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            textAlign: "center",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "42px",
+              margin: "0 0 8px",
+              fontWeight: 800,
+            }}
+          >
+            24×7
+          </h3>
+          <p style={{ color: "#555", margin: 0 }}>
+            Continuous Product Support
+          </p>
+        </div>
         </div>
       </section>
 
@@ -144,9 +446,26 @@ export default function Home() {
           textAlign: "center",
         }}
       >
-        <h2 style={{ fontSize: "28px", marginBottom: "30px" }}>
-          Our Tech Stack
-        </h2>
+      <h2
+        style={{
+          fontSize: "36px",
+          marginBottom: "20px",
+        }}
+      >
+        Technologies We Use
+      </h2>
+
+      <p
+        style={{
+          color: "#666",
+          maxWidth: "700px",
+          margin: "0 auto 40px",
+          lineHeight: 1.7,
+        }}
+      >
+        We build scalable mobile apps, websites and SaaS products using
+        modern technologies trusted by startups and businesses worldwide.
+      </p>
 
         <div
           style={{
@@ -223,6 +542,54 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <section
+  style={{
+    padding: "80px 20px",
+    textAlign: "center",
+    maxWidth: "900px",
+    margin: "0 auto",
+  }}
+>
+  <h2
+    style={{
+      fontSize: "clamp(32px, 5vw, 56px)",
+      fontWeight: 800,
+      marginBottom: "20px",
+    }}
+  >
+    Let's Build Your Next Product
+  </h2>
+
+  <p
+    style={{
+      color: "#666",
+      fontSize: "18px",
+      lineHeight: 1.8,
+      maxWidth: "700px",
+      margin: "0 auto 30px",
+    }}
+  >
+    Whether you need a mobile app, business website,
+    SaaS platform or AI-powered solution, RISNAR
+    Technologies can help bring your idea to life.
+  </p>
+
+  <Link href="/contact">
+    <button
+      style={{
+        padding: "16px 32px",
+        fontSize: "16px",
+        backgroundColor: "#000",
+        color: "#fff",
+        border: "none",
+        borderRadius: "10px",
+        cursor: "pointer",
+      }}
+    >
+      Get Free Quote
+    </button>
+  </Link>
+</section>
     </main>
   );
 }

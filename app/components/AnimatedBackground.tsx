@@ -1,120 +1,86 @@
 "use client";
-
+import Particles from "@tsparticles/react";
 export default function AnimatedBackground() {
+
   return (
-    <>
-      <style jsx>{`
-        .animated-bg {
-          position: fixed;
-          inset: 0;
-          z-index: -1;
-          overflow: hidden;
-          background:
-            radial-gradient(
-              circle at 20% 20%,
-              rgba(59, 130, 246, 0.18),
-              transparent 30%
-            ),
-            radial-gradient(
-              circle at 80% 30%,
-              rgba(168, 85, 247, 0.12),
-              transparent 30%
-            ),
-            radial-gradient(
-              circle at 50% 80%,
-              rgba(34, 197, 94, 0.10),
-              transparent 35%
-            ),
-            #050816;
-        }
+    <Particles
+      id="tsparticles"
+      particlesLoaded={async () => {}}
+      options={{
+        fullScreen: {
+          enable: true,
+          zIndex: -1,
+        },
 
-        .orb {
-          position: absolute;
-          border-radius: 9999px;
-          filter: blur(80px);
-          opacity: 0.4;
-          animation: float 18s ease-in-out infinite;
-          will-change: transform;
-        }
+        background: {
+          color: "#050816",
+        },
 
-        .orb-1 {
-          width: 280px;
-          height: 280px;
-          background: #2563eb;
-          top: 10%;
-          left: 10%;
-        }
+        fpsLimit: 120,
 
-        .orb-2 {
-          width: 240px;
-          height: 240px;
-          background: #7c3aed;
-          top: 50%;
-          right: 10%;
-          animation-delay: 4s;
-        }
+        particles: {
+          number: {
+            value: 80,
+          },
 
-        .orb-3 {
-          width: 220px;
-          height: 220px;
-          background: #22c55e;
-          bottom: 10%;
-          left: 35%;
-          animation-delay: 8s;
-        }
+          color: {
+            value: "#ffffff",
+          },
 
-        .grid {
-          position: absolute;
-          inset: 0;
+          links: {
+            enable: true,
+            color: "#4f46e5",
+            distance: 150,
+            opacity: 0.3,
+            width: 1,
+          },
 
-          background-image:
-            linear-gradient(
-              rgba(255, 255, 255, 0.03) 1px,
-              transparent 1px
-            ),
-            linear-gradient(
-              90deg,
-              rgba(255, 255, 255, 0.03) 1px,
-              transparent 1px
-            );
+          move: {
+            enable: true,
+            speed: 1,
+          },
 
-          background-size: 60px 60px;
+          opacity: {
+            value: 0.4,
+          },
 
-          mask-image: radial-gradient(
-            circle at center,
-            black,
-            transparent 90%
-          );
+          size: {
+            value: {
+              min: 1,
+              max: 3,
+            },
+          },
+        },
 
-          -webkit-mask-image: radial-gradient(
-            circle at center,
-            black,
-            transparent 90%
-          );
-        }
+        interactivity: {
+          events: {
+            onHover: {
+              enable: true,
+              mode: "grab",
+            },
 
-        @keyframes float {
-          0% {
-            transform: translate(0px, 0px);
-          }
+            onClick: {
+              enable: true,
+              mode: "push",
+            },
+          },
 
-          50% {
-            transform: translate(40px, -40px);
-          }
+          modes: {
+            grab: {
+              distance: 180,
+              links: {
+                opacity: 0.8,
+              },
+            },
 
-          100% {
-            transform: translate(0px, 0px);
-          }
-        }
-      `}</style>
+            push: {
+              quantity: 4,
+            },
+          },
+        },
 
-      <div className="animated-bg">
-        <div className="grid" />
-
-        <div className="orb orb-1" />
-        <div className="orb orb-2" />
-        <div className="orb orb-3" />
-      </div>
-    </>
+        detectRetina: true,
+      }}
+    />
   );
 }

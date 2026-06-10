@@ -36,79 +36,44 @@ export default function LeadFormModal() {
   const [message, setMessage] =
     useState("");
 
-  const [
-  isSubmitting,
-  setIsSubmitting,
-] = useState(false);
-
-const [
-  isSuccess,
-  setIsSuccess,
-] = useState(false);
 const handleSubmit =
-  async () => {
-    try {
-      setIsSubmitting(
-        true
+  () => {
+    const subject =
+      encodeURIComponent(
+        "New Project Enquiry - RISNAR Technologies"
       );
 
-      const response =
-        await fetch(
-          "/api/contact",
-          {
-            method: "POST",
+    const body =
+      encodeURIComponent(`
+Name: ${name}
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
+Email: ${email}
 
-            body: JSON.stringify(
-              {
-                name,
-                email,
-                phone,
-                projectType,
-                budget,
-                message,
-              }
-            ),
-          }
-        );
+Phone: ${phone}
 
-      if (
-        !response.ok
-      ) {
-        throw new Error(
-          "Failed"
-        );
-      }
+Project Type: ${projectType}
 
-      setIsSuccess(
-        true
-      );
+Budget: ${budget}
 
-      setName("");
-      setEmail("");
-      setPhone("");
-      setProjectType(
-        "App Development"
-      );
-      setBudget(
-        "< ₹50k"
-      );
-      setMessage("");
-    } catch (
-      error
-    ) {
-      alert(
-        "Unable to submit enquiry. Please try again."
-      );
-    } finally {
-      setIsSubmitting(
-        false
-      );
-    }
+Message:
+${message}
+`);
+
+    window.location.href =
+      `mailto:contact@risnar.com?subject=${subject}&body=${body}`;
+
+    setIsOpen(false);
+
+    setName("");
+    setEmail("");
+    setPhone("");
+    setProjectType(
+      "App Development"
+    );
+    setBudget(
+      "< ₹50k"
+    );
+    setMessage("");
   };
 
   return (
@@ -223,209 +188,155 @@ const handleSubmit =
               </button>
             </div>
 
-            {/* FORM */}
-            {isSuccess ? (
-              <div
-                style={{
-                  textAlign:
-                    "center",
-                  padding:
-                    "20px 0",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize:
-                      "54px",
-                    marginBottom:
-                      "16px",
-                  }}
-                >
-                  ✅
-                </div>
+{/* FORM */}
+<div
+  style={{
+    display:
+      "flex",
+    flexDirection:
+      "column",
+    gap: "14px",
+  }}
+>
+  <input
+    type="text"
+    placeholder="Your Name"
+    value={name}
+    onChange={(e) =>
+      setName(
+        e.target.value
+      )
+    }
+    style={
+      inputStyle
+    }
+  />
 
-                <h3
-                  style={{
-                    color:
-                      "#ffffff",
-                  }}
-                >
-                  Thank You!
-                </h3>
+  <input
+    type="email"
+    placeholder="Email Address"
+    value={email}
+    onChange={(e) =>
+      setEmail(
+        e.target.value
+      )
+    }
+    style={
+      inputStyle
+    }
+  />
 
-                <p
-                  style={{
-                    color:
-                      "#cbd5e1",
-                    lineHeight:
-                      "1.8",
-                  }}
-                >
-                  We have received
-                  your enquiry and
-                  will contact you
-                  shortly.
-                </p>
-              </div>
-            ) : (
-              <div
-                style={{
-                  display:
-                    "flex",
-                  flexDirection:
-                    "column",
-                  gap: "14px",
-                }}
-              >
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) =>
-                    setName(
-                      e.target.value
-                    )
-                  }
-                  style={
-                    inputStyle
-                  }
-                />
+  <input
+    type="tel"
+    placeholder="Phone Number"
+    value={phone}
+    onChange={(e) =>
+      setPhone(
+        e.target.value
+      )
+    }
+    style={
+      inputStyle
+    }
+  />
 
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) =>
-                    setEmail(
-                      e.target.value
-                    )
-                  }
-                  style={
-                    inputStyle
-                  }
-                />
+  <select
+    value={
+      projectType
+    }
+    onChange={(e) =>
+      setProjectType(
+        e.target.value
+      )
+    }
+    style={
+      inputStyle
+    }
+  >
+    <option>
+      App Development
+    </option>
 
-                <input
-                  type="tel"
-                  placeholder="Phone Number"
-                  value={phone}
-                  onChange={(e) =>
-                    setPhone(
-                      e.target.value
-                    )
-                  }
-                  style={
-                    inputStyle
-                  }
-                />
+    <option>
+      Website Development
+    </option>
 
-                <select
-                  value={
-                    projectType
-                  }
-                  onChange={(e) =>
-                    setProjectType(
-                      e.target.value
-                    )
-                  }
-                  style={
-                    inputStyle
-                  }
-                >
-                  <option>
-                    App Development
-                  </option>
+    <option>
+      AI Solutions
+    </option>
 
-                  <option>
-                    Website Development
-                  </option>
+    <option>
+      SEO Solutions
+    </option>
 
-                  <option>
-                    AI Solutions
-                  </option>
+    <option>
+      Other
+    </option>
+  </select>
 
-                  <option>
-                    SEO Solutions
-                  </option>
+  <select
+    value={
+      budget
+    }
+    onChange={(e) =>
+      setBudget(
+        e.target.value
+      )
+    }
+    style={
+      inputStyle
+    }
+  >
+    <option>
+      {"< ₹50k"}
+    </option>
 
-                  <option>
-                    Other
-                  </option>
-                </select>
+    <option>
+      ₹50k – ₹1L
+    </option>
 
-                <select
-                  value={
-                    budget
-                  }
-                  onChange={(e) =>
-                    setBudget(
-                      e.target.value
-                    )
-                  }
-                  style={
-                    inputStyle
-                  }
-                >
-                  <option>
-                    {"< ₹50k"}
-                  </option>
+    <option>
+      ₹1L – ₹5L
+    </option>
 
-                  <option>
-                    ₹50k – ₹1L
-                  </option>
+    <option>
+      ₹5L+
+    </option>
+  </select>
 
-                  <option>
-                    ₹1L – ₹5L
-                  </option>
+  <textarea
+    rows={5}
+    placeholder="Tell us about your project..."
+    value={
+      message
+    }
+    onChange={(e) =>
+      setMessage(
+        e.target.value
+      )
+    }
+    style={{
+      ...inputStyle,
+      resize:
+        "vertical",
+    }}
+  />
 
-                  <option>
-                    ₹5L+
-                  </option>
-                </select>
-
-                <textarea
-                  rows={5}
-                  placeholder="Tell us about your project..."
-                  value={
-                    message
-                  }
-                  onChange={(e) =>
-                    setMessage(
-                      e.target.value
-                    )
-                  }
-                  style={{
-                    ...inputStyle,
-                    resize:
-                      "vertical",
-                  }}
-                />
-
-                <button
-                  onClick={
-                    handleSubmit
-                  }
-                  disabled={
-                    isSubmitting
-                  }
-                  className="ui-btn"
-                  style={{
-                    cursor:
-                      "pointer",
-                    marginTop:
-                      "8px",
-                    opacity:
-                      isSubmitting
-                        ? 0.6
-                        : 1,
-                  }}
-                >
-                  {isSubmitting
-                    ? "Sending..."
-                    : "Send Enquiry"}
-                </button>
-              </div>
-            )}
+  <button
+    onClick={
+      handleSubmit
+    }
+    className="ui-btn"
+    style={{
+      cursor:
+        "pointer",
+      marginTop:
+        "8px",
+    }}
+  >
+    Send Enquiry
+  </button>
+</div>
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@ import "./globals.css";
 import AnimatedBackground from "./components/Animated_Background";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import LeadFormModal from "@/app/components/LeadFormModal";
 
 export const metadata = {
   title: "Risnar Technologies",
@@ -78,17 +79,20 @@ export default function RootLayout({
       {/* NAVBAR */}
       <Navbar />
 
-        {/* PAGE CONTENT */}
-        <main
-          style={{
-            minHeight: "100vh",
-          }}
-        >
-          {children}
-        </main>
+      <div
+        style={{
+          position: "fixed",
+          right: "20px",
+          bottom: "90px",
+          zIndex: 999,
+        }}
+      >
+        <LeadFormModal />
+      </div>
 
-        {/* FOOTER */}
-        <Footer />
+      {children}
+
+      <Footer />
       </body>
     </html>
   );

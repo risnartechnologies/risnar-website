@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import LeadFormModal from "@/app/components/LeadFormModal";
 
 export default function Home() {
   return (
@@ -107,21 +108,7 @@ export default function Home() {
   </button>
 </Link>
 
-        <Link href="/contact">
-          <button
-            style={{
-              padding: "14px 28px",
-              fontSize: "16px",
-              backgroundColor: "#fff",
-              color: "#000",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              cursor: "pointer",
-            }}
-          >
-            Get Free Quote
-          </button>
-        </Link>
+      <LeadFormModal />
       </div>
       </section>
       <style>{`
@@ -616,21 +603,7 @@ export default function Home() {
     Technologies can help bring your idea to life.
   </p>
 
-  <Link href="/contact">
-    <button
-      style={{
-        padding: "16px 32px",
-        fontSize: "16px",
-        backgroundColor: "#000",
-        color: "#fff",
-        border: "none",
-        borderRadius: "10px",
-        cursor: "pointer",
-      }}
-    >
-      Get Free Quote
-    </button>
-  </Link>
+ <LeadFormModal />
 </section>
     </main>
   );

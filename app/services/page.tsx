@@ -51,6 +51,16 @@ export default function ServicesPage() {
       href: "/services/seo-solutions",
       buttonText: "Learn More",
     },
+
+    {
+      icon: "📺",
+      title: "OTT Development",
+      description:
+        "Launch your own Netflix-style OTT platform with video streaming, subscriptions, content management and mobile apps.",
+      href: "/services/ott-development",
+      buttonText: "Learn More",
+    },
+    
   ];
 
 const jaipurServices = [
@@ -132,7 +142,7 @@ const jaipurServices = [
         style={{
           display: "grid",
           gridTemplateColumns:
-            "repeat(2, minmax(0, 1fr))",
+            "repeat(auto-fit, minmax(320px, 1fr))",
           gap: "24px",
         }}
       >
@@ -186,17 +196,41 @@ const jaipurServices = [
               </p>
             </div>
 
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+            }}
+          >
             <Link
               href={service.href}
               style={{
                 textDecoration: "none",
-                alignSelf: "flex-start",
               }}
             >
               <span className="ui-btn">
                 {service.buttonText}
               </span>
             </Link>
+
+            {service.title ===
+              "OTT Development" && (
+              <a
+                href="https://ott.risnar.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  textDecoration:
+                    "none",
+                }}
+              >
+                <span className="ui-btn">
+                  Live Demo
+                </span>
+              </a>
+            )}
+          </div>
           </div>
         ))}
       </section>

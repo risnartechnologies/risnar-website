@@ -355,13 +355,36 @@ export default function OTTDevelopmentPage() {
     the world.
   </p>
 
-  <div
+<div
+  style={{
+    marginTop: "30px",
+    display: "flex",
+    justifyContent: "center",
+    gap: "16px",
+    flexWrap: "wrap",
+  }}
+>
+  <LeadFormModal />
+
+  <a
+    href="https://ott.risnar.com/"
+    target="_blank"
+    rel="noopener noreferrer"
     style={{
-      marginTop: "30px",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "12px 24px",
+      borderRadius: "10px",
+      background: "#2563eb",
+      color: "#ffffff",
+      textDecoration: "none",
+      fontWeight: "bold",
     }}
   >
-    <LeadFormModal />
-  </div>
+    Live Demo
+  </a>
+</div>
 </section>
 
 {/* SERVICE OVERVIEW */}
@@ -488,6 +511,30 @@ export default function OTTDevelopmentPage() {
     content across multiple devices.
   </p>
 </section>
+
+<div
+  style={{
+    textAlign: "center",
+    marginBottom: "60px",
+  }}
+>
+  <a
+    href="https://ott.risnar.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      display: "inline-block",
+      padding: "14px 28px",
+      borderRadius: "10px",
+      background: "#2563eb",
+      color: "#ffffff",
+      textDecoration: "none",
+      fontWeight: "bold",
+    }}
+  >
+    View Live OTT Demo
+  </a>
+</div>
 
 {/* TYPES OF OTT PLATFORMS */}
 <section
@@ -1983,7 +2030,35 @@ export default function OTTDevelopmentPage() {
     opportunities.
   </p>
 
+  <div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    gap: "16px",
+    flexWrap: "wrap",
+  }}
+>
   <LeadFormModal />
+
+  <a
+    href="https://ott.risnar.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "12px 24px",
+      borderRadius: "10px",
+      background: "#2563eb",
+      color: "#ffffff",
+      textDecoration: "none",
+      fontWeight: "bold",
+    }}
+  >
+    Live Demo
+  </a>
+</div>
 </section>
       </main>
     </>

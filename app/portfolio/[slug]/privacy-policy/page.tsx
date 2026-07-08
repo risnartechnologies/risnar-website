@@ -55,9 +55,9 @@ export default async function PrivacyPolicy({
       (a) => a.slug === slug
     );
 
-  if (!app) {
+if (slug === "xo-arena") {
 
-    /* =========================
+/* =========================
    XO ARENA POLICY
 ========================= */
 
@@ -80,8 +80,6 @@ if (slug === "xo-arena") {
       <p>
         <strong>Last Updated:</strong> July 8, 2026
       </p>
-
-      ```tsx
 <h2
   style={{
     color: "#ffffff",
@@ -336,6 +334,7 @@ if (slug === "xo-arena") {
     </main>
   );
 }
+    if (!app) {
     return (
       <main
         style={{
@@ -763,4 +762,4 @@ if (slug === "xo-arena") {
       </section>
     </main>
   );
-}
+}}

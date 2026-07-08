@@ -327,8 +327,8 @@ if (slug === "xo-arena") {
   Email: contact@risnar.com
   <br />
   Website: https://risnar.com
+  Last Updated: 8th Jul 2026
 </p>
-```
 
 
     </main>

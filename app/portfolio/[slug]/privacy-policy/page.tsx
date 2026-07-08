@@ -56,6 +56,286 @@ export default async function PrivacyPolicy({
     );
 
   if (!app) {
+
+    /* =========================
+   XO ARENA POLICY
+========================= */
+
+if (slug === "xo-arena") {
+  return (
+    <main
+      style={{
+        maxWidth: "900px",
+        margin: "0 auto",
+        padding: "60px 20px",
+        fontFamily: "Arial, sans-serif",
+        color: "#e5e7eb",
+        lineHeight: 1.9,
+      }}
+    >
+      <h1 style={{ color: "#ffffff" }}>
+        XO Arena Privacy Policy
+      </h1>
+
+      <p>
+        <strong>Last Updated:</strong> July 8, 2026
+      </p>
+
+      ```tsx
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  1. Information We Collect
+</h2>
+
+<p>
+  XO Arena does not collect personally
+  identifiable information directly.
+  However, depending on the features you
+  choose to use, Google services may
+  process certain information.
+</p>
+
+<p>The App may access:</p>
+
+<ul>
+  <li>
+    Google Play Games profile
+    information (when you sign in)
+  </li>
+  <li>Player nickname</li>
+  <li>Player ID</li>
+  <li>Achievements progress</li>
+  <li>Leaderboard scores</li>
+  <li>Game statistics</li>
+  <li>Daily streak information</li>
+</ul>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  2. Google Sign-In
+</h2>
+
+<p>
+  XO Arena supports optional Google
+  Sign-In.
+</p>
+
+<p>
+  When you choose to sign in, Google may
+  provide your display name and unique
+  player ID. RISNAR Technologies never
+  receives or stores your Google account
+  password.
+</p>
+
+<p>
+  Google Sign-In is optional. You may
+  continue playing without signing in,
+  although achievements, leaderboards and
+  other online features may not be
+  available.
+</p>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  3. Google Play Games Services
+</h2>
+
+<p>
+  XO Arena integrates Google Play Games
+  Services to provide:
+</p>
+
+<ul>
+  <li>Player authentication</li>
+  <li>Achievements</li>
+  <li>Global leaderboards</li>
+  <li>Player profile</li>
+  <li>Statistics tracking</li>
+  <li>Daily streak synchronization</li>
+</ul>
+
+<p>
+  Information processed through Google
+  Play Games Services is governed by
+  Google's own Privacy Policy.
+</p>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  4. How We Use Information
+</h2>
+
+<p>Information is used only to:</p>
+
+<ul>
+  <li>Authenticate players</li>
+  <li>Unlock achievements</li>
+  <li>Submit leaderboard scores</li>
+  <li>Maintain daily streaks</li>
+  <li>Track gameplay statistics</li>
+  <li>Improve gameplay experience</li>
+  <li>Maintain app stability</li>
+</ul>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  5. Third-Party Services
+</h2>
+
+<p>XO Arena may use:</p>
+
+<ul>
+  <li>Google Play Games Services</li>
+  <li>Google Play Services</li>
+  <li>Google Sign-In</li>
+</ul>
+
+<p>
+  These services may collect information
+  according to their own privacy
+  policies.
+</p>
+
+<a
+  href="https://policies.google.com/privacy"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    color: "#60a5fa",
+    wordBreak: "break-word",
+  }}
+>
+  https://policies.google.com/privacy
+</a>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  6. Data Sharing
+</h2>
+
+<p>
+  RISNAR Technologies does not sell,
+  rent or trade your personal
+  information.
+</p>
+
+<p>
+  Information required for Google Play
+  Games functionality is processed only
+  through Google's services.
+</p>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  7. Children's Privacy
+</h2>
+
+<p>
+  XO Arena does not knowingly collect
+  personal information from children.
+  Parents or guardians who believe a
+  child has provided personal
+  information may contact us.
+</p>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  8. Data Security
+</h2>
+
+<p>
+  We take reasonable measures to protect
+  information used by the App. However,
+  no method of electronic transmission or
+  storage is completely secure.
+</p>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  9. Your Choices
+</h2>
+
+<ul>
+  <li>Play without Google Sign-In.</li>
+  <li>Sign out of Google Play Games.</li>
+  <li>Delete the App at any time.</li>
+</ul>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  10. Changes to This Privacy Policy
+</h2>
+
+<p>
+  This Privacy Policy may be updated
+  periodically. Any changes will be
+  posted on this page together with the
+  updated revision date.
+</p>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  11. Contact Us
+</h2>
+
+<p>
+  <strong>RISNAR Technologies</strong>
+  <br />
+  Email: contact@risnar.com
+  <br />
+  Website: https://risnar.com
+</p>
+```
+
+
+    </main>
+  );
+}
     return (
       <main
         style={{

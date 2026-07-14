@@ -55,8 +55,6 @@ export default async function PrivacyPolicy({
       (a) => a.slug === slug
     );
 
-if (slug === "xo-arena") {
-
 /* =========================
    XO ARENA POLICY
 ========================= */
@@ -763,4 +761,4 @@ if (slug === "xo-arena") {
       </section>
     </main>
   );
-}}
+}

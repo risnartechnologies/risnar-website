@@ -53,32 +53,36 @@ export default function Navbar() {
       );
   }, []);
 
-  const menu = [
-    {
-      label: "Home",
-      href: "/",
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
-    {
-      label: "Portfolio",
-      href: "/portfolio",
-    },
-    {
-      label: "Services",
-      href: "/services",
-    },
-    {
-      label: "Contact",
-      href: "/contact",
-    },
-    {
-      label: "Privacy",
-      href: "/privacy",
-    },
-  ];
+const menu = [
+  {
+    label: "Home",
+    href: "/",
+  },
+  {
+    label: "About",
+    href: "/about",
+  },
+  {
+    label: "Services",
+    href: "/services",
+  },
+  {
+    label: "Portfolio",
+    href: "/portfolio",
+  },
+  {
+    label: "Blog",
+    href: "/blog",
+  },
+  {
+    label: "Contact",
+    href: "/contact",
+  },
+  {
+    label: "Privacy",
+    href: "/privacy",
+  },
+];
 
   return (
     <>

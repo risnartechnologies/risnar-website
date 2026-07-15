@@ -27,11 +27,4 @@ export const apps = [
     playStore: "https://play.google.com/store/apps/details?id=com.adcampin.lalify",
     logo: "/lalify.svg",
   },
-  {
-    slug: "rsn-estates",
-    name: "RSN Estates",
-    description: "Modern real estate platform for buying, selling and investing in properties across Jaipur.",
-    playStore: "https://www.rsnestates.com",
-    logo: "/rsnestates.svg",
-  },
 ];

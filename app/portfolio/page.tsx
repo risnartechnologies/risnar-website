@@ -168,7 +168,7 @@ export default function AppsPage() {
 
           {/* =========================
               ADCAMPIN
-            ========================= */}
+          ========================= */}
         <div
           style={{
             border:
@@ -241,7 +241,7 @@ export default function AppsPage() {
         </div>
       </div>
 
-            {/* =========================
+        {/* =========================
           RSN ESTATES
         ========================= */}
       <div
@@ -394,7 +394,6 @@ export default function AppsPage() {
           </a>
         </div>
       </div>
-
       {/* BUTTON STYLES (SCOPED) */}
       <style>{`
         .btn {

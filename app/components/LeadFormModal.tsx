@@ -267,6 +267,10 @@ ${message}
     </option>
 
     <option>
+      OTT Development
+    </option>
+
+    <option>
       Other
     </option>
   </select>
@@ -337,13 +341,29 @@ ${message}
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        select option {
+          background: #0b1220;
+          color: #ffffff;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+          color: #94a3b8;
+        }
+
+        select {
+          cursor: pointer;
+        }
+      `}</style>
     </>
   );
 }
 
 const inputStyle = {
   width: "100%",
-  padding: "12px",
+  padding: "12px 14px",
   borderRadius: "10px",
   border:
     "1px solid rgba(255,255,255,0.15)",
@@ -351,4 +371,17 @@ const inputStyle = {
     "rgba(255,255,255,0.04)",
   color: "#ffffff",
   outline: "none",
+  fontSize: "16px",
+  appearance: "none",
+  WebkitAppearance: "none",
+  MozAppearance: "none",
+  backgroundImage:
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='white' viewBox='0 0 20 20'%3E%3Cpath d='M5.25 7.5L10 12.25 14.75 7.5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E\")",
+  backgroundRepeat:
+    "no-repeat",
+  backgroundPosition:
+    "right 14px center",
+  backgroundSize:
+    "18px",
+  paddingRight: "42px",
 } as const;

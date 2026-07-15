@@ -17,32 +17,38 @@ export const metadata = {
    ========================= */
 
 export default function AboutPage() {
-  const services = [
-    {
-      icon: "📱",
-      title: "App Development",
-      description:
-        "Custom Android and Flutter applications built for startups, businesses and entrepreneurs.",
-    },
-    {
-      icon: "🌐",
-      title: "Website Development",
-      description:
-        "Modern, responsive websites and web applications designed for growth.",
-    },
-    {
-      icon: "🤖",
-      title: "AI Solutions",
-      description:
-        "AI-powered tools, chatbots and automation systems that improve productivity.",
-    },
-    {
-      icon: "📈",
-      title: "SEO Solutions",
-      description:
-        "Data-driven SEO strategies that help businesses increase visibility and generate leads.",
-    },
-  ];
+const services = [
+  {
+    icon: "📱",
+    title: "App Development",
+    description:
+      "Custom Android and Flutter applications built for startups, businesses and entrepreneurs.",
+  },
+  {
+    icon: "🌐",
+    title: "Website Development",
+    description:
+      "Modern, responsive websites and web applications designed for growth.",
+  },
+  {
+    icon: "📺",
+    title: "OTT Development",
+    description:
+      "Custom OTT streaming platforms with subscriptions, video streaming and user management.",
+  },
+  {
+    icon: "🤖",
+    title: "AI Solutions",
+    description:
+      "AI-powered tools, chatbots and automation systems that improve productivity.",
+  },
+  {
+    icon: "📈",
+    title: "SEO Solutions",
+    description:
+      "Data-driven SEO strategies that help businesses increase visibility and generate leads.",
+  },
+];
 
   const values = [
     "Quality First",

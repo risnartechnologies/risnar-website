@@ -183,6 +183,14 @@ export default function Home() {
             name: "Adcampin",
             desc: "Advertising and digital marketing platform built for businesses.",
           },
+          {
+            name: "RSN Estates",
+            desc: "Premium real estate platform for buying, selling and investing.",
+          },
+          {
+            name: "OTT Demo",
+            desc: "Modern OTT streaming platform demo by RISNAR Technologies.",
+          },
         ].map((product) => (
 
 <div
@@ -218,7 +226,11 @@ export default function Home() {
           ? "/gridzio.svg"
           : product.name === "XO Arena"
           ? "/tic-tac-toe.svg"
-          : "/adcampin.png"
+          : product.name === "Adcampin"
+          ? "/adcampin.png"
+          : product.name === "RSN Estates"
+          ? "/rsnestates.svg"
+          : "/ott.svg"
       }
       alt={product.name}
       width={56}
@@ -256,8 +268,12 @@ export default function Home() {
       ? "https://play.google.com/store/apps/details?id=com.risnar.gridzio"
       : product.name === "XO Arena"
       ? "https://play.google.com/store/apps/details?id=com.adcampin.tictactoe_new"
-      : "https://adcampin.com"
-  }
+      : product.name === "Adcampin"
+      ? "https://adcampin.com"
+      : product.name === "RSN Estates"
+      ? "https://www.rsnestates.com/"
+      : "https://ott.risnar.com/"
+      }
   target="_blank"
   rel="noopener noreferrer"
 >
@@ -271,10 +287,12 @@ export default function Home() {
       cursor: "pointer",
     }}
   >
-    {product.name === "Adcampin"
+    {product.name === "Adcampin" ||
+    product.name === "RSN Estates" ||
+    product.name === "OTT Demo"
       ? "Visit Website"
       : "Download App"}
-  </button>
+      </button>
 </a>
 </div>
     ))}
@@ -413,7 +431,7 @@ export default function Home() {
               fontWeight: 800,
             }}
           >
-            5+
+            8+
           </h3>
           <p style={{ color: "#cbd5e1", margin: 0 }}>
             Products Built

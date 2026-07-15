@@ -147,6 +147,16 @@ export default function AppsPage() {
               WEBSITES
             ========================= */}
 
+          {/* GRID (RESPONSIVE) */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "20px",
+              }}
+            ></div>
+
           <div
             style={{
               gridColumn: "1 / -1",

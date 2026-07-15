@@ -3,9 +3,9 @@ import Image from "next/image";
 import { apps } from "@/lib/apps";
 
 export const metadata = {
-  title: "Our Portfolio - Risnar Technologies",
+  title: "Portfolio | RISNAR Technologies",
   description:
-    "Explore apps and platforms built by Risnar Technologies",
+    "Explore mobile apps, websites, web platforms and digital products developed by RISNAR Technologies.",
 };
 
 /* =========================
@@ -143,9 +143,32 @@ export default function AppsPage() {
           </div>
         ))}
 
-        {/* =========================
-            ADCAMPIN
-           ========================= */}
+          {/* =========================
+              WEBSITES
+            ========================= */}
+
+          <div
+            style={{
+              gridColumn: "1 / -1",
+              marginTop: "20px",
+              marginBottom: "10px",
+            }}
+          >
+            <h2
+              style={{
+                color: "#ffffff",
+                fontSize: "28px",
+                textAlign: "center",
+                margin: 0,
+              }}
+            >
+              Websites & Web Platforms
+            </h2>
+          </div>
+
+          {/* =========================
+              ADCAMPIN
+            ========================= */}
         <div
           style={{
             border:
@@ -215,6 +238,160 @@ export default function AppsPage() {
               </span>
             </a>
           </div>
+        </div>
+      </div>
+
+            {/* =========================
+          RSN ESTATES
+        ========================= */}
+      <div
+        style={{
+          border:
+            "1px solid rgba(255,255,255,0.15)",
+          borderRadius: "10px",
+          padding: "20px",
+          background:
+            "rgba(255,255,255,0.03)",
+          backdropFilter: "blur(12px)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
+        {/* LOGO */}
+        <Image
+          src="/rsnestates.svg"
+          alt="RSN Estates"
+          width={60}
+          height={60}
+          style={{
+            marginBottom: "10px",
+            objectFit: "contain",
+          }}
+        />
+
+        {/* TITLE */}
+        <h2
+          style={{
+            fontSize: "20px",
+            marginBottom: "10px",
+            color: "#ffffff",
+          }}
+        >
+          RSN Estates
+        </h2>
+
+        {/* DESCRIPTION */}
+        <p
+          style={{
+            color: "#cbd5e1",
+            marginBottom: "15px",
+          }}
+        >
+          Modern real estate platform helping users
+          buy, sell and invest in properties across
+          Jaipur.
+        </p>
+
+        {/* BUTTON */}
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          <a
+            href="https://www.rsnestates.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              textDecoration: "none",
+            }}
+          >
+            <span className="btn">
+              Visit Website
+            </span>
+          </a>
+        </div>
+      </div>
+
+      {/* =========================
+          OTT DEMO PLATFORM
+        ========================= */}
+      <div
+        style={{
+          border:
+            "1px solid rgba(255,255,255,0.15)",
+          borderRadius: "10px",
+          padding: "20px",
+          background:
+            "rgba(255,255,255,0.03)",
+          backdropFilter: "blur(12px)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
+        {/* LOGO */}
+        <Image
+          src="/ott.svg"
+          alt="OTT Demo Platform"
+          width={60}
+          height={60}
+          style={{
+            marginBottom: "10px",
+            objectFit: "contain",
+          }}
+        />
+
+        {/* TITLE */}
+        <h2
+          style={{
+            fontSize: "20px",
+            marginBottom: "10px",
+            color: "#ffffff",
+          }}
+        >
+          OTT Demo Platform
+        </h2>
+
+        {/* DESCRIPTION */}
+        <p
+          style={{
+            color: "#cbd5e1",
+            marginBottom: "15px",
+          }}
+        >
+          A modern OTT streaming platform showcasing
+          movies, TV series, user authentication,
+          subscriptions, watchlists and responsive
+          streaming experience built by RISNAR
+          Technologies.
+        </p>
+
+        {/* BUTTON */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <a
+            href="https://ott.risnar.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              textDecoration: "none",
+            }}
+          >
+            <span className="btn">
+              Live Demo
+            </span>
+          </a>
         </div>
       </div>
 

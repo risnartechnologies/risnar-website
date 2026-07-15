@@ -283,9 +283,7 @@ export default function AppsPage() {
               marginBottom: "15px",
             }}
           >
-            Modern real estate platform helping
-            users buy, sell and invest in
-            properties across Jaipur.
+            Premium real estate platform for buying, selling and investing.
           </p>
 
           <div
@@ -354,12 +352,7 @@ export default function AppsPage() {
               marginBottom: "15px",
             }}
           >
-            A modern OTT streaming platform
-            showcasing movies, TV series, user
-            authentication, subscriptions,
-            watchlists and responsive streaming
-            experience built by RISNAR
-            Technologies.
+            Professional OTT streaming platform with modern UI and premium features.
           </p>
 
           <div

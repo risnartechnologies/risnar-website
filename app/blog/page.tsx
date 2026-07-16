@@ -1,12 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
-import { blogs } from "@/lib/blogs";
 
-export const metadata = {
+import type { Metadata } from "next";
+
+import {
+  getAllBlogSlugs,
+} from "@/content/blogs";
+
+export const metadata: Metadata = {
   title:
     "Blog - RISNAR Technologies",
-  description:
-    "Expert articles on App Development, Website Development, AI Solutions, SEO Solutions and OTT Development.",
 };
 
 export const dynamic =
@@ -19,10 +22,57 @@ export const revalidate =
    BLOG PAGE
    ========================= */
 
-export default function BlogPage() {
-  const sortedBlogs = [
-    ...blogs,
-  ].sort(
+export default async function BlogPage() {
+  const slugs =
+    getAllBlogSlugs();
+
+  const publishedBlogs = [];
+
+  for (const slug of slugs) {
+    try {
+      const module =
+        await import(
+          `@/content/blogs/${slug}/page`
+        );
+
+      const meta =
+        module.blogMetadata ??
+        module.metadata;
+
+      if (!meta) {
+        continue;
+      }
+
+      publishedBlogs.push({
+        slug,
+
+        title:
+          meta.title ??
+          "Untitled Article",
+
+        category:
+          meta.category ??
+          "Blog",
+
+        readingTime:
+          meta.readTime ??
+          meta.readingTime ??
+          "",
+
+        publishedAt:
+          meta.publishedAt ??
+          "",
+
+        published:
+          meta.published ??
+          true,
+      });
+    } catch {
+      // Ignore invalid folders
+    }
+  }
+
+  publishedBlogs.sort(
     (a, b) =>
       new Date(
         b.publishedAt
@@ -44,6 +94,7 @@ export default function BlogPage() {
       }}
     >
       {/* HERO */}
+
       <section
         style={{
           textAlign:
@@ -100,130 +151,132 @@ export default function BlogPage() {
       </section>
 
       {/* BLOG GRID */}
-      <section
-        style={{
-          display:
-            "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "30px",
-        }}
-      >
-        {sortedBlogs.map(
-          (blog) => (
-            <Link
-              key={
-                blog.slug
-              }
-              href={`/blog/${blog.slug}`}
-              style={{
-                textDecoration:
-                  "none",
-              }}
-            >
-              <article
+
+      {publishedBlogs.length ===
+      0 ? (
+        <div
+          style={{
+            textAlign:
+              "center",
+            color:
+              "#cbd5e1",
+            padding:
+              "80px 0",
+          }}
+        >
+          No blogs
+          published yet.
+        </div>
+      ) : (
+        <section
+          style={{
+            display:
+              "grid",
+            gridTemplateColumns:
+              "repeat(3, minmax(0, 1fr))",
+            gap: "24px",
+          }}
+        >
+          {publishedBlogs.map(
+            (blog) => (
+              <Link
+                key={
+                  blog.slug
+                }
+                href={`/blog/${blog.slug}`}
                 style={{
-                  border:
-                    "1px solid rgba(255,255,255,0.15)",
-                  borderRadius:
-                    "18px",
-                  overflow:
-                    "hidden",
-                  background:
-                    "rgba(255,255,255,0.03)",
-                  backdropFilter:
-                    "blur(12px)",
-                  transition:
-                    "0.25s",
-                  height:
-                    "100%",
+                  textDecoration:
+                    "none",
                 }}
               >
-                <Image
-                  src={
-                    blog.image
-                  }
-                  alt={
-                    blog.title
-                  }
-                  width={
-                    600
-                  }
-                  height={
-                    340
-                  }
+                <article
                   style={{
-                    width:
-                      "100%",
+                    border:
+                      "1px solid rgba(255,255,255,0.15)",
+                    borderRadius:
+                      "18px",
+                    overflow:
+                      "hidden",
+                    background:
+                      "rgba(255,255,255,0.03)",
+                    backdropFilter:
+                      "blur(12px)",
+                    boxShadow:
+                      "0 10px 35px rgba(0,0,0,0.35)",
+                    transition:
+                      "0.25s",
+                    display:
+                      "flex",
+                    flexDirection:
+                      "column",
                     height:
-                      "220px",
-                    objectFit:
-                      "cover",
-                  }}
-                />
-
-                <div
-                  style={{
-                    padding:
-                      "22px",
+                      "100%",
                   }}
                 >
-                  <div
-                    style={{
-                      color:
-                        "#60a5fa",
-                      fontSize:
-                        "14px",
-                      marginBottom:
-                        "10px",
-                    }}
-                  >
-                    {
-                      blog.category
-                    }
-                    {" • "}
-                    {
-                      blog.readingTime
-                    }
-                  </div>
-
-                  <h2
-                    style={{
-                      color:
-                        "#ffffff",
-                      fontSize:
-                        "24px",
-                      lineHeight:
-                        "1.5",
-                      margin:
-                        "0 0 14px",
-                    }}
-                  >
-                    {
+                  <Image
+                    src={`/images/${blog.slug}.webp`}
+                    alt={
                       blog.title
                     }
-                  </h2>
-
-                  <p
+                    width={600}
+                    height={340}
                     style={{
-                      color:
-                        "#cbd5e1",
-                      lineHeight:
-                        "1.8",
-                      margin:
-                        0,
+                      width:
+                        "100%",
+                      height:
+                        "180px",
+                      objectFit:
+                        "cover",
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      padding:
+                        "18px",
                     }}
                   >
-                    {
-                      blog.description
-                    }
-                  </p>
-                </div>
-              </article>
-            </Link>
-          )
-        )}
-      </section>
+                    <div
+                      style={{
+                        color:
+                          "#60a5fa",
+                        fontSize:
+                          "13px",
+                        marginBottom:
+                          "10px",
+                      }}
+                    >
+                      {
+                        blog.category
+                      }
+                      {" • "}
+                      {
+                        blog.readingTime
+                      }
+                    </div>
+
+                    <h2
+                      style={{
+                        color:
+                          "#ffffff",
+                        fontSize:
+                          "20px",
+                        lineHeight:
+                          "1.5",
+                        margin: 0,
+                      }}
+                    >
+                      {
+                        blog.title
+                      }
+                    </h2>
+                  </div>
+                </article>
+              </Link>
+            )
+          )}
+        </section>
+      )}
     </main>
   );
 }

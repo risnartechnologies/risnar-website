@@ -20,6 +20,11 @@ export const metadata = {
     "AI Consulting",
     "RISNAR",
   ],
+
+    authors: [{ name: "RISNAR Editorial Team" }],
+  creator: "RISNAR",
+  publisher: "RISNAR",
+  category: "AI Solutions",
   alternates: {
     canonical:
       "https://risnar.com/blog/ai-solutions-for-businesses-2026",

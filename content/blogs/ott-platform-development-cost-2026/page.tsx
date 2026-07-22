@@ -25,6 +25,8 @@ export const metadata: Metadata = {
   creator: "RISNAR",
   publisher: "RISNAR",
 
+  category: "OTT App Development",
+
   alternates: {
     canonical:
       "https://risnar.com/blog/ott-platform-development-cost-2026",

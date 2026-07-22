@@ -24,6 +24,7 @@ export const metadata: Metadata = {
   authors: [{ name: "RISNAR Editorial Team" }],
   creator: "RISNAR",
   publisher: "RISNAR",
+  category: "Mobile App Development",
 
   alternates: {
     canonical:

@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
 import RelatedArticles from "@/components/blog/RelatedArticles";
+import OpenLeadFormButton from "@/app/components/OpenLeadFormButton";
+
 
 export const metadata: Metadata = {
   title:
@@ -1201,12 +1203,10 @@ export default function BlogPage() {
 
               <div className="mt-10 flex flex-wrap justify-center gap-5">
 
-                <Link
-                  href="/contact"
-                  className="rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white transition hover:bg-blue-700"
-                >
-                  Get Free Consultation
-                </Link>
+                <OpenLeadFormButton className="rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white transition hover:bg-blue-700">
+                  Get Free Quote
+                </OpenLeadFormButton>
+
 
                 <Link
                   href="/services/ai-chatbot-development"

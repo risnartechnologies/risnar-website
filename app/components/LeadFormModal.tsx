@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLeadForm } from "@/app/context/LeadFormContext";
 
 /* =========================
    LEAD FORM MODAL
@@ -11,8 +12,11 @@ import { useState } from "react";
    ========================= */
 
 export default function LeadFormModal() {
-  const [isOpen, setIsOpen] =
-    useState(false);
+  const {
+    isOpen,
+    openLeadForm,
+    closeLeadForm,
+  } = useLeadForm();
 
   const [name, setName] =
     useState("");
@@ -62,7 +66,7 @@ ${message}
     window.location.href =
       `mailto:contact@risnar.com?subject=${subject}&body=${body}`;
 
-    setIsOpen(false);
+    closeLeadForm();
 
     setName("");
     setEmail("");
@@ -82,9 +86,7 @@ ${message}
           OPEN BUTTON
          ========================= */}
       <button
-        onClick={() =>
-          setIsOpen(true)
-        }
+        onClick={openLeadForm}
         className="ui-btn"
         style={{
           cursor: "pointer",
@@ -164,11 +166,7 @@ ${message}
               </h2>
 
               <button
-                onClick={() =>
-                  setIsOpen(
-                    false
-                  )
-                }
+                onClick={closeLeadForm}
                 style={{
                   background:
                     "transparent",

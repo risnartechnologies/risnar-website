@@ -73,7 +73,7 @@ export default function BlogPage() {
   return (
     <main className="min-h-screen text-white">
 
-              {/* ========================================================= */}
+      {/* ========================================================= */}
       {/* 2. Breadcrumb */}
       {/* ========================================================= */}
 
@@ -107,57 +107,7 @@ export default function BlogPage() {
 
       </section>
 
-      {/* ========================================================= */}
-      {/* 1. Hero */}
-      {/* ========================================================= */}
-
-      <section className="relative overflow-hidden border-b border-white/10">
-
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_45%)]" />
-
-        <div className="relative mx-auto flex max-w-7xl flex-col items-center px-6 py-24 text-center lg:px-8 lg:py-28">
-
-          <span className="rounded-full border border-green-500/30 bg-green-500/10 px-5 py-2 text-sm font-semibold uppercase tracking-wider text-green-300">
-            SEO • Digital Marketing • Pricing Guide 2026
-          </span>
-
-          <h1 className="mt-8 max-w-5xl text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl">
-            SEO Services Cost in 2026:
-            <br />
-            Complete Pricing Guide for Small Businesses,
-            Startups & Enterprises
-          </h1>
-
-          <p className="mt-8 max-w-4xl text-xl leading-9 text-slate-300">
-            Wondering how much SEO costs in 2026? This easy-to-understand guide
-            explains SEO pricing, monthly packages, project costs, hourly rates,
-            and what businesses should expect to pay. Learn how to choose the
-            right SEO plan without wasting money.
-          </p>
-
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-
-            <Link
-              href="/contact"
-              className="rounded-lg bg-green-600 px-8 py-4 font-semibold text-white transition hover:bg-green-700"
-            >
-              Get Free SEO Consultation
-            </Link>
-
-            <Link
-              href="/services/seo"
-              className="rounded-lg border border-white/20 px-8 py-4 font-semibold text-white transition hover:bg-white hover:text-slate-900"
-            >
-              Explore SEO Services
-            </Link>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ========================================================= */}
+            {/* ========================================================= */}
       {/* 3. Title & Meta */}
       {/* ========================================================= */}
 
@@ -212,6 +162,56 @@ export default function BlogPage() {
               priority
               className="h-auto w-full object-cover"
             />
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* ========================================================= */}
+      {/* 1. Hero */}
+      {/* ========================================================= */}
+
+      <section className="relative overflow-hidden border-b border-white/10">
+
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_45%)]" />
+
+        <div className="relative mx-auto flex max-w-7xl flex-col items-center px-6 py-24 text-center lg:px-8 lg:py-28">
+
+          <span className="rounded-full border border-green-500/30 bg-green-500/10 px-5 py-2 text-sm font-semibold uppercase tracking-wider text-green-300">
+            SEO • Digital Marketing • Pricing Guide 2026
+          </span>
+
+          <h1 className="mt-8 max-w-5xl text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl">
+            SEO Services Cost in 2026:
+            <br />
+            Complete Pricing Guide for Small Businesses,
+            Startups & Enterprises
+          </h1>
+
+          <p className="mt-8 max-w-4xl text-xl leading-9 text-slate-300">
+            Wondering how much SEO costs in 2026? This easy-to-understand guide
+            explains SEO pricing, monthly packages, project costs, hourly rates,
+            and what businesses should expect to pay. Learn how to choose the
+            right SEO plan without wasting money.
+          </p>
+
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+
+            <Link
+              href="/contact"
+              className="rounded-lg bg-green-600 px-8 py-4 font-semibold text-white transition hover:bg-green-700"
+            >
+              Get Free SEO Consultation
+            </Link>
+
+            <Link
+              href="/services/seo"
+              className="rounded-lg border border-white/20 px-8 py-4 font-semibold text-white transition hover:bg-white hover:text-slate-900"
+            >
+              Explore SEO Services
+            </Link>
 
           </div>
 

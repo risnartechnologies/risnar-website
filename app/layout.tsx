@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LeadFormModal from "@/app/components/LeadFormModal";
 import OrganizationSchema from "@/app/components/OrganizationSchema";
+import { LeadFormProvider } from "@/app/context/LeadFormContext";
 
 export const metadata = {
   title: "Risnar Technologies",
@@ -102,6 +103,7 @@ export default function RootLayout({
             "transparent",
         }}
       >
+        <LeadFormProvider>
         {/* =========================
             ORGANIZATION SCHEMA
            ========================= */}
@@ -183,7 +185,8 @@ export default function RootLayout({
             FOOTER
            ========================= */}
         <Footer />
-      </body>
+      </LeadFormProvider>
+    </body>
     </html>
   );
 }

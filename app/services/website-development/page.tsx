@@ -323,7 +323,6 @@ export default function WebsiteDevelopmentPage() {
       marginTop: "30px",
     }}
   >
-    <LeadFormModal />
   </div>
 </section>
 
@@ -1844,7 +1843,6 @@ export default function WebsiteDevelopmentPage() {
     accelerate growth.
   </p>
 
-  <LeadFormModal />
 </section>
       </main>
     </>

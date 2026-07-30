@@ -168,7 +168,6 @@ export default function Footer() {
           help bring your vision to life.
         </p>
 
-      <LeadFormModal />
       </div>
 
       {/* =========================

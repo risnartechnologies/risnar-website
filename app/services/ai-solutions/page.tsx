@@ -352,7 +352,6 @@ export default function AISolutionsPage() {
       marginTop: "30px",
     }}
   >
-    <LeadFormModal />
   </div>
 </section>
 
@@ -1840,7 +1839,6 @@ export default function AISolutionsPage() {
     advantage.
   </p>
 
-  <LeadFormModal />
 </section>
       </main>
     </>

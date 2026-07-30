@@ -352,7 +352,6 @@ const jaipurServices = [
           your vision to life.
         </p>
 
-      <LeadFormModal />
       </section>
 
     <style>{`

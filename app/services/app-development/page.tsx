@@ -368,7 +368,6 @@ faqSchema
       marginTop: "30px",
     }}
   >
-    <LeadFormModal />
   </div>
 </section>
 
@@ -2131,7 +2130,6 @@ faqSchema
     lasting business value.
   </p>
 
-  <LeadFormModal />
 </section>
   </main>
 </>

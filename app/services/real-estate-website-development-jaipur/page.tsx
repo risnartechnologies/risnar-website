@@ -343,7 +343,6 @@ export default function RealEstateWebsiteDevelopmentJaipurPage() {
       marginTop: "30px",
     }}
   >
-    <LeadFormModal />
   </div>
 </section>
 
@@ -1962,7 +1961,6 @@ export default function RealEstateWebsiteDevelopmentJaipurPage() {
     long-term business growth.
   </p>
 
-  <LeadFormModal />
 </section>
   </main>
 </>

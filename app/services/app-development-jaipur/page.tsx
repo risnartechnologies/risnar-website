@@ -371,7 +371,6 @@ export default function AppDevelopmentJaipurPage() {
       marginTop: "30px",
     }}
   >
-    <LeadFormModal />
   </div>
 </section>
 
@@ -1950,7 +1949,6 @@ export default function AppDevelopmentJaipurPage() {
     supports long-term growth.
   </p>
 
-  <LeadFormModal />
 </section>
       </main>
     </>

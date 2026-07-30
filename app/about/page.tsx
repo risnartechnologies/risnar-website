@@ -466,7 +466,6 @@ const services = [
           RISNAR Technologies is ready to help.
         </p>
 
-        <LeadFormModal />
       </section>
     </main>
   );

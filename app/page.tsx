@@ -129,7 +129,6 @@ export default function Home() {
   </button>
 </Link>
 
-      <LeadFormModal />
       </div>
       </section>
       <style>{`
@@ -642,7 +641,6 @@ export default function Home() {
     Technologies can help bring your idea to life.
   </p>
 
- <LeadFormModal />
 </section>
     </main>
   );

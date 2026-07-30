@@ -516,7 +516,6 @@ export default function SEOSolutionsPage() {
       marginTop: "30px",
     }}
   >
-    <LeadFormModal />
   </div>
 </section>
 
@@ -2158,7 +2157,6 @@ export default function SEOSolutionsPage() {
     sustainable long-term business growth.
   </p>
 
-  <LeadFormModal />
 </section>
 
     </main>

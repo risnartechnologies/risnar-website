@@ -286,7 +286,6 @@ const faqs = [
               marginTop: "30px",
             }}
           >
-            <LeadFormModal />
           </div>
         </section>
 
@@ -1762,7 +1761,6 @@ const faqs = [
     grow faster.
   </p>
 
-  <LeadFormModal />
 </section>
       </main>
     </>

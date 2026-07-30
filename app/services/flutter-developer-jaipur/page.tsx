@@ -319,7 +319,6 @@ Flutter Developer Jaipur </h1>
         marginTop: "30px",
       }}
     >
-      <LeadFormModal />
     </div>
   </section>
 
@@ -1215,7 +1214,6 @@ Flutter Developer Jaipur </h1>
     results.
   </p>
 
-  <LeadFormModal />
 </section>
     </main>
   </>

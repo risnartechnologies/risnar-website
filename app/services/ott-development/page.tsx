@@ -364,7 +364,6 @@ export default function OTTDevelopmentPage() {
     flexWrap: "wrap",
   }}
 >
-  <LeadFormModal />
 
   <a
     href="https://ott.risnar.com/"
@@ -2038,7 +2037,6 @@ export default function OTTDevelopmentPage() {
     flexWrap: "wrap",
   }}
 >
-  <LeadFormModal />
 
   <a
     href="https://ott.risnar.com/"

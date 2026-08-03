@@ -1,10 +1,7 @@
-import type { ReactNode } from "react";
-import DashboardLayout from "@/components/dashboard/dashboard-layout";
-
-interface LayoutProps {
-  children: ReactNode;
-}
-
-export default function Layout({ children }: LayoutProps) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+export default function Page() {
+  return (
+    <div className="p-6">
+      <h1 className="text-3xl font-bold">dashboard</h1>
+    </div>
+  );
 }

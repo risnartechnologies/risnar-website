@@ -205,6 +205,7 @@ if (slug === "xo-arena") {
   <li>Google Play Games Services</li>
   <li>Google Play Services</li>
   <li>Google Sign-In</li>
+  <li>Google Mobile Ads (AdMob)</li>
 </ul>
 
 <p>
@@ -231,7 +232,48 @@ if (slug === "xo-arena") {
     marginTop: "40px",
   }}
 >
-  6. Data Sharing
+  6. Advertising
+</h2>
+
+<p>
+  XO Arena uses Google Mobile Ads
+  (AdMob) to display Banner Ads
+  and optional Rewarded Ads.
+</p>
+
+<p>
+  Google Mobile Ads (AdMob) may
+  collect and process device
+  identifiers and other information
+  necessary to display, measure,
+  and improve advertisements.
+</p>
+
+<p>
+  For more information about how
+  Google processes data, please
+  visit:
+</p>
+
+<a
+  href="https://policies.google.com/privacy"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    color: "#60a5fa",
+    wordBreak: "break-word",
+  }}
+>
+  https://policies.google.com/privacy
+</a>
+
+<h2
+  style={{
+    color: "#ffffff",
+    marginTop: "40px",
+  }}
+>
+  7. Data Sharing
 </h2>
 
 <p>
@@ -241,9 +283,12 @@ if (slug === "xo-arena") {
 </p>
 
 <p>
-  Information required for Google Play
-  Games functionality is processed only
-  through Google's services.
+  Information required for Google
+  Play Games Services and Google
+  Mobile Ads (AdMob) is processed
+  through Google's services in
+  accordance with Google's
+  Privacy Policy.
 </p>
 
 <h2
@@ -252,7 +297,7 @@ if (slug === "xo-arena") {
     marginTop: "40px",
   }}
 >
-  7. Children's Privacy
+  8. Children's Privacy
 </h2>
 
 <p>
@@ -269,7 +314,7 @@ if (slug === "xo-arena") {
     marginTop: "40px",
   }}
 >
-  8. Data Security
+  9. Data Security
 </h2>
 
 <p>
@@ -285,12 +330,13 @@ if (slug === "xo-arena") {
     marginTop: "40px",
   }}
 >
-  9. Your Choices
+  10. Your Choices
 </h2>
 
 <ul>
   <li>Play without Google Sign-In.</li>
   <li>Sign out of Google Play Games.</li>
+  <li>Choose whether to watch optional Rewarded Ads to earn in-game coins.</li>
   <li>Delete the App at any time.</li>
 </ul>
 
@@ -300,7 +346,7 @@ if (slug === "xo-arena") {
     marginTop: "40px",
   }}
 >
-  10. Changes to This Privacy Policy
+  11. Changes to This Privacy Policy
 </h2>
 
 <p>
@@ -316,7 +362,7 @@ if (slug === "xo-arena") {
     marginTop: "40px",
   }}
 >
-  11. Contact Us
+  12. Contact Us
 </h2>
 
 <p>
@@ -326,7 +372,7 @@ if (slug === "xo-arena") {
   <br />
   Website: https://risnar.com
   <br />
-  Last Updated: 8th Jul 2026
+  Last Updated: 4th Aug 2026
 </p>
 
 

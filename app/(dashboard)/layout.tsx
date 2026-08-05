@@ -1,10 +1,26 @@
-import type { ReactNode } from "react";
-import DashboardLayout from "@/components/dashboard/dashboard-layout";
+import Sidebar from "@/components/whatsapp/layout/sidebar";
+import Topbar from "@/components/whatsapp/layout/topbar";
 
-interface LayoutProps {
-  children: ReactNode;
-}
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="min-h-screen bg-slate-950">
 
-export default function Layout({ children }: LayoutProps) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+      <Sidebar />
+
+      <div className="ml-72">
+
+        <Topbar />
+
+        <main className="p-8">
+          {children}
+        </main>
+
+      </div>
+
+    </div>
+  );
 }

@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  useEffect,
+  useRef,
+} from "react";
+
 import ChatHeader from "./chat-header";
 import EmptyChat from "./empty-chat";
 import MessageBubble from "./message-bubble";
@@ -29,6 +34,15 @@ export default function ChatWindow({
   messages,
   onSend,
 }: Props) {
+  const bottomRef =
+    useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
+
   if (!selectedChat) {
     return <EmptyChat />;
   }
@@ -37,11 +51,23 @@ export default function ChatWindow({
     <div className="flex h-full flex-col bg-slate-950">
 
       <ChatHeader
+        id={selectedChat.id}
         name={selectedChat.name}
         phone={selectedChat.phone}
+        onRefresh={() => {
+          window.location.reload();
+        }}
       />
 
-      <div className="flex-1 space-y-4 overflow-y-auto p-6">
+      <div
+        className="
+          flex-1
+          overflow-y-auto
+          scroll-smooth
+          p-6
+          space-y-4
+        "
+      >
 
         {messages.length === 0 && (
           <div className="mt-20 text-center text-slate-500">
@@ -57,6 +83,8 @@ export default function ChatWindow({
             outgoing={message.outgoing}
           />
         ))}
+
+        <div ref={bottomRef} />
 
       </div>
 

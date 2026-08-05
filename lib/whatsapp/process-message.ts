@@ -53,7 +53,7 @@ export async function processMessage(
           data: {
             name:
               contactData.profile?.name ??
-              "Unknown",
+              `+${contactData.wa_id}`,
             phone:
               contactData.wa_id,
           },
@@ -140,6 +140,25 @@ export async function processMessage(
       console.log(
         "Message saved:",
         saved.id
+      );
+
+      /**
+       * Increment unread counter
+       * for every inbound message.
+       */
+      await db.conversation.update({
+        where: {
+          id: conversation.id,
+        },
+        data: {
+          unreadCount: {
+            increment: 1,
+          },
+        },
+      });
+
+      console.log(
+        "Unread count incremented."
       );
     } catch (error) {
       console.error(

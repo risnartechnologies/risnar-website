@@ -38,7 +38,6 @@ export default function InboxPage() {
     useState<Message[]>([]);
 
 useEffect(() => {
-  loadConversations();
 
   const interval = setInterval(() => {
     loadConversations();
@@ -117,7 +116,16 @@ useEffect(() => {
         })
       );
 
-      setChats(mapped);
+      setChats((previous) => {
+        if (
+          JSON.stringify(previous) ===
+          JSON.stringify(mapped)
+        ) {
+          return previous;
+        }
+
+        return mapped;
+      });
 
       setSelectedId((current) => {
         // Keep the currently selected conversation if it still exists.
@@ -227,17 +235,15 @@ async function loadMessages(
       <ChatList
         chats={chats}
         selectedId={selectedId}
-        onSelect={async (id) => {
+        onSelect={(id) => {
           setSelectedId(id);
 
-          await fetch(
+          fetch(
             `/api/conversations/${id}/read`,
             {
               method: "POST",
             }
-          );
-
-          loadConversations();
+          ).catch(console.error);
         }}
       />
 

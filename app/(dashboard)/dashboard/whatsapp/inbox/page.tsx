@@ -121,63 +121,70 @@ export default function InboxPage() {
   /**
    * Load messages for selected conversation.
    */
-  async function loadMessages(
-    conversationId: string
-  ) {
-    try {
-      const res = await fetch(
-        `/api/conversations/${conversationId}/messages`,
-        {
-          cache: "no-store",
-        }
+async function loadMessages(
+  conversationId: string
+) {
+  try {
+    const res = await fetch(
+      `/api/conversations/${conversationId}/messages`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        "Failed to load messages."
+      );
+    }
+
+    const data = await res.json();
+
+    const mapped: Message[] =
+      data.map(
+        (
+          message: {
+            id: string;
+            body: string | null;
+            direction:
+              | "INBOUND"
+              | "OUTBOUND";
+            createdAt: string;
+          }
+        ) => ({
+          id: message.id,
+
+          body:
+            message.body ?? "",
+
+          createdAt: new Date(
+            message.createdAt
+          ).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+
+          outgoing:
+            message.direction ===
+            "OUTBOUND",
+        })
       );
 
-      if (!res.ok) {
-        throw new Error(
-          "Failed to load messages."
-        );
-      }
+    console.log(
+      "Loaded Messages:",
+      mapped
+    );
 
-      const data =
-        await res.json();
+    setMessages(mapped);
+  } catch (error) {
+    console.error(
+      "Failed to load messages:",
+      error
+    );
 
-      const mapped: Message[] =
-        data.map(
-          (
-            message: {
-              id: string;
-              body: string | null;
-              direction:
-                | "INBOUND"
-                | "OUTBOUND";
-              createdAt: string;
-            }
-          ) => ({
-            id: message.id,
-
-            text:
-              message.body ?? "",
-
-            outgoing:
-              message.direction ===
-              "OUTBOUND",
-
-            time: new Date(
-              message.createdAt
-            ).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          })
-        );
-
-      setMessages(mapped);
-    } catch (error) {
-      console.error(error);
-
-      setMessages([]);
-    }
+    setMessages([]);
   }
+}
 
   const selectedChat =
     chats.find(

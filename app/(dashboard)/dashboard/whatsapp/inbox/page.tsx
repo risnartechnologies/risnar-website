@@ -119,14 +119,23 @@ useEffect(() => {
 
       setChats(mapped);
 
-      if (
-        mapped.length > 0 &&
-        !selectedId
-      ) {
-        setSelectedId(
-          mapped[0].id
-        );
-      }
+      setSelectedId((current) => {
+        // Keep the currently selected conversation if it still exists.
+        if (
+          current &&
+          mapped.some(
+            (chat) => chat.id === current
+          )
+        ) {
+          return current;
+        }
+
+        // Select the first conversation only on the initial load
+        // or if the previously selected conversation was deleted.
+        return mapped.length > 0
+          ? mapped[0].id
+          : null;
+      });
     } catch (error) {
       console.error(error);
 

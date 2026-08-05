@@ -10,9 +10,19 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: MetaWebhook = await request.json();
+    const body = await request.json();
 
-    await processMessage(body);
+    console.log(
+      "========== WHATSAPP WEBHOOK =========="
+    );
+
+    console.log(
+      JSON.stringify(body, null, 2)
+    );
+
+    console.log(
+      "======================================"
+    );
 
     return NextResponse.json(
       {

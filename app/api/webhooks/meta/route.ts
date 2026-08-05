@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body: MetaWebhook =
+      await request.json();
 
     console.log(
       "========== WHATSAPP WEBHOOK =========="
@@ -24,6 +25,8 @@ export async function POST(request: NextRequest) {
       "======================================"
     );
 
+    await processMessage(body);
+
     return NextResponse.json(
       {
         success: true,
@@ -33,6 +36,10 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
+    console.error(
+      "Webhook processing failed:"
+    );
+
     console.error(error);
 
     return NextResponse.json(

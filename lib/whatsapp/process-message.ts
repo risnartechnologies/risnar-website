@@ -1,34 +1,23 @@
 import { db } from "@/lib/prisma/db";
 import { MetaWebhook } from "./types";
 
-/**
- * Processes incoming WhatsApp Cloud API webhook messages.
- *
- * Features:
- * - Creates contact automatically if it doesn't exist.
- * - Creates one conversation per contact.
- * - Prevents duplicate messages using Meta Message ID.
- * - Ignores non-message webhook events (statuses, delivery receipts, etc.).
- * - Safely handles missing optional fields.
- */
 export async function processMessage(
   payload: MetaWebhook
 ) {
+  console.log(
+    "WhatsApp Webhook:",
+    JSON.stringify(payload, null, 2)
+  );
+
   try {
-    // ------------------------------------------------------------
-    // Extract webhook change
-    // ------------------------------------------------------------
     const change =
       payload.entry?.[0]?.changes?.[0];
 
     if (!change) {
+      console.log("No webhook change found.");
       return;
     }
 
-    // ------------------------------------------------------------
-    // Ignore webhook events that don't contain messages
-    // (delivery receipts, read receipts, statuses, etc.)
-    // ------------------------------------------------------------
     const contactData =
       change.value.contacts?.[0];
 
@@ -36,12 +25,17 @@ export async function processMessage(
       change.value.messages?.[0];
 
     if (!contactData || !messageData) {
+      console.log(
+        "Webhook does not contain an incoming message."
+      );
       return;
     }
 
-    // ------------------------------------------------------------
-    // Find or create contact
-    // ------------------------------------------------------------
+    console.log(
+      "Finding contact:",
+      contactData.wa_id
+    );
+
     let contact =
       await db.contact.findUnique({
         where: {
@@ -50,23 +44,27 @@ export async function processMessage(
       });
 
     if (!contact) {
+      console.log(
+        "Creating new contact..."
+      );
+
       contact =
         await db.contact.create({
           data: {
             name:
-              contactData.profile
-                ?.name ?? "Unknown",
-
+              contactData.profile?.name ??
+              "Unknown",
             phone:
               contactData.wa_id,
           },
         });
     }
 
-    // ------------------------------------------------------------
-    // Find or create conversation
-    // One conversation per contact.
-    // ------------------------------------------------------------
+    console.log(
+      "Contact ID:",
+      contact.id
+    );
+
     let conversation =
       await db.conversation.findUnique({
         where: {
@@ -75,6 +73,10 @@ export async function processMessage(
       });
 
     if (!conversation) {
+      console.log(
+        "Creating conversation..."
+      );
+
       conversation =
         await db.conversation.create({
           data: {
@@ -83,11 +85,12 @@ export async function processMessage(
         });
     }
 
-    // ------------------------------------------------------------
-    // Prevent duplicate webhook inserts
-    // Meta can resend webhook events.
-    // ------------------------------------------------------------
-    const existingMessage =
+    console.log(
+      "Conversation ID:",
+      conversation.id
+    );
+
+    const existing =
       await db.message.findUnique({
         where: {
           metaMessageId:
@@ -95,47 +98,54 @@ export async function processMessage(
         },
       });
 
-    if (existingMessage) {
+    if (existing) {
+      console.log(
+        "Duplicate webhook ignored."
+      );
       return;
     }
 
-    // ------------------------------------------------------------
-    // Save incoming message
-    // ------------------------------------------------------------
-    await db.message.create({
-      data: {
-        contactId: contact.id,
+    console.log(
+      "Saving message..."
+    );
 
-        conversationId:
-          conversation.id,
+    const saved =
+      await db.message.create({
+        data: {
+          contactId:
+            contact.id,
 
-        metaMessageId:
-          messageData.id,
+          conversationId:
+            conversation.id,
 
-        direction:
-          "INBOUND",
+          metaMessageId:
+            messageData.id,
 
-        type:
-          "TEXT",
+          direction:
+            "INBOUND",
 
-        body:
-          messageData.text?.body ??
-          "",
+          type:
+            "TEXT",
 
-        status:
-          "DELIVERED",
-      },
-    });
+          body:
+            messageData.text?.body ??
+            "",
+
+          status:
+            "DELIVERED",
+        },
+      });
 
     console.log(
-      "✅ Incoming WhatsApp message saved:",
-      messageData.id
+      "Message saved:",
+      saved.id
     );
   } catch (error) {
     console.error(
-      "❌ processMessage() failed:",
-      error
+      "processMessage() ERROR"
     );
+
+    console.error(error);
 
     throw error;
   }

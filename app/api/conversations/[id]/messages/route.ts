@@ -1,26 +1,25 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/prisma/db";
 
-interface RouteParams {
+interface RouteContext {
   params: Promise<{
     id: string;
   }>;
 }
 
-export async function GET({
-  params,
-}: RouteParams) {
+export async function GET(
+  request: NextRequest,
+  { params }: RouteContext
+) {
   try {
-    const { id } =
-      await params;
+    const { id } = await params;
 
     const messages =
       await db.message.findMany({
         where: {
           conversationId: id,
         },
-
         orderBy: {
           createdAt: "asc",
         },

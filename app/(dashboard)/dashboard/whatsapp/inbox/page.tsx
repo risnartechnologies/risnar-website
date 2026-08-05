@@ -13,6 +13,8 @@ import ChatWindow, {
 interface Conversation {
   id: string;
 
+  unreadCount: number;
+
   contact: {
     id: string;
     name: string | null;
@@ -35,17 +37,30 @@ export default function InboxPage() {
   const [messages, setMessages] =
     useState<Message[]>([]);
 
-  useEffect(() => {
-    loadConversations();
-  }, []);
+useEffect(() => {
+  loadConversations();
 
-  useEffect(() => {
-    if (selectedId) {
-      loadMessages(selectedId);
-    } else {
-      setMessages([]);
-    }
-  }, [selectedId]);
+  const interval = setInterval(() => {
+    loadConversations();
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, []);
+
+useEffect(() => {
+  if (!selectedId) {
+    setMessages([]);
+    return;
+  }
+
+  loadMessages(selectedId);
+
+  const interval = setInterval(() => {
+    loadMessages(selectedId);
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, [selectedId]);
 
   /**
    * Load all conversations.
@@ -97,7 +112,8 @@ export default function InboxPage() {
                 })
               : "",
 
-          unread: 0,
+          unread:
+          conversation.unreadCount,
         })
       );
 
@@ -199,11 +215,22 @@ async function loadMessages(
 
         <div className="border-r border-slate-800">
 
-          <ChatList
-            chats={chats}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-          />
+      <ChatList
+        chats={chats}
+        selectedId={selectedId}
+        onSelect={async (id) => {
+          setSelectedId(id);
+
+          await fetch(
+            `/api/conversations/${id}/read`,
+            {
+              method: "POST",
+            }
+          );
+
+          loadConversations();
+        }}
+      />
 
         </div>
 

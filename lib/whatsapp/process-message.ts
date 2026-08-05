@@ -105,51 +105,51 @@ export async function processMessage(
       return;
     }
 
-console.log(
-  "Saving message..."
-);
+    console.log(
+      "Saving message..."
+    );
 
-try {
-  const saved =
-    await db.message.create({
-      data: {
-        contactId:
-          contact.id,
+    try {
+      const saved =
+        await db.message.create({
+          data: {
+            contactId:
+              contact.id,
 
-        conversationId:
-          conversation.id,
+            conversationId:
+              conversation.id,
 
-        metaMessageId:
-          messageData.id,
+            metaMessageId:
+              messageData.id,
 
-        direction:
-          "INBOUND",
+            direction:
+              "INBOUND",
 
-        type:
-          "TEXT",
+            type:
+              "TEXT",
 
-        body:
-          messageData.text?.body ??
-          "",
+            body:
+              messageData.text?.body ??
+              "",
 
-        status:
-          "DELIVERED",
-      },
-    });
+            status:
+              "DELIVERED",
+          },
+        });
 
-  console.log(
-    "Message saved:",
-    saved.id
-  );
-} catch (error) {
-  console.error(
-    "MESSAGE CREATE FAILED"
-  );
+      console.log(
+        "Message saved:",
+        saved.id
+      );
+    } catch (error) {
+      console.error(
+        "MESSAGE CREATE FAILED"
+      );
 
-  console.error(error);
+      console.error(error);
 
-  throw error;
-}
+      throw error;
+    }
   } catch (error) {
     console.error(
       "processMessage() ERROR"

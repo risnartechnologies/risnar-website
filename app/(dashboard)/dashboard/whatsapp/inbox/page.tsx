@@ -26,25 +26,29 @@ interface Conversation {
 }
 
 export default function InboxPage() {
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] =
+    useState<Chat[]>([]);
+
   const [selectedId, setSelectedId] =
     useState<string | null>(null);
 
-  const [messages] = useState<Message[]>([]);
+  const [messages, setMessages] =
+    useState<Message[]>([]);
 
   useEffect(() => {
     loadConversations();
   }, []);
 
+  useEffect(() => {
+    if (selectedId) {
+      loadMessages(selectedId);
+    } else {
+      setMessages([]);
+    }
+  }, [selectedId]);
+
   /**
-   * Loads all conversations from the backend.
-   *
-   * Features:
-   * - Always fetches fresh data (no browser cache).
-   * - Handles API/network failures gracefully.
-   * - Prevents crashes caused by malformed data.
-   * - Automatically selects the first conversation.
-   * - Includes detailed console logs for debugging.
+   * Load all conversations.
    */
   async function loadConversations() {
     try {
@@ -55,24 +59,14 @@ export default function InboxPage() {
         }
       );
 
-      console.log(
-        "Conversation API Status:",
-        res.status
-      );
-
       if (!res.ok) {
         throw new Error(
-          `Failed to load conversations (${res.status})`
+          "Failed to load conversations."
         );
       }
 
       const data: Conversation[] =
         await res.json();
-
-      console.log(
-        "Conversations:",
-        data
-      );
 
       const mapped: Chat[] = data.map(
         (conversation) => ({
@@ -107,11 +101,6 @@ export default function InboxPage() {
         })
       );
 
-      console.log(
-        "Mapped Chats:",
-        mapped
-      );
-
       setChats(mapped);
 
       if (
@@ -123,12 +112,70 @@ export default function InboxPage() {
         );
       }
     } catch (error) {
-      console.error(
-        "Failed to load conversations:",
-        error
-      );
+      console.error(error);
 
       setChats([]);
+    }
+  }
+
+  /**
+   * Load messages for selected conversation.
+   */
+  async function loadMessages(
+    conversationId: string
+  ) {
+    try {
+      const res = await fetch(
+        `/api/conversations/${conversationId}/messages`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          "Failed to load messages."
+        );
+      }
+
+      const data =
+        await res.json();
+
+      const mapped: Message[] =
+        data.map(
+          (
+            message: {
+              id: string;
+              body: string | null;
+              direction:
+                | "INBOUND"
+                | "OUTBOUND";
+              createdAt: string;
+            }
+          ) => ({
+            id: message.id,
+
+            text:
+              message.body ?? "",
+
+            outgoing:
+              message.direction ===
+              "OUTBOUND",
+
+            time: new Date(
+              message.createdAt
+            ).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          })
+        );
+
+      setMessages(mapped);
+    } catch (error) {
+      console.error(error);
+
+      setMessages([]);
     }
   }
 

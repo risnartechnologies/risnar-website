@@ -3,15 +3,16 @@ import { db } from "@/lib/prisma/db";
 
 export async function GET() {
   try {
-    const result = await db.$queryRawUnsafe(`
+    const columns = await db.$queryRawUnsafe(`
       SELECT
-        current_database() AS database,
-        current_schema() AS schema,
-        inet_server_addr() AS server,
-        version();
+        table_schema,
+        column_name
+      FROM information_schema.columns
+      WHERE table_name='Conversation'
+      ORDER BY ordinal_position;
     `);
 
-    return NextResponse.json(result);
+    return NextResponse.json(columns);
   } catch (error) {
     return NextResponse.json(error);
   }

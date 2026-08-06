@@ -246,7 +246,7 @@ async function loadMessages(
 
       <div className="grid h-full grid-cols-[380px_1fr]">
 
-        <div className="border-r border-slate-800">
+        <div className="flex h-full flex-col border-r border-slate-800 min-h-0">
 
       <ChatList
         chats={chats}

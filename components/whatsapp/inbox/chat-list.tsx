@@ -23,12 +23,14 @@ export default function ChatList({
   onSelect,
 }: Props) {
   return (
-    <div className="
-      h-full
-      overflow-y-auto
-      scroll-smooth
-      bg-slate-950
-      ">
+    <div
+      className="
+          flex-1
+          min-h-0
+          overflow-y-auto
+          scroll-smooth
+          bg-slate-950
+          ">
 
       {chats.length === 0 && (
         <div className="flex h-full items-center justify-center text-slate-500">

@@ -24,31 +24,21 @@ export default function ChatList({
 }: Props) {
   return (
     <div
-      className="
-          flex-1
-          min-h-0
-          overflow-y-auto
-          scroll-smooth
-          bg-slate-950
-          ">
-
+      key={chats.length}
+      className="h-full overflow-y-auto bg-slate-950"
+    >
       {chats.length === 0 && (
         <div className="flex h-full items-center justify-center text-slate-500">
           No conversations found.
         </div>
       )}
 
-      {chats.map((chat, index) => {
-        console.log(
-          "Rendering chat",
-          index,
-          chat.id,
-          chat.name
-        );
-
-        return (
+      {chats.map((chat) => (
+        <div
+          key={chat.id}
+          data-chat-id={chat.id}
+        >
           <ChatItem
-            key={chat.id}
             id={chat.id}
             name={chat.name}
             phone={chat.phone}
@@ -58,9 +48,8 @@ export default function ChatList({
             active={selectedId === chat.id}
             onClick={() => onSelect(chat.id)}
           />
-        );
-      })}
-
+        </div>
+      ))}
     </div>
   );
 }

@@ -45,20 +45,6 @@ export default function InboxPage() {
 
 useEffect(() => {
   loadConversations();
-
-  let loading = false;
-
-  const interval = setInterval(async () => {
-    if (loading) return;
-
-    loading = true;
-
-    await loadConversations();
-
-    loading = false;
-  }, 2000);
-
-  return () => clearInterval(interval);
 }, []);
 
 useEffect(() => {

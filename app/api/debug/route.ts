@@ -3,17 +3,28 @@ import { db } from "@/lib/prisma/db";
 
 export async function GET() {
   try {
-    const columns = await db.$queryRawUnsafe(`
-      SELECT
-        table_schema,
-        column_name
-      FROM information_schema.columns
-      WHERE table_name='Conversation'
-      ORDER BY ordinal_position;
-    `);
+    const conversations = await db.conversation.findMany({
+      take: 1,
+    });
 
-    return NextResponse.json(columns);
+    return NextResponse.json({
+      success: true,
+      conversations,
+    });
   } catch (error) {
-    return NextResponse.json(error);
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : String(error),
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

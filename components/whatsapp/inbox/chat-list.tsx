@@ -23,10 +23,16 @@ export default function ChatList({
   onSelect,
 }: Props) {
   return (
-    <div
-      key={chats.length}
-      className="h-full overflow-y-auto bg-slate-950"
-    >
+        <div
+          key={chats.length}
+          onScroll={(e) => {
+            console.log(
+              "ChatList scrollTop:",
+              e.currentTarget.scrollTop
+            );
+          }}
+          className="h-full overflow-y-auto bg-slate-950"
+        >
       {chats.length === 0 && (
         <div className="flex h-full items-center justify-center text-slate-500">
           No conversations found.

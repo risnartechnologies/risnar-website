@@ -44,6 +44,20 @@ useEffect(() => {
   const container =
     messagesRef.current;
 
+  if (!container) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    container.scrollTop =
+      container.scrollHeight;
+  });
+}, [selectedChat?.id]);
+
+useEffect(() => {
+  const container =
+    messagesRef.current;
+
   if (
     !container ||
     !shouldAutoScroll.current
@@ -51,9 +65,9 @@ useEffect(() => {
     return;
   }
 
-  container.scrollTo({
-    top: container.scrollHeight,
-    behavior: "smooth",
+  requestAnimationFrame(() => {
+    container.scrollTop =
+      container.scrollHeight;
   });
 }, [messages]);
 

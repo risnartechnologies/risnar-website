@@ -86,6 +86,21 @@ useEffect(() => {
       const data: Conversation[] =
         await res.json();
 
+        console.clear();
+
+        console.log(
+          "API returned",
+          data.length,
+          "conversations"
+        );
+
+        console.table(
+          data.map((c) => ({
+            id: c.id,
+            name: c.contact?.name,
+          }))
+        );
+
       if (
         currentRequest !==
         requestId.current
@@ -128,6 +143,13 @@ useEffect(() => {
       );
 
       setChats(mapped);
+
+      console.log(
+          "Mapped chats:",
+          mapped.length
+        );
+
+        console.table(mapped);
 
       setSelectedId((current) => {
         // Keep the currently selected conversation if it still exists.

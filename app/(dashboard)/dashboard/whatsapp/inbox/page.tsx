@@ -233,6 +233,8 @@ async function loadMessages(
     );
 
     setMessages(mapped);
+
+    loadConversations();
   } catch (error) {
     console.error(
       "Failed to load messages:",
@@ -259,15 +261,17 @@ async function loadMessages(
       <ChatList
         chats={chats}
         selectedId={selectedId}
-        onSelect={(id) => {
+        onSelect={async (id) => {
           setSelectedId(id);
 
-          fetch(
+          await fetch(
             `/api/conversations/${id}/read`,
             {
               method: "POST",
             }
-          ).catch(console.error);
+          );
+
+          loadConversations();
         }}
       />
 

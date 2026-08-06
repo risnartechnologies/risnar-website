@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import ChatList, {
   Chat,
@@ -36,14 +40,22 @@ export default function InboxPage() {
 
   const [messages, setMessages] =
     useState<Message[]>([]);
+  
+  const requestId = useRef(0);
 
 useEffect(() => {
-  // Load immediately.
   loadConversations();
 
-  // Then keep polling.
-  const interval = setInterval(() => {
-    loadConversations();
+  let loading = false;
+
+  const interval = setInterval(async () => {
+    if (loading) return;
+
+    loading = true;
+
+    await loadConversations();
+
+    loading = false;
   }, 2000);
 
   return () => clearInterval(interval);
@@ -69,6 +81,9 @@ useEffect(() => {
    */
   async function loadConversations() {
     try {
+      const currentRequest =
+        ++requestId.current;
+
       const res = await fetch(
         "/api/conversations",
         {
@@ -84,6 +99,13 @@ useEffect(() => {
 
       const data: Conversation[] =
         await res.json();
+
+      if (
+        currentRequest !==
+        requestId.current
+      ) {
+        return;
+      }
 
       const mapped: Chat[] = data.map(
         (conversation) => ({

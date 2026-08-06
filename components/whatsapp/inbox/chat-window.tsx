@@ -37,11 +37,9 @@ export default function ChatWindow({
   const bottomRef =
     useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [messages]);
+useEffect(() => {
+  // Auto-scroll temporarily disabled for debugging.
+}, [messages]);
 
   if (!selectedChat) {
     return <EmptyChat />;

@@ -76,7 +76,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="flex h-full flex-col bg-slate-950">
+    <div className="flex h-full min-h-0 flex-col bg-slate-950">
 
       <ChatHeader
         id={selectedChat.id}
@@ -87,26 +87,27 @@ useEffect(() => {
         }}
       />
 
-    <div
-      ref={messagesRef}
-      onScroll={(e) => {
-        const element =
-          e.currentTarget;
+      <div
+        ref={messagesRef}
+        onScroll={(e) => {
+          const element =
+            e.currentTarget;
 
-        shouldAutoScroll.current =
-          element.scrollHeight -
-            element.scrollTop -
-            element.clientHeight <
-          60;
-      }}
-      className="
-        flex-1
-        overflow-y-auto
-        scroll-smooth
-        p-6
-        space-y-4
-      "
-    >
+          shouldAutoScroll.current =
+            element.scrollHeight -
+              element.scrollTop -
+              element.clientHeight <
+            60;
+        }}
+        className="
+          min-h-0
+          flex-1
+          overflow-y-auto
+          scroll-smooth
+          p-6
+          space-y-4
+        "
+      >
 
         {messages.length === 0 && (
           <div className="mt-20 text-center text-slate-500">

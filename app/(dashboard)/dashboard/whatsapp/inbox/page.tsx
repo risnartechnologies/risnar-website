@@ -38,7 +38,10 @@ export default function InboxPage() {
     useState<Message[]>([]);
 
 useEffect(() => {
+  // Load immediately.
+  loadConversations();
 
+  // Then keep polling.
   const interval = setInterval(() => {
     loadConversations();
   }, 2000);
@@ -116,16 +119,7 @@ useEffect(() => {
         })
       );
 
-      setChats((previous) => {
-        if (
-          JSON.stringify(previous) ===
-          JSON.stringify(mapped)
-        ) {
-          return previous;
-        }
-
-        return mapped;
-      });
+      setChats(mapped);
 
       setSelectedId((current) => {
         // Keep the currently selected conversation if it still exists.

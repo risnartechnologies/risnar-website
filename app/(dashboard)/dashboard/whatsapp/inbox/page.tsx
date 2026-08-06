@@ -264,14 +264,30 @@ async function loadMessages(
         onSelect={async (id) => {
           setSelectedId(id);
 
-          await fetch(
-            `/api/conversations/${id}/read`,
-            {
-              method: "POST",
-            }
+          // Update UI immediately.
+          setChats((previous) =>
+            previous.map((chat) =>
+              chat.id === id
+                ? {
+                    ...chat,
+                    unread: 0,
+                  }
+                : chat
+            )
           );
 
-          loadConversations();
+          try {
+            await fetch(
+              `/api/conversations/${id}/read`,
+              {
+                method: "POST",
+              }
+            );
+
+            await loadConversations();
+          } catch (error) {
+            console.error(error);
+          }
         }}
       />
 

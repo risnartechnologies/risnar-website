@@ -14,20 +14,12 @@ export async function POST(
 ) {
   const { id } = await params;
 
-  /**
-   * Placeholder endpoint.
-   *
-   * The unread counter will be implemented after the
-   * Prisma Client is regenerated with the new
-   * Conversation.unreadCount field.
-   *
-   * For now we simply verify that the conversation
-   * exists and return success so the rest of the
-   * WhatsApp Inbox continues to work.
-   */
-  await db.conversation.findUnique({
+  await db.conversation.update({
     where: {
       id,
+    },
+    data: {
+      unreadCount: 0,
     },
   });
 

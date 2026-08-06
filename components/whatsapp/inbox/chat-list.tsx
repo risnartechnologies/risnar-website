@@ -38,19 +38,28 @@ export default function ChatList({
         </div>
       )}
 
-      {chats.map((chat) => (
-        <ChatItem
-          key={chat.id}
-          id={chat.id}
-          name={chat.name}
-          phone={chat.phone}
-          lastMessage={chat.lastMessage}
-          lastMessageTime={chat.lastMessageTime}
-          unread={chat.unread}
-          active={selectedId === chat.id}
-          onClick={() => onSelect(chat.id)}
-        />
-      ))}
+      {chats.map((chat, index) => {
+        console.log(
+          "Rendering chat",
+          index,
+          chat.id,
+          chat.name
+        );
+
+        return (
+          <ChatItem
+            key={chat.id}
+            id={chat.id}
+            name={chat.name}
+            phone={chat.phone}
+            lastMessage={chat.lastMessage}
+            lastMessageTime={chat.lastMessageTime}
+            unread={chat.unread}
+            active={selectedId === chat.id}
+            onClick={() => onSelect(chat.id)}
+          />
+        );
+      })}
 
     </div>
   );

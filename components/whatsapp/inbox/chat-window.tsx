@@ -34,11 +34,27 @@ export default function ChatWindow({
   messages,
   onSend,
 }: Props) {
-  const bottomRef =
-    useRef<HTMLDivElement>(null);
+const messagesRef =
+  useRef<HTMLDivElement>(null);
+
+const shouldAutoScroll =
+  useRef(true);
 
 useEffect(() => {
-  // Auto-scroll temporarily disabled for debugging.
+  const container =
+    messagesRef.current;
+
+  if (
+    !container ||
+    !shouldAutoScroll.current
+  ) {
+    return;
+  }
+
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: "smooth",
+  });
 }, [messages]);
 
   if (!selectedChat) {
@@ -57,15 +73,26 @@ useEffect(() => {
         }}
       />
 
-      <div
-        className="
-          flex-1
-          overflow-y-auto
-          scroll-smooth
-          p-6
-          space-y-4
-        "
-      >
+    <div
+      ref={messagesRef}
+      onScroll={(e) => {
+        const element =
+          e.currentTarget;
+
+        shouldAutoScroll.current =
+          element.scrollHeight -
+            element.scrollTop -
+            element.clientHeight <
+          60;
+      }}
+      className="
+        flex-1
+        overflow-y-auto
+        scroll-smooth
+        p-6
+        space-y-4
+      "
+    >
 
         {messages.length === 0 && (
           <div className="mt-20 text-center text-slate-500">
@@ -81,8 +108,6 @@ useEffect(() => {
             outgoing={message.outgoing}
           />
         ))}
-
-        <div ref={bottomRef} />
 
       </div>
 

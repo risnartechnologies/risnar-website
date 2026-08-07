@@ -62,10 +62,10 @@ export default function CampaignsPage() {
 
         <button
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white hover:bg-green-500"
+          className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-500"
         >
           <Plus size={18} />
-          Create Campaign
+          New Campaign
         </button>
 
       </div>

@@ -1,6 +1,6 @@
 "use client";
-
 import { useEffect, useState } from "react";
+import DateTimePicker from "@/components/ui/date-time-picker";
 
 import {
   ResponsiveContainer,
@@ -277,39 +277,31 @@ async function loadTrend(
 
         <div className="flex items-center gap-2">
 
-  <input
-    type="date"
-    value={fromDate}
-    onChange={(e) =>
-      setFromDate(
-        e.target.value
-      )
-    }
-    className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white"
-  />
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]">
 
-  <input
-    type="date"
-    value={toDate}
-    onChange={(e) =>
-      setToDate(
-        e.target.value
-      )
-    }
-    className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white"
-  />
+        <DateTimePicker
+          value={fromDate}
+          onChange={setFromDate}
+        />
 
-  <button
-    onClick={() => {
-      setRange("custom");
-      loadTrend("custom");
-    }}
-    className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
-  >
-    Apply
-  </button>
+        <DateTimePicker
+          value={toDate}
+          onChange={setToDate}
+        />
 
-</div>
+        <button
+          onClick={() => {
+            setRange("custom");
+            loadTrend("custom");
+          }}
+          className="h-12 rounded-xl bg-green-600 px-6 font-semibold text-white transition hover:bg-green-500"
+        >
+          Apply
+        </button>
+
+      </div>
+
+      </div>
 
         <div className="h-[380px]">
 

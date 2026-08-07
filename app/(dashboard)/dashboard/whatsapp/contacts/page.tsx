@@ -2,6 +2,7 @@
 import AddContactModal from "@/components/whatsapp/contacts/add-contact-modal";
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
+import ImportContactsModal from "@/components/whatsapp/contacts/import-contacts-modal";
 
 interface Contact {
   id: string;
@@ -16,6 +17,8 @@ interface Contact {
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [open, setOpen] = useState(false);
+  const [importOpen, setImportOpen] =
+  useState(false);
 
   useEffect(() => {
     loadContacts();
@@ -30,27 +33,54 @@ export default function ContactsPage() {
   return (
     <div className="space-y-8">
 
-      <div className="flex items-center justify-between">
+<div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
-        <div>
-          <h1 className="text-4xl font-bold text-white">
-            Contacts
-          </h1>
+  <div>
 
-          <p className="mt-2 text-slate-400">
-            Manage all your WhatsApp contacts.
-          </p>
-        </div>
+    <h1 className="text-4xl font-bold text-white">
+      Contacts
+    </h1>
 
-        <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-500"
-        >
-          <Plus size={18} />
-          Add Contact
-        </button>
+    <p className="mt-2 text-slate-400">
+      Manage all your WhatsApp contacts.
+    </p>
 
-      </div>
+  </div>
+
+  <div className="flex flex-wrap gap-3">
+
+    <button
+      onClick={() =>
+        setImportOpen(true)
+      }
+      className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 font-medium text-slate-200 transition hover:border-green-500"
+    >
+      Import CSV
+    </button>
+
+    <button
+      className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 font-medium text-slate-200 transition hover:border-green-500"
+    >
+      Export CSV
+    </button>
+
+    <button
+      className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 font-medium text-slate-200 transition hover:border-green-500"
+    >
+      Download Sample
+    </button>
+
+    <button
+      onClick={() => setOpen(true)}
+      className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-500"
+    >
+      <Plus size={18} />
+      Add Contact
+    </button>
+
+  </div>
+
+</div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
 
@@ -125,6 +155,14 @@ export default function ContactsPage() {
         onClose={() => setOpen(false)}
         onSuccess={loadContacts}
         />
+
+        <ImportContactsModal
+        open={importOpen}
+        onClose={() =>
+          setImportOpen(false)
+        }
+        onSuccess={loadContacts}
+      />
 
     </div>
   );

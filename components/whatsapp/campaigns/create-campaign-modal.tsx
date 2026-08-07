@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import DateTimePicker from "@/components/ui/date-time-picker";
+import {
+  useEffect,
+  useState,
+} from "react";
 import { X } from "lucide-react";
+
+import DarkSelect from "@/components/ui/dark-select";
 
 interface Props {
   open: boolean;
@@ -16,12 +22,45 @@ export default function CreateCampaignModal({
 }: Props) {
   const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    templateName: "",
-    status: "DRAFT",
-  });
+  const [templates, setTemplates] =
+  useState<
+    {
+      id: string;
+      name: string;
+    }[]
+  >([]);
+
+const [form, setForm] = useState({
+  name: "",
+  description: "",
+  templateName: "",
+  status: "DRAFT",
+
+  audience: "ALL",
+
+  scheduledAt: "",
+});
+
+useEffect(() => {
+  if (!open) return;
+
+  async function loadTemplates() {
+    try {
+      const res = await fetch(
+        "/api/templates"
+      );
+
+      const data =
+        await res.json();
+
+      setTemplates(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  loadTemplates();
+}, [open]);
 
   if (!open) return null;
 
@@ -47,12 +86,16 @@ export default function CreateCampaignModal({
       name: "",
       description: "",
       templateName: "",
-      status: "Draft",
+      status: "DRAFT",
+
+      audience: "ALL",
+
+      scheduledAt: "",
     });
 
-    onSuccess();
-    onClose();
-  }
+        onSuccess();
+        onClose();
+      }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
@@ -85,17 +128,61 @@ export default function CreateCampaignModal({
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-green-500"
           />
 
-          <input
-            placeholder="Template Name"
+          <DarkSelect
             value={form.templateName}
-            onChange={(e) =>
+            onChange={(value) =>
               setForm({
                 ...form,
-                templateName: e.target.value,
+                templateName: value,
               })
             }
-            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-green-500"
+            placeholder="Select WhatsApp Template"
+            options={templates.map(
+              (template) => ({
+                label: template.name,
+                value: template.name,
+              })
+            )}
           />
+
+        <DarkSelect
+          value={form.audience}
+          onChange={(value) =>
+            setForm({
+              ...form,
+              audience: value,
+            })
+          }
+          placeholder="Select Audience"
+          options={[
+            {
+              label: "All Contacts",
+              value: "ALL",
+            },
+            {
+              label: "Active Contacts",
+              value: "ACTIVE",
+            },
+            {
+              label: "Inactive Contacts",
+              value: "INACTIVE",
+            },
+            {
+              label: "By Tag (Coming Soon)",
+              value: "TAG",
+            },
+          ]}
+        />
+
+        <DateTimePicker
+          value={form.scheduledAt}
+          onChange={(value) =>
+            setForm({
+              ...form,
+              scheduledAt: value,
+            })
+          }
+        />
 
           <textarea
             rows={5}
@@ -110,23 +197,42 @@ export default function CreateCampaignModal({
             className="w-full rounded-xl border border-slate-700 bg-slate-950 p-4 text-white outline-none focus:border-green-500"
           />
 
-          <select
+          <DarkSelect
             value={form.status}
-            onChange={(e) =>
+            onChange={(value) =>
               setForm({
                 ...form,
-                status: e.target.value,
+                status: value,
               })
             }
-            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-green-500"
-          >
-            <option value="DRAFT">Draft</option>
-            <option value="SCHEDULED">Scheduled</option>
-            <option value="RUNNING">Running</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="PAUSED">Paused</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
+            placeholder="Select Status"
+            options={[
+              {
+                label: "Draft",
+                value: "DRAFT",
+              },
+              {
+                label: "Scheduled",
+                value: "SCHEDULED",
+              },
+              {
+                label: "Running",
+                value: "RUNNING",
+              },
+              {
+                label: "Completed",
+                value: "COMPLETED",
+              },
+              {
+                label: "Paused",
+                value: "PAUSED",
+              },
+              {
+                label: "Cancelled",
+                value: "CANCELLED",
+              },
+            ]}
+          />
 
         </div>
 

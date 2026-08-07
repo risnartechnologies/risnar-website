@@ -1,9 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import {
   Bell,
   Menu,
+  LogOut,
 } from "lucide-react";
+
+import { supabase } from "@/lib/supabase/client";
 
 interface Props {
   onMenuClick: () => void;
@@ -12,6 +17,31 @@ interface Props {
 export default function Topbar({
   onMenuClick,
 }: Props) {
+  const [email, setEmail] =
+    useState("");
+
+  useEffect(() => {
+    async function loadUser() {
+      const {
+        data: { user },
+      } =
+        await supabase.auth.getUser();
+
+      setEmail(
+        user?.email ?? ""
+      );
+    }
+
+    loadUser();
+  }, []);
+
+  async function logout() {
+    await supabase.auth.signOut();
+
+    window.location.href =
+      "/login";
+  }
+
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-slate-800 bg-slate-950/90 px-4 backdrop-blur sm:px-6 lg:px-10">
 
@@ -50,22 +80,37 @@ export default function Topbar({
         <div className="flex items-center gap-3">
 
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-600 font-bold text-white">
-            S
+            {email
+              ? email
+                  .charAt(0)
+                  .toUpperCase()
+              : "A"}
           </div>
 
           <div className="hidden md:block">
 
             <p className="font-semibold text-white">
-              Sanjay
+              {email ||
+                "Administrator"}
             </p>
 
             <p className="text-sm text-slate-400">
-              Administrator
+              Admin
             </p>
 
           </div>
 
         </div>
+
+        <button
+          onClick={logout}
+          className="flex items-center gap-2 rounded-xl border border-red-600 px-4 py-3 text-red-400 transition hover:bg-red-600 hover:text-white"
+        >
+          <LogOut size={18} />
+          <span className="hidden lg:block">
+            Logout
+          </span>
+        </button>
 
       </div>
 

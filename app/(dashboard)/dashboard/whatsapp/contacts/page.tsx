@@ -1,8 +1,10 @@
 "use client";
 import AddContactModal from "@/components/whatsapp/contacts/add-contact-modal";
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import ConfirmDeleteModal from "@/components/whatsapp/common/confirm-delete-modal";
+import { Plus, Trash2 } from "lucide-react";
 import ImportContactsModal from "@/components/whatsapp/contacts/import-contacts-modal";
+import { createPortal } from "react-dom";
 
 interface Contact {
   id: string;
@@ -20,15 +22,100 @@ export default function ContactsPage() {
   const [importOpen, setImportOpen] =
   useState(false);
 
-  useEffect(() => {
-    loadContacts();
-  }, []);
+  const [selected, setSelected] =
+  useState<string[]>([]);
 
-  async function loadContacts() {
-    const res = await fetch("/api/contacts");
-    const data = await res.json();
-    setContacts(data);
+  const [search, setSearch] =
+  useState("");
+
+const [page, setPage] =
+  useState(1);
+
+const [totalPages, setTotalPages] =
+  useState(1);
+
+const [totalContacts, setTotalContacts] =
+  useState(0);
+
+const [limit, setLimit] =
+  useState(25);
+
+  const [deleteOpen, setDeleteOpen] =
+  useState(false);
+
+const [deleting, setDeleting] =
+  useState(false);
+
+useEffect(() => {
+  loadContacts();
+}, [page, search, limit]);
+
+async function loadContacts() {
+  const res = await fetch(
+    `/api/contacts?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`
+  );
+
+  const data =
+    await res.json();
+
+  setContacts(data.contacts);
+  setTotalPages(
+    data.totalPages
+  );
+  setTotalContacts(
+    data.total
+  );
+}
+
+  function toggle(id: string) {
+  setSelected((prev) =>
+    prev.includes(id)
+      ? prev.filter((x) => x !== id)
+      : [...prev, id]
+  );
+}
+
+function toggleAll() {
+  if (selected.length === contacts.length) {
+    setSelected([]);
+  } else {
+    setSelected(
+      contacts.map((c) => c.id)
+    );
   }
+}
+
+async function deleteSelected() {
+  setDeleting(true);
+
+  try {
+
+    await fetch(
+      "/api/contacts/delete",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          ids: selected,
+        }),
+      }
+    );
+
+    setSelected([]);
+
+    loadContacts();
+
+  } finally {
+
+    setDeleting(false);
+
+    setDeleteOpen(false);
+
+  }
+}
 
   return (
     <div className="space-y-8">
@@ -49,36 +136,73 @@ export default function ContactsPage() {
 
   <div className="flex flex-wrap gap-3">
 
+<div className="w-64">
+
+  <input
+    type="text"
+    placeholder="Search by name or phone..."
+    value={search}
+    onChange={(e) => {
+      setPage(1);
+      setSearch(e.target.value);
+    }}
+    className="h-12 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 text-white outline-none focus:border-green-500"
+  />
+
+</div>
+
     <button
       onClick={() =>
         setImportOpen(true)
       }
-      className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 font-medium text-slate-200 transition hover:border-green-500"
+      className="h-12 rounded-xl border border-slate-700 bg-slate-900 px-5 font-medium text-slate-200 transition hover:border-green-500"
     >
       Import CSV
     </button>
 
     <button
-      className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 font-medium text-slate-200 transition hover:border-green-500"
+      className="h-12 rounded-xl border border-slate-700 bg-slate-900 px-5 font-medium text-slate-200 transition hover:border-green-500"
     >
       Export CSV
     </button>
 
     <button
-      className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 font-medium text-slate-200 transition hover:border-green-500"
+      className="h-12 rounded-xl border border-slate-700 bg-slate-900 px-5 font-medium text-slate-200 transition hover:border-green-500"
     >
       Download Sample
     </button>
 
+    {selected.length > 0 && (
+      <button
+        onClick={() =>
+          setDeleteOpen(true)
+        }
+        className="flex h-12 items-center gap-2 rounded-xl bg-red-600 px-5 font-semibold text-white hover:bg-red-500"
+      >
+        <Trash2 size={18} />
+        Delete ({selected.length})
+      </button>
+    )}
+
     <button
       onClick={() => setOpen(true)}
-      className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-500"
+      className="flex h-12 items-center gap-2 rounded-xl bg-green-600 px-5 font-semibold text-white transition hover:bg-green-500"
     >
       <Plus size={18} />
       Add Contact
     </button>
 
   </div>
+
+  <ConfirmDeleteModal
+  open={deleteOpen}
+  count={selected.length}
+  loading={deleting}
+  onCancel={() =>
+    setDeleteOpen(false)
+  }
+  onConfirm={deleteSelected}
+/>
 
 </div>
 
@@ -88,15 +212,26 @@ export default function ContactsPage() {
 
           <thead className="border-b border-slate-800 bg-slate-950">
 
-            <tr className="text-left text-slate-400">
+          <tr className="text-left text-slate-400">
 
-              <th className="px-6 py-4">Name</th>
-              <th className="px-6 py-4">Phone</th>
-              <th className="px-6 py-4">Email</th>
-              <th className="px-6 py-4">Company</th>
-              <th className="px-6 py-4">City</th>
+            <th className="px-4 py-4">
+              <input
+                type="checkbox"
+                checked={
+                  contacts.length > 0 &&
+                  selected.length === contacts.length
+                }
+                onChange={toggleAll}
+              />
+            </th>
 
-            </tr>
+            <th className="px-6 py-4">Name</th>
+            <th className="px-6 py-4">Phone</th>
+            <th className="px-6 py-4">Email</th>
+            <th className="px-6 py-4">Company</th>
+            <th className="px-6 py-4">City</th>
+
+          </tr>
 
           </thead>
 
@@ -120,6 +255,14 @@ export default function ContactsPage() {
                 key={contact.id}
                 className="border-t border-slate-800 hover:bg-slate-800/40"
               >
+
+                <td className="px-4 py-4">
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(contact.id)}
+                    onChange={() => toggle(contact.id)}
+                  />
+                </td>
 
                 <td className="px-6 py-4 text-white">
                   {contact.name}
@@ -156,13 +299,17 @@ export default function ContactsPage() {
         onSuccess={loadContacts}
         />
 
-        <ImportContactsModal
-        open={importOpen}
-        onClose={() =>
-          setImportOpen(false)
-        }
-        onSuccess={loadContacts}
-      />
+      {typeof window !== "undefined" &&
+        createPortal(
+          <ImportContactsModal
+            open={importOpen}
+            onClose={() =>
+              setImportOpen(false)
+            }
+            onSuccess={loadContacts}
+          />,
+          document.body
+        )}
 
     </div>
   );

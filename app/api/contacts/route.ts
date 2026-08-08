@@ -1,114 +1,189 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/prisma/db";
+import { Prisma } from "@prisma/client";
 
-export async function GET() {
-  const contacts =
-    await db.contact.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+export async function GET(
+  request: Request
+) {
+  const { searchParams } =
+    new URL(request.url);
 
-  return NextResponse.json(
-    contacts
+  const page = Number(
+    searchParams.get("page") ?? "1"
   );
+
+  const limit = Number(
+    searchParams.get("limit") ?? "25"
+  );
+
+  const search =
+    searchParams
+      .get("search")
+      ?.trim() ?? "";
+
+  const where: Prisma.ContactWhereInput =
+    {};
+
+  if (search) {
+    where.OR = [
+      {
+        name: {
+          contains: search,
+        },
+      },
+      {
+        phone: {
+          contains: search,
+        },
+      },
+    ];
+  }
+
+  const [contacts, total] =
+    await Promise.all([
+      db.contact.findMany({
+        where,
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip:
+          (page - 1) * limit,
+        take: limit,
+      }),
+
+      db.contact.count({
+        where,
+      }),
+    ]);
+
+  return NextResponse.json({
+    contacts,
+    total,
+    page,
+    totalPages: Math.ceil(
+      total / limit
+    ),
+  });
 }
 
 export async function POST(
   request: Request
 ) {
-  const body =
-    await request.json();
+  try {
+    const body =
+      await request.json();
 
-  // ----------------------------
-  // BULK IMPORT
-  // ----------------------------
+    // ----------------------------
+    // BULK IMPORT
+    // ----------------------------
 
-  if (Array.isArray(body.contacts)) {
-    let imported = 0;
-    let skipped = 0;
+    if (
+      Array.isArray(body.contacts)
+    ) {
+      let imported = 0;
+      let skipped = 0;
 
-    for (const contact of body.contacts) {
-      if (!contact.phone) {
-        skipped++;
-        continue;
-      }
+      for (const contact of body.contacts) {
+        if (!contact.phone) {
+          skipped++;
+          continue;
+        }
 
-      const existing =
-        await db.contact.findUnique({
-          where: {
+        const existing =
+          await db.contact.findUnique({
+            where: {
+              phone:
+                contact.phone,
+            },
+          });
+
+        if (existing) {
+          skipped++;
+          continue;
+        }
+
+        await db.contact.create({
+          data: {
+            name:
+              contact.name ??
+              "",
             phone:
               contact.phone,
+            email:
+              contact.email ??
+              null,
+            company:
+              contact.company ??
+              null,
+            city:
+              contact.city ??
+              null,
+            state:
+              contact.state ??
+              null,
+            tags: null,
+            notes:
+              contact.notes ??
+              null,
           },
         });
 
-      if (existing) {
-        skipped++;
-        continue;
+        imported++;
       }
 
+      return NextResponse.json({
+        imported,
+        skipped,
+      });
+    }
+
+    // ----------------------------
+    // SINGLE CONTACT
+    // ----------------------------
+
+    const contact =
       await db.contact.create({
         data: {
-          name:
-            contact.name ??
-            "",
+          name: body.name,
           phone:
-            contact.phone,
+            body.phone,
           email:
-            contact.email ??
-            null,
+            body.email,
           company:
-            contact.company ??
-            null,
+            body.company,
           city:
-            contact.city ??
-            null,
+            body.city,
           state:
-            contact.state ??
-            null,
-          tags:
-            contact.tags ??
-            [],
+            body.state,
+          tags: null,
           notes:
-            contact.notes ??
-            null,
+            body.notes,
         },
       });
 
-      imported++;
-    }
+    return NextResponse.json(
+      contact
+    );
 
-    return NextResponse.json({
-      success: true,
-      imported,
-      skipped,
-    });
-  }
+  } catch (error) {
 
-  // ----------------------------
-  // SINGLE CONTACT
-  // ----------------------------
+    console.error(
+      "CONTACT API ERROR:",
+      error
+    );
 
-  const contact =
-    await db.contact.create({
-      data: {
-        name: body.name,
-        phone: body.phone,
-        email:
-          body.email,
-        company:
-          body.company,
-        city: body.city,
-        state:
-          body.state,
-        tags:
-          body.tags,
-        notes:
-          body.notes,
+    return NextResponse.json(
+      {
+        error:
+          error instanceof
+          Error
+            ? error.message
+            : "Unknown error",
       },
-    });
+      {
+        status: 500,
+      }
+    );
 
-  return NextResponse.json(
-    contact
-  );
+  }
 }

@@ -53,7 +53,9 @@ useEffect(() => {
       const data =
         await res.json();
 
-      setTemplates(data);
+      setTemplates(
+      data.data ?? []
+    );
     } catch (error) {
       console.error(error);
     }

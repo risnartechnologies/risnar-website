@@ -12,22 +12,78 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  try {
 
-  const campaign = await db.campaign.create({
-    data: {
-      name: body.name,
-      description: body.description,
-      templateName: body.templateName,
-      status: body.status,
+    const body =
+      await request.json();
 
-      totalRecipients: 0,
-      sentCount: 0,
-      deliveredCount: 0,
-      readCount: 0,
-      failedCount: 0,
-    },
-  });
+    const campaign =
+      await db.campaign.create({
 
-  return NextResponse.json(campaign);
+        data: {
+
+          name:
+            body.name,
+
+          description:
+            body.description,
+
+          templateName:
+            body.templateName,
+
+          status:
+            body.status,
+
+          totalRecipients:
+            body.contacts.length,
+
+          queuedCount:
+            body.contacts.length,
+
+          recipients: {
+
+            create:
+              body.contacts.map(
+                (
+                  contactId: string
+                ) => ({
+
+                  contactId,
+
+                })
+              ),
+
+          },
+
+        },
+
+        include: {
+
+          recipients: true,
+
+        },
+
+      });
+
+    return NextResponse.json({
+      success: true,
+      campaign,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Unable to create campaign.",
+      },
+      {
+        status: 500,
+      }
+    );
+
+  }
 }

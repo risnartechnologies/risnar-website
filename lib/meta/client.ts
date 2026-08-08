@@ -8,9 +8,9 @@ export async function metaRequest(
   endpoint: string,
   options: RequestInit = {}
 ) {
-  const token =
-    process.env
-      .META_ACCESS_TOKEN;
+const token =
+  process.env
+    .WHATSAPP_ACCESS_TOKEN;
 
   if (!token) {
     throw new Error(

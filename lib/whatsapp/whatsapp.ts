@@ -17,6 +17,10 @@ export interface WhatsAppResponse {
 }
 
 async function sendRequest(payload: any): Promise<WhatsAppResponse> {
+
+  console.log("GRAPH_API =", GRAPH_API);
+  console.log("PHONE_NUMBER_ID =", PHONE_NUMBER_ID);
+  console.log("TOKEN_PREFIX =", ACCESS_TOKEN.substring(0, 25));
   const response = await axios.post(
     `${GRAPH_API}/${PHONE_NUMBER_ID}/messages`,
     payload,

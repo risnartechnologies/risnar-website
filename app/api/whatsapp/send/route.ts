@@ -24,18 +24,17 @@ export async function POST(req: NextRequest) {
         status: 200,
       }
     );
-  } catch (error: any) {
-    console.error(error);
+} catch (error: any) {
+  console.error("AXIOS ERROR:");
+  console.error(error.response?.status);
+  console.error(JSON.stringify(error.response?.data, null, 2));
 
-    return NextResponse.json(
-      {
-        success: false,
-        message:
-          error?.message || "Unable to send WhatsApp message.",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
+  return NextResponse.json(
+    {
+      success: false,
+      error: error.response?.data || error.message,
+    },
+    { status: 500 }
+  );
+}
 }

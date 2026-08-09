@@ -2,8 +2,13 @@
 import AddContactModal from "@/components/whatsapp/contacts/add-contact-modal";
 import { useEffect, useState } from "react";
 import ConfirmDeleteModal from "@/components/whatsapp/common/confirm-delete-modal";
-import { Plus, Trash2 } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Send,
+} from "lucide-react";
 import ImportContactsModal from "@/components/whatsapp/contacts/import-contacts-modal";
+import CreateCampaignModal from "@/components/whatsapp/campaigns/create-campaign-modal";
 import { createPortal } from "react-dom";
 
 interface Contact {
@@ -20,6 +25,8 @@ export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [open, setOpen] = useState(false);
   const [importOpen, setImportOpen] =
+  useState(false);
+  const [campaignOpen, setCampaignOpen] =
   useState(false);
 
   const [selected, setSelected] =
@@ -175,6 +182,18 @@ async function deleteSelected() {
     {selected.length > 0 && (
       <button
         onClick={() =>
+          setCampaignOpen(true)
+        }
+        className="flex h-12 items-center gap-2 rounded-xl bg-blue-600 px-5 font-semibold text-white transition hover:bg-blue-500"
+      >
+        <Send size={18} />
+        Send Campaign ({selected.length})
+      </button>
+    )}
+
+    {selected.length > 0 && (
+      <button
+        onClick={() =>
           setDeleteOpen(true)
         }
         className="flex h-12 items-center gap-2 rounded-xl bg-red-600 px-5 font-semibold text-white hover:bg-red-500"
@@ -298,6 +317,19 @@ async function deleteSelected() {
         onClose={() => setOpen(false)}
         onSuccess={loadContacts}
         />
+
+      <CreateCampaignModal
+        open={campaignOpen}
+        selectedContacts={selected}
+        onClose={() =>
+          setCampaignOpen(false)
+        }
+        onSuccess={() => {
+          setCampaignOpen(false);
+          setSelected([]);
+          loadContacts();
+        }}
+      />
 
       {typeof window !== "undefined" &&
         createPortal(

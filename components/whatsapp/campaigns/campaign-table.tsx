@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import CampaignStatusBadge from "./campaign-status-badge";
 
 export interface Campaign {
@@ -6,98 +9,226 @@ export interface Campaign {
   templateName: string;
   totalRecipients: number;
   sentCount: number;
+  failedCount: number;
   status: string;
+  recipients: any[];
 }
 
 interface Props {
   campaigns: Campaign[];
+  onRowClick: (campaign: Campaign) => void;
 }
 
 export default function CampaignTable({
   campaigns,
+  onRowClick,
 }: Props) {
+
+  const [selected, setSelected] =
+    useState<string[]>([]);
+
+  function toggle(id: string) {
+    setSelected((prev) =>
+      prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id]
+    );
+  }
+
+  function toggleAll() {
+    if (
+      selected.length === campaigns.length
+    ) {
+      setSelected([]);
+    } else {
+      setSelected(
+        campaigns.map(
+          (campaign) => campaign.id
+        )
+      );
+    }
+  }
+
+  async function deleteSelected() {
+
+    if (
+      !confirm(
+        `Delete ${selected.length} campaign(s)?`
+      )
+    ) {
+      return;
+    }
+
+    await fetch(
+      "/api/campaigns/delete",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          ids: selected,
+        }),
+      }
+    );
+
+    window.location.reload();
+
+  }
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+    <div className="space-y-4">
 
-      <table className="w-full">
+      {selected.length > 0 && (
 
-        <thead className="border-b border-slate-800 bg-slate-950">
+        <div className="flex justify-end">
 
-          <tr className="text-left text-sm font-semibold text-slate-400">
+          <button
+            onClick={deleteSelected}
+            className="rounded-xl bg-red-600 px-5 py-3 font-semibold text-white hover:bg-red-500"
+          >
+            Delete ({selected.length})
+          </button>
 
-            <th className="px-6 py-4">
-              Campaign
-            </th>
+        </div>
 
-            <th className="px-6 py-4">
-              Template
-            </th>
+      )}
 
-            <th className="px-6 py-4">
-              Recipients
-            </th>
+      <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
 
-            <th className="px-6 py-4">
-              Sent
-            </th>
+        <table className="w-full">
 
-            <th className="px-6 py-4">
-              Status
-            </th>
+          <thead className="border-b border-slate-800 bg-slate-950">
 
-          </tr>
+            <tr className="text-left text-sm font-semibold text-slate-400">
 
-        </thead>
+              <th className="px-4 py-4">
 
-        <tbody>
-
-          {campaigns.length === 0 && (
-            <tr>
-
-              <td
-                colSpan={5}
-                className="py-20 text-center text-slate-500"
-              >
-                No campaigns found.
-              </td>
-
-            </tr>
-          )}
-
-          {campaigns.map((campaign) => (
-            <tr
-              key={campaign.id}
-              className="border-t border-slate-800 hover:bg-slate-800/40"
-            >
-
-              <td className="px-6 py-4 font-medium text-white">
-                {campaign.name}
-              </td>
-
-              <td className="px-6 py-4 text-slate-300">
-                {campaign.templateName}
-              </td>
-
-              <td className="px-6 py-4 text-slate-300">
-                {campaign.totalRecipients}
-              </td>
-
-              <td className="px-6 py-4 text-green-400">
-                {campaign.sentCount}
-              </td>
-
-              <td className="px-6 py-4">
-                <CampaignStatusBadge
-                  status={campaign.status}
+                <input
+                  type="checkbox"
+                  checked={
+                    campaigns.length > 0 &&
+                    selected.length === campaigns.length
+                  }
+                  onChange={toggleAll}
                 />
-              </td>
+
+              </th>
+
+              <th className="px-6 py-4">
+                Campaign
+              </th>
+
+              <th className="px-6 py-4">
+                Template
+              </th>
+
+              <th className="px-6 py-4">
+                Recipients
+              </th>
+
+              <th className="px-6 py-4">
+                Delivered
+              </th>
+
+              <th className="px-6 py-4">
+                Failed
+              </th>
+
+              <th className="px-6 py-4">
+                Status
+              </th>
 
             </tr>
-          ))}
 
-        </tbody>
+          </thead>
 
-      </table>
+          <tbody>
+
+            {campaigns.length === 0 && (
+
+              <tr>
+
+                <td
+                  colSpan={7}
+                  className="py-20 text-center text-slate-500"
+                >
+                  No campaigns found.
+                </td>
+
+              </tr>
+
+            )}
+
+            {campaigns.map((campaign) => (
+
+              <tr
+                key={campaign.id}
+                onClick={() =>
+                  onRowClick(campaign)
+                }
+                className="cursor-pointer border-t border-slate-800 hover:bg-slate-800/40"
+              >
+
+                <td
+                  className="px-4 py-4"
+                  onClick={(e) =>
+                    e.stopPropagation()
+                  }
+                >
+
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(
+                      campaign.id
+                    )}
+                    onChange={() =>
+                      toggle(
+                        campaign.id
+                      )
+                    }
+                  />
+
+                </td>
+
+                <td className="px-6 py-4 font-medium text-white">
+                  {campaign.name}
+                </td>
+
+                <td className="px-6 py-4 text-slate-300">
+                  {campaign.templateName}
+                </td>
+
+                <td className="px-6 py-4 text-slate-300">
+                  {campaign.totalRecipients}
+                </td>
+
+                <td className="px-6 py-4 text-green-400">
+                  {campaign.sentCount}
+                </td>
+
+                <td className="px-6 py-4 text-red-400">
+                  {campaign.failedCount}
+                </td>
+
+                <td className="px-6 py-4">
+
+                  <CampaignStatusBadge
+                    status={campaign.status}
+                  />
+
+                </td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+      </div>
 
     </div>
   );

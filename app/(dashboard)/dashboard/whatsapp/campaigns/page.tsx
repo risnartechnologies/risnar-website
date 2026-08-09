@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
 
 import CampaignTable, {
   Campaign,
@@ -9,64 +8,80 @@ import CampaignTable, {
 
 import CampaignSearch from "@/components/whatsapp/campaigns/campaign-search";
 import CampaignFilter from "@/components/whatsapp/campaigns/campaign-filter";
-import CreateCampaignModal from "@/components/whatsapp/campaigns/create-campaign-modal";
+import CampaignDetailsModal from "@/components/whatsapp/campaigns/campaign-details-modal";
 
 export default function CampaignsPage() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("All");
-  const [open, setOpen] = useState(false);
+
+  const [campaigns, setCampaigns] =
+    useState<Campaign[]>([]);
+
+  const [search, setSearch] =
+    useState("");
+
+  const [status, setStatus] =
+    useState("All");
+
+  const [detailsOpen, setDetailsOpen] =
+    useState(false);
+
+  const [selectedCampaign, setSelectedCampaign] =
+    useState<Campaign | null>(null);
 
   useEffect(() => {
     loadCampaigns();
   }, []);
 
   async function loadCampaigns() {
-    const res = await fetch("/api/campaigns");
-    const data = await res.json();
+
+    const res =
+      await fetch("/api/campaigns");
+
+    const data =
+      await res.json();
+
     setCampaigns(data);
+
   }
 
-  const filtered = campaigns.filter((campaign) => {
-    const matchesSearch =
-      campaign.name
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      campaign.templateName
-        .toLowerCase()
-        .includes(search.toLowerCase());
+  const filtered =
+    campaigns.filter((campaign) => {
 
-    const matchesStatus =
-      status === "All" ||
-      campaign.status === status;
+      const matchesSearch =
 
-    return matchesSearch && matchesStatus;
-  });
+        campaign.name
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+
+        campaign.templateName
+          .toLowerCase()
+          .includes(search.toLowerCase());
+
+      const matchesStatus =
+
+        status === "All" ||
+
+        campaign.status === status;
+
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
+
+    });
 
   return (
+
     <div className="space-y-8">
 
-      <div className="flex items-center justify-between">
+      <div>
 
-        <div>
+        <h1 className="text-4xl font-bold text-white">
+          Campaigns
+        </h1>
 
-          <h1 className="text-4xl font-bold text-white">
-            Campaigns
-          </h1>
-
-          <p className="mt-2 text-slate-400">
-            Create and manage WhatsApp campaigns.
-          </p>
-
-        </div>
-
-        <button
-          onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-500"
-        >
-          <Plus size={18} />
-          New Campaign
-        </button>
+        <p className="mt-2 text-slate-400">
+          View campaign history, delivery status and performance.
+        </p>
 
       </div>
 
@@ -86,14 +101,27 @@ export default function CampaignsPage() {
 
       <CampaignTable
         campaigns={filtered}
+        onRowClick={(campaign) => {
+
+          setSelectedCampaign(
+            campaign
+          );
+
+          setDetailsOpen(true);
+
+        }}
       />
 
-      <CreateCampaignModal
-        open={open}
-        onClose={() => setOpen(false)}
-        onSuccess={loadCampaigns}
+      <CampaignDetailsModal
+        open={detailsOpen}
+        campaign={selectedCampaign}
+        onClose={() =>
+          setDetailsOpen(false)
+        }
       />
 
     </div>
+
   );
+
 }

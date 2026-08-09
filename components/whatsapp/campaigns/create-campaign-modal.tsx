@@ -1,6 +1,4 @@
 "use client";
-
-import DateTimePicker from "@/components/ui/date-time-picker";
 import {
   useEffect,
   useState,
@@ -11,16 +9,20 @@ import DarkSelect from "@/components/ui/dark-select";
 
 interface Props {
   open: boolean;
+  selectedContacts: string[];
   onClose: () => void;
   onSuccess: () => void;
 }
 
 export default function CreateCampaignModal({
   open,
+  selectedContacts,
   onClose,
   onSuccess,
 }: Props) {
   const [loading, setLoading] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [templates, setTemplates] =
   useState<
@@ -35,10 +37,6 @@ const [form, setForm] = useState({
   description: "",
   templateName: "",
   status: "DRAFT",
-
-  audience: "ALL",
-
-  scheduledAt: "",
 });
 
 useEffect(() => {
@@ -53,9 +51,13 @@ useEffect(() => {
       const data =
         await res.json();
 
-      setTemplates(
-      data.data ?? []
-    );
+        console.log("Templates API Response:", data);
+
+        setTemplates(
+          data.data ?? []
+        );
+
+        console.log("Templates State:", data.data ?? []);
     } catch (error) {
       console.error(error);
     }
@@ -63,24 +65,34 @@ useEffect(() => {
 
   loadTemplates();
 }, [open]);
-
+  console.log("Templates Render:", templates);
   if (!open) return null;
 
-  async function saveCampaign() {
-    setLoading(true);
+async function saveCampaign() {
+  setLoading(true);
+  setErrorMessage("");
 
+  try {
     const response = await fetch("/api/campaigns", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        ...form,
+        contacts: selectedContacts,
+      }),
     });
 
-    setLoading(false);
+    const data = await response.json();
 
     if (!response.ok) {
-      alert("Unable to create campaign.");
+      setErrorMessage(
+        data?.message ??
+        data?.error ??
+        "Unable to create campaign."
+      );
+      setLoading(false);
       return;
     }
 
@@ -89,15 +101,22 @@ useEffect(() => {
       description: "",
       templateName: "",
       status: "DRAFT",
-
-      audience: "ALL",
-
-      scheduledAt: "",
     });
 
-        onSuccess();
-        onClose();
-      }
+    setLoading(false);
+
+    onSuccess();
+    onClose();
+  } catch (err) {
+    console.error(err);
+
+    setLoading(false);
+
+    setErrorMessage(
+      "Unable to create campaign."
+    );
+  }
+}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
@@ -147,113 +166,36 @@ useEffect(() => {
             )}
           />
 
-        <DarkSelect
-          value={form.audience}
-          onChange={(value) =>
-            setForm({
-              ...form,
-              audience: value,
-            })
-          }
-          placeholder="Select Audience"
-          options={[
-            {
-              label: "All Contacts",
-              value: "ALL",
-            },
-            {
-              label: "Active Contacts",
-              value: "ACTIVE",
-            },
-            {
-              label: "Inactive Contacts",
-              value: "INACTIVE",
-            },
-            {
-              label: "By Tag (Coming Soon)",
-              value: "TAG",
-            },
-          ]}
-        />
-
-        <DateTimePicker
-          value={form.scheduledAt}
-          onChange={(value) =>
-            setForm({
-              ...form,
-              scheduledAt: value,
-            })
-          }
-        />
-
-          <textarea
-            rows={5}
-            placeholder="Campaign Description"
-            value={form.description}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                description: e.target.value,
-              })
-            }
-            className="w-full rounded-xl border border-slate-700 bg-slate-950 p-4 text-white outline-none focus:border-green-500"
-          />
-
-          <DarkSelect
-            value={form.status}
-            onChange={(value) =>
-              setForm({
-                ...form,
-                status: value,
-              })
-            }
-            placeholder="Select Status"
-            options={[
-              {
-                label: "Draft",
-                value: "DRAFT",
-              },
-              {
-                label: "Scheduled",
-                value: "SCHEDULED",
-              },
-              {
-                label: "Running",
-                value: "RUNNING",
-              },
-              {
-                label: "Completed",
-                value: "COMPLETED",
-              },
-              {
-                label: "Paused",
-                value: "PAUSED",
-              },
-              {
-                label: "Cancelled",
-                value: "CANCELLED",
-              },
-            ]}
-          />
-
         </div>
 
-        <div className="mt-8 flex justify-end gap-4">
+        <div className="mt-8 flex items-center justify-between">
 
-          <button
-            onClick={onClose}
-            className="rounded-xl border border-slate-700 px-6 py-3 text-white"
-          >
-            Cancel
-          </button>
+          <div className="min-h-[24px]">
+            {errorMessage && (
+              <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-400">
+                {errorMessage}
+              </p>
+            )}
+          </div>
 
-          <button
-            onClick={saveCampaign}
-            disabled={loading}
-            className="rounded-xl bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-500"
-          >
-            {loading ? "Saving..." : "Create Campaign"}
-          </button>
+          <div className="flex gap-4">
+
+            <button
+              onClick={onClose}
+              className="rounded-xl border border-slate-700 px-6 py-3 text-white"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={saveCampaign}
+              disabled={loading}
+              className="rounded-xl bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-500 disabled:opacity-60"
+            >
+              {loading ? "Saving..." : "Create Campaign"}
+            </button>
+
+          </div>
 
         </div>
 

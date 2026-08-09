@@ -1,11 +1,29 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/prisma/db";
+import { sendTemplateMessage } from "@/lib/whatsapp/whatsapp";
 
 export async function GET() {
-  const campaigns = await db.campaign.findMany({
+const campaigns =
+  await db.campaign.findMany({
+
     orderBy: {
       createdAt: "desc",
     },
+
+    include: {
+
+      recipients: {
+
+        include: {
+
+          contact: true,
+
+        },
+
+      },
+
+    },
+
   });
 
   return NextResponse.json(campaigns);
@@ -22,17 +40,15 @@ export async function POST(request: Request) {
 
         data: {
 
-          name:
-            body.name,
+          name: body.name,
 
-          description:
-            body.description,
+          description: body.description,
 
-          templateName:
-            body.templateName,
+          templateName: body.templateName,
 
-          status:
-            body.status,
+          status: body.status,
+
+          scheduledAt: null,
 
           totalRecipients:
             body.contacts.length,
@@ -44,9 +60,7 @@ export async function POST(request: Request) {
 
             create:
               body.contacts.map(
-                (
-                  contactId: string
-                ) => ({
+                (contactId: string) => ({
 
                   contactId,
 
@@ -65,9 +79,126 @@ export async function POST(request: Request) {
 
       });
 
+      const contacts =
+  await db.contact.findMany({
+    where: {
+      id: {
+        in: body.contacts,
+      },
+    },
+  });
+
+let sentCount = 0;
+let failedCount = 0;
+
+for (const contact of contacts) {
+
+  try {
+
+    const result =
+      await sendTemplateMessage(
+        contact.phone,
+        body.templateName,
+        "en"
+      );
+
+    console.log(
+      "WhatsApp Response:",
+      JSON.stringify(result, null, 2)
+    );
+
+    sentCount++;
+
+    await db.campaignRecipient.update({
+
+      where: {
+
+        campaignId_contactId: {
+
+          campaignId: campaign.id,
+
+          contactId: contact.id,
+
+        },
+
+      },
+
+      data: {
+
+        status: "SENT",
+
+        sentAt: new Date(),
+
+        metaMessageId:
+          result.messages?.[0]?.id ?? null,
+
+      },
+
+    });
+
+  } catch (error: any) {
+
+    console.error(
+      "Meta Error:",
+      error.response?.data ??
+      error.message ??
+      error
+    );
+
+    failedCount++;
+
+    await db.campaignRecipient.update({
+
+      where: {
+
+        campaignId_contactId: {
+
+          campaignId: campaign.id,
+
+          contactId: contact.id,
+
+        },
+
+      },
+
+      data: {
+
+        status: "FAILED",
+
+        failedAt: new Date(),
+
+        errorMessage:
+          JSON.stringify(
+            error.response?.data ??
+            error.message ??
+            error
+          ),
+
+      },
+
+    });
+
+  }
+
+}
+
+await db.campaign.update({
+  where: {
+    id: campaign.id,
+  },
+  data: {
+    sentCount,
+    failedCount,
+    queuedCount: 0,
+    status: "COMPLETED",
+  },
+});
+
     return NextResponse.json({
       success: true,
       campaign,
+      sentCount,
+      failedCount,
     });
 
   } catch (error) {

@@ -1,5 +1,9 @@
 import pool from './db';
 
+// ============================================================
+// TOP 3
+// ============================================================
+
 export async function getTop3(
   month: number,
   year: number,
@@ -23,6 +27,10 @@ export async function getTop3(
   return rows;
 }
 
+// ============================================================
+// TOP 100
+// ============================================================
+
 export async function getTop100(
   month: number,
   year: number,
@@ -36,7 +44,7 @@ export async function getTop100(
       coins
     FROM monthly_league
     WHERE month = ?
-      AND year = ?
+        AND year = ?
     ORDER BY coins DESC
     LIMIT 100
     `,
@@ -45,6 +53,10 @@ export async function getTop100(
 
   return rows;
 }
+
+// ============================================================
+// MY RANK
+// ============================================================
 
 export async function getMyRank(
   playerId: string,
@@ -100,7 +112,8 @@ export async function getMyRank(
 
   const [totalRows]: any = await pool.query(
     `
-    SELECT COUNT(*) AS totalPlayers
+    SELECT
+      COUNT(*) AS totalPlayers
     FROM monthly_league
     WHERE month = ?
       AND year = ?
@@ -135,4 +148,55 @@ export async function getMyRank(
     coins:
         playerRows[0].coins,
   };
+}
+
+// ============================================================
+// ADD COINS
+// ============================================================
+
+export async function addCoins(
+  playerId: string,
+  playerName: string,
+  playerAvatar: string | null,
+  coins: number,
+  month: number,
+  year: number,
+) {
+
+  await pool.query(
+    `
+    INSERT INTO monthly_league
+    (
+      player_id,
+      player_name,
+      player_avatar,
+      coins,
+      month,
+      year,
+      last_coin_at
+    )
+    VALUES
+    (
+      ?, ?, ?, ?, ?, ?, NOW()
+    )
+
+    ON DUPLICATE KEY UPDATE
+
+      player_name = VALUES(player_name),
+
+      player_avatar = VALUES(player_avatar),
+
+      coins = coins + VALUES(coins),
+
+      last_coin_at = NOW()
+    `,
+    [
+      playerId,
+      playerName,
+      playerAvatar,
+      coins,
+      month,
+      year,
+    ],
+  );
 }

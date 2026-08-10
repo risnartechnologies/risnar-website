@@ -10,21 +10,24 @@ export async function fetchTemplates() {
     );
   }
 
-    const response =
-      await metaRequest(
-        `/${wabaId}/message_templates`
-      );
-
-    console.log(
-      JSON.stringify(response, null, 2)
+  const response =
+    await metaRequest(
+      `/${wabaId}/message_templates`
     );
 
-  return {
-    ...response,
+  console.log(
+    "META_WABA_ID:",
+    wabaId
+  );
 
-    data: (response.data ?? []).filter(
-      (template: any) =>
-        template.status === "APPROVED"
-    ),
-  };
+  console.log(
+    "META TEMPLATES:",
+    JSON.stringify(
+      response?.data ?? [],
+      null,
+      2
+    )
+  );
+
+  return response;
 }

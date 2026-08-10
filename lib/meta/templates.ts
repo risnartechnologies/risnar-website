@@ -10,9 +10,13 @@ export async function fetchTemplates() {
     );
   }
 
-  const response =
-    await metaRequest(
-      `/${wabaId}/message_templates`
+    const response =
+      await metaRequest(
+        `/${wabaId}/message_templates`
+      );
+
+    console.log(
+      JSON.stringify(response, null, 2)
     );
 
   return {

@@ -170,64 +170,63 @@ const cards = [
 
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-3">
+<div className="grid gap-6 xl:grid-cols-3">
+  <div className="min-w-0 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <h2 className="mb-6 text-xl font-semibold text-white">
+      Today's Overview
+    </h2>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="rounded-xl bg-slate-800 p-4">
+        <p className="text-sm text-slate-400">
+          Messages Today
+        </p>
 
-  <h2 className="mb-6 text-xl font-semibold text-white">
-    Today's Overview
-  </h2>
+        <p className="mt-2 text-3xl font-bold text-green-400">
+          {data?.messagesToday ?? 0}
+        </p>
+      </div>
 
-  <div className="grid grid-cols-2 gap-4">
+      <div className="rounded-xl bg-slate-800 p-4">
+        <p className="text-sm text-slate-400">
+          Unread
+        </p>
 
-    <div className="rounded-xl bg-slate-800 p-4">
-      <p className="text-sm text-slate-400">
-        Messages Today
-      </p>
+        <p className="mt-2 text-3xl font-bold text-red-400">
+          {data?.unread ?? 0}
+        </p>
+      </div>
 
-      <p className="mt-2 text-3xl font-bold text-green-400">
-        {data?.messagesToday ?? 0}
-      </p>
+      <div className="rounded-xl bg-slate-800 p-4">
+        <p className="text-sm text-slate-400">
+          New Contacts
+        </p>
+
+        <p className="mt-2 text-3xl font-bold text-blue-400">
+          {data?.newContactsToday ?? 0}
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-slate-800 p-4">
+        <p className="text-sm text-slate-400">
+          Active Campaigns
+        </p>
+
+        <p className="mt-2 text-3xl font-bold text-orange-400">
+          {data?.activeCampaigns ?? 0}
+        </p>
+      </div>
     </div>
-
-    <div className="rounded-xl bg-slate-800 p-4">
-      <p className="text-sm text-slate-400">
-        Unread
-      </p>
-
-      <p className="mt-2 text-3xl font-bold text-red-400">
-        {data?.unread ?? 0}
-      </p>
-    </div>
-
-    <div className="rounded-xl bg-slate-800 p-4">
-      <p className="text-sm text-slate-400">
-        New Contacts
-      </p>
-
-      <p className="mt-2 text-3xl font-bold text-blue-400">
-        {data?.newContactsToday ?? 0}
-      </p>
-    </div>
-
-    <div className="rounded-xl bg-slate-800 p-4">
-      <p className="text-sm text-slate-400">
-        Active Campaigns
-      </p>
-
-      <p className="mt-2 text-3xl font-bold text-orange-400">
-        {data?.activeCampaigns ?? 0}
-      </p>
-    </div>
-
   </div>
 
+  <div className="min-w-0 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <RecentConversations />
+  </div>
+
+  <div className="min-w-0 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <CampaignPerformance />
+  </div>
 </div>
-
-        <RecentConversations />
-        <CampaignPerformance />
-
-      </div>
 
     </div>
   );

@@ -141,3 +141,23 @@ enum MessageType {
   VIDEO
   AUDIO
 }
+
+model WhatsAppConnection {
+  id                String   @id @default(cuid())
+
+  businessId        String?
+  wabaId            String
+  phoneNumberId     String   @unique
+  phoneNumber       String?
+  displayName       String?
+
+  accessToken       String
+
+  status            String   @default("CONNECTED")
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([wabaId])
+  @@index([phoneNumberId])
+}

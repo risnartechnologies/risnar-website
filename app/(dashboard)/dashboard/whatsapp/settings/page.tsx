@@ -1,7 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+
+interface WhatsAppSignupData {
+  waba_id?: string;
+  phone_number_id?: string;
+  business_id?: string;
+}
+
+interface WhatsAppSignupEvent {
+  type?: string;
+  event?: string;
+  data?: WhatsAppSignupData & {
+    current_step?: string;
+    error_message?: string;
+  };
+  version?: number;
+}
+
+interface MetaLoginResponse {
+  authResponse?: {
+    code?: string;
+    accessToken?: string;
+  };
+}
 
 declare global {
   interface Window {
@@ -12,19 +35,25 @@ declare global {
         xfbml?: boolean;
         version: string;
       }) => void;
+
       login: (
-        callback: (response: {
-          authResponse?: {
-            code?: string;
-            accessToken?: string;
-          };
-        }) => void,
+        callback: (response: MetaLoginResponse) => void,
         options: {
           config_id: string;
           response_type: string;
           override_default_response_type: boolean;
           extras?: {
-            sessionInfoVersion?: number;
+            /**
+             * Meta Embedded Signup session information version.
+             *
+             * Meta currently accepts this as part of the
+             * Embedded Signup extras configuration.
+             */
+            sessionInfoVersion?: number | string;
+
+            /**
+             * Optional Embedded Signup setup configuration.
+             */
             setup?: Record<string, unknown>;
           };
         }
@@ -36,83 +65,101 @@ declare global {
 const META_APP_ID = "1876583616650920";
 const WHATSAPP_CONFIG_ID = "4412997948981440";
 
+const SIGNUP_CODE_STORAGE_KEY =
+  "risnar_whatsapp_signup_code";
+
 export default function Page() {
   const [sdkReady, setSdkReady] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
-  useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
+  /**
+   * Meta can deliver the authorization code through
+   * FB.login() and the WhatsApp account information
+   * through window.postMessage().
+   *
+   * These two events are asynchronous and their order
+   * is not guaranteed.
+   *
+   * Refs allow us to safely retain both values until
+   * the complete connection information is available.
+   */
+  const authorizationCodeRef =
+    useRef<string | null>(null);
+
+  const signupDataRef =
+    useRef<WhatsAppSignupData | null>(null);
+
+  /**
+   * Prevent duplicate API requests if Meta sends
+   * more than one completion message.
+   */
+  const connectionRequestStartedRef =
+    useRef(false);
+
+  /**
+   * Complete the RISNAR WhatsApp connection once
+   * both required pieces of information are available:
+   *
+   * 1. Meta authorization code
+   * 2. WABA + phone number information
+   */
+  const completeWhatsAppConnection =
+    async () => {
       if (
-        event.origin !== "https://www.facebook.com" &&
-        event.origin !== "https://web.facebook.com"
+        connectionRequestStartedRef.current
       ) {
         return;
       }
 
-      let data: {
-        type?: string;
-        event?: string;
-        data?: {
-          waba_id?: string;
-          phone_number_id?: string;
-          business_id?: string;
-        };
-      };
+      const code =
+        authorizationCodeRef.current;
 
-      try {
-        data =
-          typeof event.data === "string"
-            ? JSON.parse(event.data)
-            : event.data;
-      } catch {
+      const signupData =
+        signupDataRef.current;
+
+      if (!code || !signupData) {
         return;
       }
 
-      if (data?.type !== "WA_EMBEDDED_SIGNUP") {
-        return;
-      }
+      const wabaId =
+        signupData.waba_id;
 
-      console.log(
-        "WhatsApp Embedded Signup event:",
-        data
-      );
+      const phoneNumberId =
+        signupData.phone_number_id;
 
-      if (data.event === "FINISH") {
-        const code = sessionStorage.getItem(
-          "risnar_whatsapp_signup_code"
+      const businessId =
+        signupData.business_id;
+
+      if (!wabaId || !phoneNumberId) {
+        console.error(
+          "Embedded Signup completed but WABA ID or Phone Number ID is missing.",
+          {
+            wabaId,
+            phoneNumberId,
+            businessId,
+          }
         );
 
-        const wabaId = data.data?.waba_id;
-        const phoneNumberId = data.data?.phone_number_id;
-        const businessId = data.data?.business_id;
+        setConnecting(false);
+        return;
+      }
 
-        if (!code) {
-          console.error(
-            "Embedded Signup finished but authorization code is missing."
-          );
-          setConnecting(false);
-          return;
-        }
+      connectionRequestStartedRef.current =
+        true;
 
-        if (!wabaId || !phoneNumberId) {
-          console.error(
-            "Embedded Signup finished but WABA ID or Phone Number ID is missing.",
-            {
-              wabaId,
-              phoneNumberId,
-            }
-          );
-          setConnecting(false);
-          return;
-        }
+      try {
+        console.log(
+          "Sending WhatsApp connection data to RISNAR API."
+        );
 
-        try {
-          const response = await fetch(
+        const response =
+          await fetch(
             "/api/whatsapp/connect",
             {
               method: "POST",
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type":
+                  "application/json",
               },
               body: JSON.stringify({
                 code,
@@ -123,77 +170,300 @@ export default function Page() {
             }
           );
 
-          const result = await response.json();
+        const result =
+          await response.json();
 
-          if (!response.ok || !result.success) {
-            console.error(
-              "RISNAR WhatsApp connection failed:",
-              result
-            );
-
-            alert(
-              result?.error ??
-                "Unable to connect WhatsApp Business."
-            );
-
-            setConnecting(false);
-            return;
-          }
-
-          sessionStorage.removeItem(
-            "risnar_whatsapp_signup_code"
-          );
-
-          console.log(
-            "WhatsApp Business connected successfully:",
-            result.connection
-          );
-
-          alert(
-            "WhatsApp Business connected successfully."
-          );
-
-          setConnecting(false);
-        } catch (error) {
+        if (
+          !response.ok ||
+          !result.success
+        ) {
           console.error(
-            "RISNAR WhatsApp connection request failed:",
-            error
+            "RISNAR WhatsApp connection failed:",
+            result
           );
 
           alert(
-            "Unable to connect WhatsApp Business."
+            result?.error ??
+              "Unable to connect WhatsApp Business."
           );
 
-          setConnecting(false);
-        }
-      }
+          connectionRequestStartedRef.current =
+            false;
 
-      if (data.event === "CANCEL") {
+          setConnecting(false);
+
+          return;
+        }
+
+        /**
+         * Connection completed successfully.
+         *
+         * Remove the temporary authorization code
+         * only after the backend confirms success.
+         */
         sessionStorage.removeItem(
-          "risnar_whatsapp_signup_code"
+          SIGNUP_CODE_STORAGE_KEY
         );
 
+        authorizationCodeRef.current =
+          null;
+
+        signupDataRef.current =
+          null;
+
         console.log(
-          "WhatsApp signup cancelled."
+          "WhatsApp Business connected successfully:",
+          result.connection
+        );
+
+        alert(
+          "WhatsApp Business connected successfully."
         );
 
         setConnecting(false);
-      }
-
-      if (data.event === "ERROR") {
-        sessionStorage.removeItem(
-          "risnar_whatsapp_signup_code"
+      } catch (error) {
+        console.error(
+          "RISNAR WhatsApp connection request failed:",
+          error
         );
 
-        console.error(
-          "WhatsApp signup error:",
-          data
+        connectionRequestStartedRef.current =
+          false;
+
+        alert(
+          "Unable to connect WhatsApp Business."
         );
 
         setConnecting(false);
       }
     };
 
+  useEffect(() => {
+    /**
+     * Meta Embedded Signup uses window.postMessage()
+     * to communicate the WABA / phone-number information
+     * back to the RISNAR page.
+     *
+     * IMPORTANT:
+     *
+     * Meta can use different Facebook subdomains.
+     * Therefore we must NOT restrict this to only:
+     *
+     *     https://www.facebook.com
+     *
+     * or:
+     *
+     *     https://web.facebook.com
+     *
+     * Instead, we accept facebook.com itself and any
+     * HTTPS subdomain of facebook.com.
+     */
+    const handleMessage = (
+      event: MessageEvent
+    ) => {
+      /**
+       * Diagnostic logging.
+       *
+       * This is intentionally kept here so that
+       * browser DevTools clearly shows the Meta event
+       * while we verify the Embedded Signup flow.
+       */
+      console.log(
+        "Meta postMessage received:",
+        {
+          origin: event.origin,
+          data: event.data,
+        }
+      );
+
+      /**
+       * Security check:
+       *
+       * Only accept messages from HTTPS Facebook
+       * origins.
+       */
+      const isFacebookOrigin =
+        typeof event.origin === "string" &&
+        (
+          event.origin ===
+            "https://facebook.com" ||
+          event.origin.endsWith(
+            ".facebook.com"
+          )
+        );
+
+      if (!isFacebookOrigin) {
+        return;
+      }
+
+      let data:
+        | WhatsAppSignupEvent
+        | null = null;
+
+      /**
+       * Meta normally sends event.data as a JSON
+       * string, but support an object as well.
+       */
+      try {
+        data =
+          typeof event.data === "string"
+            ? JSON.parse(event.data)
+            : event.data;
+      } catch (error) {
+        console.error(
+          "Unable to parse Meta postMessage data:",
+          error
+        );
+
+        return;
+      }
+
+      if (!data) {
+        return;
+      }
+
+      /**
+       * Ignore unrelated Facebook messages.
+       */
+      if (
+        data.type !==
+        "WA_EMBEDDED_SIGNUP"
+      ) {
+        return;
+      }
+
+      console.log(
+        "WhatsApp Embedded Signup event received:",
+        data
+      );
+
+      /**
+       * Meta may report successful completion
+       * using FINISH.
+       *
+       * Some Embedded Signup configurations can
+       * also report FINISH_ONLY_WABA.
+       */
+      if (
+        data.event === "FINISH" ||
+        data.event ===
+          "FINISH_ONLY_WABA"
+      ) {
+        const signupData =
+          data.data ?? {};
+
+        console.log(
+          "WhatsApp Embedded Signup completed:",
+          signupData
+        );
+
+        /**
+         * Store the Meta account information first.
+         *
+         * The FB.login callback may already have
+         * supplied the authorization code, or it may
+         * arrive immediately after this event.
+         */
+        signupDataRef.current =
+          signupData;
+
+        /**
+         * Keep the information in sessionStorage too.
+         * This preserves the existing RISNAR flow and
+         * provides a temporary recovery point during
+         * the current browser session.
+         */
+        const storedCode =
+          sessionStorage.getItem(
+            SIGNUP_CODE_STORAGE_KEY
+          );
+
+        if (
+          storedCode &&
+          !authorizationCodeRef.current
+        ) {
+          authorizationCodeRef.current =
+            storedCode;
+        }
+
+        /**
+         * Try to complete immediately.
+         *
+         * If FB.login() has not returned the code yet,
+         * this safely does nothing. The FB.login callback
+         * will call the same function again.
+         */
+        void completeWhatsAppConnection();
+
+        return;
+      }
+
+      /**
+       * User cancelled Embedded Signup.
+       */
+      if (
+        data.event === "CANCEL"
+      ) {
+        console.log(
+          "WhatsApp signup cancelled.",
+          data
+        );
+
+        sessionStorage.removeItem(
+          SIGNUP_CODE_STORAGE_KEY
+        );
+
+        authorizationCodeRef.current =
+          null;
+
+        signupDataRef.current =
+          null;
+
+        connectionRequestStartedRef.current =
+          false;
+
+        setConnecting(false);
+
+        return;
+      }
+
+      /**
+       * Meta reported an Embedded Signup error.
+       */
+      if (
+        data.event === "ERROR"
+      ) {
+        console.error(
+          "WhatsApp Embedded Signup error:",
+          data
+        );
+
+        sessionStorage.removeItem(
+          SIGNUP_CODE_STORAGE_KEY
+        );
+
+        authorizationCodeRef.current =
+          null;
+
+        signupDataRef.current =
+          null;
+
+        connectionRequestStartedRef.current =
+          false;
+
+        setConnecting(false);
+
+        alert(
+          data.data?.error_message ??
+            "WhatsApp Embedded Signup failed. Please try again."
+        );
+      }
+    };
+
+    /**
+     * Register the message listener before the
+     * user starts the Embedded Signup flow.
+     */
     window.addEventListener(
       "message",
       handleMessage
@@ -207,11 +477,16 @@ export default function Page() {
     };
   }, []);
 
+  /**
+   * Initialize the Facebook JavaScript SDK
+   * after the SDK script has loaded.
+   */
   const initializeMetaSDK = () => {
     if (!window.FB) {
       console.error(
         "Meta Facebook SDK is not available."
       );
+
       return;
     }
 
@@ -223,22 +498,52 @@ export default function Page() {
     });
 
     setSdkReady(true);
+
+    console.log(
+      "Meta Facebook SDK initialized."
+    );
   };
 
+  /**
+   * Start the Meta WhatsApp Embedded Signup flow.
+   */
   const connectWhatsApp = () => {
     if (!window.FB) {
       alert(
         "WhatsApp connection is still loading. Please try again."
       );
+
       return;
     }
 
+    /**
+     * Reset the previous Embedded Signup state
+     * before starting a new attempt.
+     */
+    authorizationCodeRef.current =
+      null;
+
+    signupDataRef.current =
+      null;
+
+    connectionRequestStartedRef.current =
+      false;
+
+    sessionStorage.removeItem(
+      SIGNUP_CODE_STORAGE_KEY
+    );
+
     setConnecting(true);
+
+    console.log(
+      "Starting Meta WhatsApp Embedded Signup."
+    );
 
     window.FB.login(
       (response) => {
         console.log(
-          "Meta Login response received."
+          "Meta Login response received:",
+          response
         );
 
         const code =
@@ -250,6 +555,7 @@ export default function Page() {
           );
 
           setConnecting(false);
+
           return;
         }
 
@@ -257,17 +563,45 @@ export default function Page() {
           "Embedded Signup authorization code received."
         );
 
+        /**
+         * Store the authorization code immediately.
+         *
+         * The FINISH postMessage can arrive either
+         * before or after this callback.
+         */
+        authorizationCodeRef.current =
+          code;
+
         sessionStorage.setItem(
-          "risnar_whatsapp_signup_code",
+          SIGNUP_CODE_STORAGE_KEY,
           code
         );
+
+        /**
+         * If Meta has already delivered the FINISH
+         * event, complete the connection now.
+         *
+         * Otherwise this safely waits for the
+         * postMessage handler.
+         */
+        void completeWhatsAppConnection();
       },
       {
-        config_id: WHATSAPP_CONFIG_ID,
+        config_id:
+          WHATSAPP_CONFIG_ID,
+
         response_type: "code",
-        override_default_response_type: true,
+
+        override_default_response_type:
+          true,
+
         extras: {
+          /**
+           * Meta Embedded Signup session
+           * information version.
+           */
           sessionInfoVersion: 3,
+
           setup: {},
         },
       }
@@ -294,7 +628,8 @@ export default function Page() {
           </h1>
 
           <p className="mt-2 text-gray-400">
-            Manage your RISNAR CRM integrations and account settings.
+            Manage your RISNAR CRM integrations and
+            account settings.
           </p>
         </div>
 
@@ -305,23 +640,29 @@ export default function Page() {
             </h2>
 
             <p className="text-sm text-gray-400">
-              Connect your WhatsApp Business account to RISNAR CRM.
+              Connect your WhatsApp Business account
+              to RISNAR CRM.
             </p>
           </div>
 
           <div className="mt-6 space-y-2 text-sm text-gray-300">
             <p>
-              ✓ Receive WhatsApp messages in RISNAR Inbox
+              ✓ Receive WhatsApp messages in RISNAR
+              Inbox
             </p>
+
             <p>
               ✓ Reply to leads from RISNAR CRM
             </p>
+
             <p>
               ✓ Manage WhatsApp contacts
             </p>
+
             <p>
               ✓ Send approved message templates
             </p>
+
             <p>
               ✓ Run WhatsApp campaigns
             </p>
@@ -332,7 +673,9 @@ export default function Page() {
           <button
             type="button"
             onClick={connectWhatsApp}
-            disabled={!sdkReady || connecting}
+            disabled={
+              !sdkReady || connecting
+            }
             className="rounded-xl bg-green-600 px-5 py-3 font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {connecting

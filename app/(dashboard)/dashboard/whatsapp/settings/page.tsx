@@ -24,6 +24,7 @@ declare global {
           response_type: string;
           override_default_response_type: boolean;
           extras?: {
+            sessionInfoVersion?: number;
             setup?: Record<string, unknown>;
           };
         }
@@ -266,6 +267,7 @@ export default function Page() {
         response_type: "code",
         override_default_response_type: true,
         extras: {
+          sessionInfoVersion: 3,
           setup: {},
         },
       }

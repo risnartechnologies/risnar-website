@@ -15,19 +15,12 @@ export async function fetchTemplates() {
       `/${wabaId}/message_templates`
     );
 
-  console.log(
-    "META_WABA_ID:",
-    wabaId
-  );
+  return {
+    ...response,
 
-  console.log(
-    "META TEMPLATES:",
-    JSON.stringify(
-      response?.data ?? [],
-      null,
-      2
-    )
-  );
-
-  return response;
+    data: (response.data ?? []).filter(
+      (template: any) =>
+        template.status === "APPROVED"
+    ),
+  };
 }

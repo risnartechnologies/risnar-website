@@ -54,8 +54,7 @@ declare global {
 
 const META_APP_ID = "1876583616650920";
 
-const WHATSAPP_CONFIG_ID =
-  "4412997948981440";
+const WHATSAPP_CONFIG_ID = "1583260966778990";
 
 const SIGNUP_CODE_STORAGE_KEY =
   "risnar_whatsapp_signup_code";

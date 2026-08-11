@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
 /**
@@ -27,6 +27,8 @@ import Script from "next/script";
  * - Meta Facebook subdomains are accepted for the Embedded Signup
  *   postMessage because the completion message may originate from a
  *   Facebook subdomain other than www.facebook.com.
+ * - A temporary watchdog is used only to diagnose whether Meta sends
+ *   the WA_EMBEDDED_SIGNUP completion postMessage after OAuth succeeds.
  */
 
 declare global {
@@ -118,6 +120,18 @@ export default function Page() {
 
   const [connecting, setConnecting] =
     useState(false);
+
+  /**
+   * Temporary diagnostic watchdog.
+   *
+   * This does not participate in the WhatsApp connection logic.
+   * It only records whether a WA_EMBEDDED_SIGNUP message arrives
+   * after the OAuth authorization code has been received.
+   */
+  const waEmbeddedSignupWatchdogTimer =
+    useRef<ReturnType<
+      typeof setTimeout
+    > | null>(null);
 
   /**
    * Listen for Meta's Embedded Signup completion event.
@@ -218,6 +232,28 @@ export default function Page() {
         "WA_EMBEDDED_SIGNUP"
       ) {
         return;
+      }
+
+      /**
+       * A WA_EMBEDDED_SIGNUP message has now been observed.
+       *
+       * Stop the temporary diagnostic watchdog because Meta
+       * successfully delivered the Embedded Signup message.
+       */
+      if (
+        waEmbeddedSignupWatchdogTimer.current
+      ) {
+        clearTimeout(
+          waEmbeddedSignupWatchdogTimer.current
+        );
+
+        waEmbeddedSignupWatchdogTimer.current =
+          null;
+
+        console.log(
+          "[RISNAR WhatsApp DEBUG]",
+          "WA_EMBEDDED_SIGNUP WATCHDOG CLEARED: completion message received."
+        );
       }
 
       /**
@@ -401,6 +437,21 @@ export default function Page() {
         "message",
         handleMessage
       );
+
+      /**
+       * Prevent the temporary watchdog from surviving
+       * component unmount.
+       */
+      if (
+        waEmbeddedSignupWatchdogTimer.current
+      ) {
+        clearTimeout(
+          waEmbeddedSignupWatchdogTimer.current
+        );
+
+        waEmbeddedSignupWatchdogTimer.current =
+          null;
+      }
     };
   }, []);
 
@@ -453,6 +504,21 @@ export default function Page() {
         SIGNUP_CODE_STORAGE_KEY
       );
 
+      /**
+       * Clear any previous diagnostic watchdog before
+       * beginning a new connection attempt.
+       */
+      if (
+        waEmbeddedSignupWatchdogTimer.current
+      ) {
+        clearTimeout(
+          waEmbeddedSignupWatchdogTimer.current
+        );
+
+        waEmbeddedSignupWatchdogTimer.current =
+          null;
+      }
+
       setConnecting(true);
 
       try {
@@ -490,6 +556,73 @@ export default function Page() {
 
               return;
             }
+
+            /**
+             * Start a diagnostic watchdog AFTER the OAuth
+             * authorization code has been successfully received
+             * and stored.
+             *
+             * This deliberately does not alter the connection flow.
+             *
+             * If Meta sends WA_EMBEDDED_SIGNUP, the message listener
+             * clears this timer.
+             *
+             * If no WA_EMBEDDED_SIGNUP message arrives within
+             * 15 seconds, the console records that fact.
+             */
+            waEmbeddedSignupWatchdogTimer.current =
+              setTimeout(() => {
+                console.log(
+                  "[RISNAR WhatsApp DEBUG]",
+                  "=================================================="
+                );
+
+                console.log(
+                  "[RISNAR WhatsApp DEBUG]",
+                  "WA_EMBEDDED_SIGNUP WATCHDOG FIRED."
+                );
+
+                console.log(
+                  "[RISNAR WhatsApp DEBUG]",
+                  "Meta did NOT deliver a WA_EMBEDDED_SIGNUP message during the watchdog period.",
+                  {
+                    waitedMilliseconds:
+                      15000,
+                    currentTime:
+                      new Date().toISOString(),
+                    configId:
+                      WHATSAPP_CONFIG_ID,
+                    sessionInfoVersion:
+                      3,
+                  }
+                );
+
+                console.log(
+                  "[RISNAR WhatsApp DEBUG]",
+                  "IMPORTANT: The OAuth authorization code was received successfully, but the Embedded Signup completion postMessage was not observed."
+                );
+
+                console.log(
+                  "[RISNAR WhatsApp DEBUG]",
+                  "=================================================="
+                );
+
+                waEmbeddedSignupWatchdogTimer.current =
+                  null;
+              }, 15000);
+
+            console.log(
+              "[RISNAR WhatsApp DEBUG]",
+              "WA_EMBEDDED_SIGNUP WATCHDOG STARTED.",
+              {
+                startedAt:
+                  new Date().toISOString(),
+                configId:
+                  WHATSAPP_CONFIG_ID,
+                sessionInfoVersion:
+                  3,
+              }
+            );
           },
           {
             config_id:
@@ -503,9 +636,9 @@ export default function Page() {
             /**
              * Meta Embedded Signup session information.
              *
-             * sessionInfoVersion is intentionally numeric because
-             * the local FB.login TypeScript declaration defines it
-             * as a number.
+             * sessionInfoVersion remains numeric because
+             * the local FB.login TypeScript declaration defines
+             * it as a number.
              */
             extras: {
               setup: {},
@@ -514,6 +647,17 @@ export default function Page() {
           }
         );
       } catch {
+        if (
+          waEmbeddedSignupWatchdogTimer.current
+        ) {
+          clearTimeout(
+            waEmbeddedSignupWatchdogTimer.current
+          );
+
+          waEmbeddedSignupWatchdogTimer.current =
+            null;
+        }
+
         setConnecting(false);
 
         alert(

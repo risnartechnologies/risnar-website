@@ -942,7 +942,7 @@ export default function Page() {
             true,
           extras: {
             setup: {},
-            sessionInfoVersion: 3,
+            sessionInfoVersion: "3",
           },
         }
       );

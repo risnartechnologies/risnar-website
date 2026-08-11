@@ -257,78 +257,112 @@ export default function Page() {
      * Therefore we must NEVER assume every event.data
      * value can be passed directly to JSON.parse().
      */
+
+    
     const handleMessage = (
       event: MessageEvent
     ) => {
       /*
-       * Only accept messages from Facebook.
+       * Meta sends several different postMessage payloads
+       * during the OAuth / Embedded Signup flow.
+       *
+       * Some messages are plain strings.
+       * Some implementations can deliver the payload
+       * as an already-parsed JavaScript object.
+       *
+       * We therefore normalize both formats before
+       * checking for WA_EMBEDDED_SIGNUP.
+       */
+
+      console.log(
+        "Meta postMessage received:",
+        {
+          origin: event.origin,
+          data: event.data,
+          dataType: typeof event.data,
+        }
+      );
+
+      /*
+       * Only process messages coming from Facebook.
        */
       if (
         !event.origin ||
         !event.origin.endsWith(
-          "facebook.com"
-        )
+          ".facebook.com"
+        ) &&
+        event.origin !==
+          "https://facebook.com"
       ) {
         return;
       }
 
       /*
-       * Meta's OAuth flow can send strings such as:
+       * Normalize event.data.
        *
-       * data=...
-       *
-       * These are NOT the WhatsApp Embedded Signup
-       * JSON message.
-       *
-       * Ignore them before JSON.parse().
+       * Meta normally sends the Embedded Signup
+       * event as a JSON string, but we also support
+       * an already-parsed object.
        */
-      if (
-        typeof event.data !== "string"
-      ) {
-        return;
-      }
-
-      const rawData =
-        event.data.trim();
-
-      if (!rawData) {
-        return;
-      }
-
-      /*
-       * Only JSON objects can contain the
-       * WA_EMBEDDED_SIGNUP event we need.
-       *
-       * This prevents the console error:
-       *
-       * Unexpected token 'U'
-       */
-      if (
-        !rawData.startsWith("{")
-      ) {
-        return;
-      }
-
       let data:
         | WhatsAppSignupEvent
         | null = null;
 
-      try {
-        data =
-          JSON.parse(rawData);
-      } catch {
+      if (
+        typeof event.data === "string"
+      ) {
+        const rawData =
+          event.data.trim();
+
         /*
-         * Ignore malformed/non-JSON Facebook messages.
-         *
-         * These are unrelated to the WhatsApp
-         * Embedded Signup session information.
+         * Ignore empty messages.
          */
+        if (!rawData) {
+          return;
+        }
+
+        /*
+         * Facebook sends non-JSON OAuth messages too,
+         * for example:
+         *
+         * data=...
+         *
+         * These are unrelated to Embedded Signup.
+         */
+        if (
+          !rawData.startsWith("{")
+        ) {
+          return;
+        }
+
+        try {
+          data =
+            JSON.parse(rawData);
+        } catch {
+          /*
+           * Ignore malformed/non-JSON Facebook
+           * messages without interrupting the
+           * Embedded Signup flow.
+           */
+          return;
+        }
+      } else if (
+        typeof event.data === "object" &&
+        event.data !== null
+      ) {
+        /*
+         * Support an already-parsed postMessage
+         * payload.
+         */
+        data =
+          event.data as WhatsAppSignupEvent;
+      } else {
         return;
       }
 
       /*
-       * Ignore every Facebook message that is not
-       * an Embedded Signup event.
+       * Ignore all Facebook messages that are not
+       * WhatsApp Embedded Signup events.
        */
       if (
         data?.type !==
@@ -343,7 +377,10 @@ export default function Page() {
       );
 
       /*
-       * Successful standard Embedded Signup.
+       * Successful Embedded Signup.
+       *
+       * Meta provides the WABA, phone number and
+       * business information in data.data.
        */
       if (
         data.event === "FINISH"
@@ -357,14 +394,12 @@ export default function Page() {
         );
 
         /*
-         * The authorization code may already have
-         * arrived through FB.login().
+         * completeWhatsAppConnection() checks both:
          *
-         * If it has, this immediately completes the
-         * backend connection.
+         * 1. authorizationCodeRef
+         * 2. signupDataRef
          *
-         * If it has not arrived yet, FB.login() will
-         * call completeWhatsAppConnection() when it does.
+         * This allows either Meta event to arrive first.
          */
         void completeWhatsAppConnection();
 
@@ -372,12 +407,8 @@ export default function Page() {
       }
 
       /*
-       * Some Embedded Signup configurations can finish
-       * with WABA information but without a phone number.
-       *
-       * Our backend currently requires a phoneNumberId,
-       * so store the data but let the validation below
-       * prevent an incomplete connection.
+       * Some configurations may complete with only
+       * the WABA information.
        */
       if (
         data.event ===
@@ -397,7 +428,7 @@ export default function Page() {
       }
 
       /*
-       * WhatsApp Embedded Signup was cancelled.
+       * User cancelled the Embedded Signup flow.
        */
       if (
         data.event === "CANCEL"
@@ -426,7 +457,7 @@ export default function Page() {
       }
 
       /*
-       * WhatsApp Embedded Signup reported an error.
+       * Meta reported an Embedded Signup error.
        */
       if (
         data.event === "ERROR"
@@ -455,6 +486,8 @@ export default function Page() {
           data.data?.error_message ??
             "WhatsApp Embedded Signup failed."
         );
+
+        return;
       }
     };
 

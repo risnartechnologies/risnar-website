@@ -70,7 +70,8 @@ export async function POST(request: Request) {
         const result = await sendTemplateMessage(
           contact.phone,
           body.templateName,
-          "en"
+          "en",
+          [contact.name ?? "Customer"]
         );
 
         console.log(

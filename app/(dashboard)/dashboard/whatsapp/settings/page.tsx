@@ -56,7 +56,7 @@ declare global {
           extras?: {
             setup?: Record<string, unknown>;
             featureType?: string;
-            sessionInfoVersion?: number;
+            sessionInfoVersion?: string;
           };
         }
       ) => void;
@@ -260,11 +260,12 @@ export default function Page() {
        * Meta can report the normal completion or the
        * WABA-only completion variant.
        */
-      if (
-        data.event !== "FINISH" &&
-        data.event !==
-          "FINISH_ONLY_WABA"
-      ) {
+        if (
+          data.event !== "FINISH" &&
+          data.event !== "FINISH_ONLY_WABA" &&
+          data.event !==
+            "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING"
+        ) {
         /**
          * CANCEL and ERROR both terminate the connection attempt.
          */
@@ -593,7 +594,7 @@ export default function Page() {
                     configId:
                       WHATSAPP_CONFIG_ID,
                     sessionInfoVersion:
-                      3,
+                      "3",
                   }
                 );
 
@@ -642,7 +643,8 @@ export default function Page() {
              */
             extras: {
               setup: {},
-              sessionInfoVersion: 3,
+              featureType: "whatsapp_business_app_onboarding",
+              sessionInfoVersion: "3",
             },
           }
         );

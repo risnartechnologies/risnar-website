@@ -963,9 +963,42 @@ let data: {
           }
         );
 
-        debugLog(
+debugLog(
           "window.FB.login invocation completed without synchronous exception."
         );
+
+        /**
+         * DIAGNOSTIC TIMEOUT.
+         *
+         * If Meta never sends a WA_EMBEDDED_SIGNUP completion
+         * message (FINISH / FINISH_ONLY_WABA / CANCEL / ERROR)
+         * within 2 minutes, the button would otherwise be stuck
+         * on "Connecting..." forever with no explanation.
+         *
+         * This does NOT fix a code bug — it surfaces that Meta's
+         * side of the flow (the config_id's Embedded Signup setup)
+         * never reached completion.
+         */
+        setTimeout(() => {
+          setConnecting((current) => {
+            if (current) {
+              debugError(
+                "TIMEOUT: No WA_EMBEDDED_SIGNUP completion message arrived within 120s. " +
+                  "This means the popup never completed the WhatsApp signup wizard. " +
+                  "Check the config_id's Embedded Signup setup in Meta App Dashboard " +
+                  "(WhatsApp > Embedded Signup), and confirm the logged-in user is an " +
+                  "approved tester/admin if the app is in Development Mode.",
+                { config_id: WHATSAPP_CONFIG_ID, app_id: META_APP_ID }
+              );
+
+              alert(
+                "WhatsApp connection timed out waiting for Meta to finish. Please check your Meta App's Embedded Signup configuration."
+              );
+            }
+
+            return false;
+          });
+        }, 120000);
       } catch (error) {
         debugError(
           "window.FB.login THREW A SYNCHRONOUS EXCEPTION.",

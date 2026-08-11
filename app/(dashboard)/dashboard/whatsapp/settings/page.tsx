@@ -238,7 +238,7 @@ export default function Page() {
         "Message origin accepted."
       );
 
-      let data: {
+let data: {
         type?: string;
         event?: string;
         data?: {
@@ -249,16 +249,37 @@ export default function Page() {
       };
 
       /**
-       * Meta may send non-JSON messages.
+       * Meta sends several non-JSON messages from the same
+       * facebook.com origin (e.g. cookie/xd_arbiter style
+       * messages such as "cb=...&domain=...&is_canvas=...").
        *
-       * Do NOT treat those as application errors.
-       * We log them and safely ignore them.
+       * These are NOT Embedded Signup messages and must be
+       * silently ignored WITHOUT attempting JSON.parse,
+       * otherwise every one of them is incorrectly logged
+       * as a parsing failure.
        */
+      const rawData = event.data;
+
+      const looksLikeJson =
+        typeof rawData === "object" ||
+        (typeof rawData === "string" &&
+          (rawData.trim().startsWith("{") ||
+            rawData.trim().startsWith("[")));
+
+      if (!looksLikeJson) {
+        debugLog(
+          "Ignoring non-JSON Facebook SDK message (not Embedded Signup related).",
+          rawData
+        );
+
+        return;
+      }
+
       try {
         data =
-          typeof event.data === "string"
-            ? JSON.parse(event.data)
-            : event.data;
+          typeof rawData === "string"
+            ? JSON.parse(rawData)
+            : rawData;
 
         debugLog(
           "Message JSON parsing SUCCESS.",
@@ -269,7 +290,7 @@ export default function Page() {
           "Message JSON parsing FAILED. This message is being ignored because it is not valid JSON.",
           {
             error,
-            rawData: event.data,
+            rawData,
           }
         );
 

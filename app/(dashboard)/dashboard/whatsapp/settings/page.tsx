@@ -61,6 +61,7 @@ declare global {
           override_default_response_type: boolean;
           extras?: {
             setup?: Record<string, unknown>;
+            featureType?: string;
             sessionInfoVersion?: string;
           };
         }
@@ -866,6 +867,7 @@ export default function Page() {
             true,
           extras: {
             setup: {},
+            featureType: "",
             sessionInfoVersion: "3",
           },
         }
@@ -988,6 +990,7 @@ export default function Page() {
 
             extras: {
               setup: {},
+              featureType: "",
               sessionInfoVersion: "3",
             },
           }

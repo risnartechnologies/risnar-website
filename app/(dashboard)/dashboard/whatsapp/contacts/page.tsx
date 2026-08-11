@@ -32,6 +32,9 @@ export default function ContactsPage() {
   const [selected, setSelected] =
   useState<string[]>([]);
 
+  const [selectingAll, setSelectingAll] =
+  useState(false);
+
   const [search, setSearch] =
   useState("");
 
@@ -82,13 +85,40 @@ async function loadContacts() {
   );
 }
 
-function toggleAll() {
-  if (selected.length === contacts.length) {
+async function toggleAll() {
+  if (selected.length === totalContacts) {
     setSelected([]);
-  } else {
-    setSelected(
-      contacts.map((c) => c.id)
+    return;
+  }
+
+  setSelectingAll(true);
+
+  try {
+    const res = await fetch(
+      `/api/contacts?page=1&limit=${totalContacts}&search=${encodeURIComponent(search)}`
     );
+
+    if (!res.ok) {
+      alert("Unable to select all contacts.");
+      return;
+    }
+
+    const data = await res.json();
+
+    setSelected(
+      data.contacts.map(
+        (contact: Contact) => contact.id
+      )
+    );
+  } catch (error) {
+    console.error(
+      "Select all contacts failed:",
+      error
+    );
+
+    alert("Unable to select all contacts.");
+  } finally {
+    setSelectingAll(false);
   }
 }
 
@@ -150,8 +180,9 @@ async function deleteSelected() {
     placeholder="Search by name or phone..."
     value={search}
     onChange={(e) => {
-      setPage(1);
-      setSearch(e.target.value);
+    setPage(1);
+    setSelected([]);
+    setSearch(e.target.value);
     }}
     className="h-12 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 text-white outline-none focus:border-green-500"
   />
@@ -234,14 +265,15 @@ async function deleteSelected() {
           <tr className="text-left text-slate-400">
 
             <th className="px-4 py-4">
-              <input
-                type="checkbox"
-                checked={
-                  contacts.length > 0 &&
-                  selected.length === contacts.length
-                }
-                onChange={toggleAll}
-              />
+            <input
+              type="checkbox"
+              checked={
+                totalContacts > 0 &&
+                selected.length === totalContacts
+              }
+              onChange={toggleAll}
+              disabled={selectingAll}
+            />
             </th>
 
             <th className="px-6 py-4">Name</th>

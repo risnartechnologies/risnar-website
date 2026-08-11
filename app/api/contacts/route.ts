@@ -13,7 +13,7 @@ export async function GET(
   );
 
   const limit = Number(
-    searchParams.get("limit") ?? "25"
+    searchParams.get("limit") ?? "500"
   );
 
   const search =
@@ -73,69 +73,108 @@ export async function POST(
     const body =
       await request.json();
 
-    // ----------------------------
-    // BULK IMPORT
-    // ----------------------------
+// ----------------------------
+// BULK IMPORT
+// ----------------------------
 
-    if (
-      Array.isArray(body.contacts)
-    ) {
-      let imported = 0;
-      let skipped = 0;
+if (Array.isArray(body.contacts)) {
+  const contacts: Prisma.ContactCreateManyInput[] =
+    body.contacts
+      .map((contact: any) => ({
+        name: contact.name ?? "",
+        phone:
+          typeof contact.phone === "string"
+            ? contact.phone.trim()
+            : "",
+        email: contact.email ?? null,
+        company: contact.company ?? null,
+        city: contact.city ?? null,
+        state: contact.state ?? null,
+        tags: null,
+        notes: contact.notes ?? null,
+      }))
+      .filter(
+        (contact: Prisma.ContactCreateManyInput) =>
+          Boolean(contact.phone)
+      );
 
-      for (const contact of body.contacts) {
-        if (!contact.phone) {
-          skipped++;
-          continue;
-        }
+  if (contacts.length === 0) {
+    return NextResponse.json({
+      imported: 0,
+      skipped: body.contacts.length,
+    });
+  }
 
-        const existing =
-          await db.contact.findUnique({
-            where: {
-              phone:
-                contact.phone,
-            },
-          });
+  // Remove duplicate phone numbers
+  // inside the CSV itself.
+  const uniqueContactsMap =
+    new Map<string, Prisma.ContactCreateManyInput>();
 
-        if (existing) {
-          skipped++;
-          continue;
-        }
-
-        await db.contact.create({
-          data: {
-            name:
-              contact.name ??
-              "",
-            phone:
-              contact.phone,
-            email:
-              contact.email ??
-              null,
-            company:
-              contact.company ??
-              null,
-            city:
-              contact.city ??
-              null,
-            state:
-              contact.state ??
-              null,
-            tags: null,
-            notes:
-              contact.notes ??
-              null,
-          },
-        });
-
-        imported++;
-      }
-
-      return NextResponse.json({
-        imported,
-        skipped,
-      });
+  for (const contact of contacts) {
+    if (!uniqueContactsMap.has(contact.phone)) {
+      uniqueContactsMap.set(
+        contact.phone,
+        contact
+      );
     }
+  }
+
+  const uniqueContacts =
+    Array.from(
+      uniqueContactsMap.values()
+    );
+
+  // Find existing contacts in ONE query.
+  const existingContacts =
+    await db.contact.findMany({
+      where: {
+        phone: {
+          in: uniqueContacts.map(
+            (contact) => contact.phone
+          ),
+        },
+      },
+      select: {
+        phone: true,
+      },
+    });
+
+  const existingPhones = new Set(
+    existingContacts.map(
+      (contact) => contact.phone
+    )
+  );
+
+  // Only insert genuinely new contacts.
+  const newContacts =
+    uniqueContacts.filter(
+      (contact) =>
+        !existingPhones.has(
+          contact.phone
+        )
+    );
+
+  let imported = 0;
+
+  if (newContacts.length > 0) {
+    const result =
+      await db.contact.createMany({
+        data: newContacts,
+        skipDuplicates: true,
+      });
+
+    imported = result.count;
+  }
+
+  const skipped =
+    body.contacts.length -
+    imported;
+
+  return NextResponse.json({
+    imported,
+    skipped,
+  });
+}
 
     // ----------------------------
     // SINGLE CONTACT

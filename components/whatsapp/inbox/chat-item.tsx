@@ -55,7 +55,7 @@ export default function ChatItem({
 
       </div>
 
-      {unread > 0 && (
+      {unread > 0 && !active && (
         <div className="flex h-6 min-w-6 items-center justify-center rounded-full bg-green-600 px-2 text-xs font-bold text-white">
           {unread}
         </div>

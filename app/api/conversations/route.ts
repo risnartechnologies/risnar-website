@@ -6,21 +6,41 @@ export async function GET() {
   try {
     const conversations =
       await db.conversation.findMany({
+        where: {
+          messages: {
+            some: {
+              direction: "INBOUND",
+            },
+          },
+        },
+
         include: {
           contact: true,
 
           messages: {
+            where: {
+              direction: "INBOUND",
+            },
+
             orderBy: {
               createdAt: "desc",
             },
+
             take: 1,
           },
         },
-
-        orderBy: {
-          updatedAt: "desc",
-        },
       });
+
+    // Sort conversations by latest INBOUND message.
+    conversations.sort((a, b) => {
+      const aTime =
+        a.messages[0]?.createdAt?.getTime() ?? 0;
+
+      const bTime =
+        b.messages[0]?.createdAt?.getTime() ?? 0;
+
+      return bTime - aTime;
+    });
 
     return NextResponse.json(
       conversations,

@@ -20,6 +20,7 @@ export async function GET(
         where: {
           conversationId: id,
         },
+
         orderBy: {
           createdAt: "asc",
         },

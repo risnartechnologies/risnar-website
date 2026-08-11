@@ -27,8 +27,11 @@ import Script from "next/script";
  * - Meta Facebook subdomains are accepted for the Embedded Signup
  *   postMessage because the completion message may originate from a
  *   Facebook subdomain other than www.facebook.com.
- * - A temporary watchdog is used only to diagnose whether Meta sends
- *   the WA_EMBEDDED_SIGNUP completion postMessage after OAuth succeeds.
+ * - A temporary watchdog is used only to diagnose whether Meta sends the
+ *   WA_EMBEDDED_SIGNUP completion postMessage after OAuth succeeds.
+ * - Diagnostic logging only records non-sensitive Embedded Signup
+ *   configuration information. Tokens and authorization codes are never
+ *   logged.
  */
 
 declare global {
@@ -56,7 +59,7 @@ declare global {
           extras?: {
             setup?: Record<string, unknown>;
             featureType?: string;
-            sessionInfoVersion?: string;
+            sessionInfoVersion?: number;
           };
         }
       ) => void;
@@ -260,12 +263,12 @@ export default function Page() {
        * Meta can report the normal completion or the
        * WABA-only completion variant.
        */
-        if (
-          data.event !== "FINISH" &&
-          data.event !== "FINISH_ONLY_WABA" &&
-          data.event !==
-            "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING"
-        ) {
+      if (
+        data.event !== "FINISH" &&
+        data.event !== "FINISH_ONLY_WABA" &&
+        data.event !==
+          "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING"
+      ) {
         /**
          * CANCEL and ERROR both terminate the connection attempt.
          */
@@ -522,6 +525,34 @@ export default function Page() {
 
       setConnecting(true);
 
+      /**
+       * Diagnostic trace immediately before Meta's FB.login().
+       *
+       * This intentionally logs ONLY the non-sensitive
+       * configuration being sent to Meta.
+       *
+       * NEVER log:
+       * - authorization code
+       * - access token
+       * - refresh token
+       * - cookies
+       * - session credentials
+       */
+      console.log(
+        "[RISNAR WhatsApp DEBUG]",
+        "FB.login() INVOCATION.",
+        {
+          configId:
+            WHATSAPP_CONFIG_ID,
+          responseType: "code",
+          overrideDefaultResponseType:
+            true,
+          featureType:
+            "whatsapp_business_app_onboarding",
+          sessionInfoVersion: 3,
+        }
+      );
+
       try {
         window.FB.login(
           (response) => {
@@ -594,7 +625,7 @@ export default function Page() {
                     configId:
                       WHATSAPP_CONFIG_ID,
                     sessionInfoVersion:
-                      "3",
+                      3,
                   }
                 );
 
@@ -637,14 +668,14 @@ export default function Page() {
             /**
              * Meta Embedded Signup session information.
              *
-             * sessionInfoVersion remains numeric because
-             * the local FB.login TypeScript declaration defines
-             * it as a number.
+             * sessionInfoVersion is numeric and must remain
+             * consistent with the FB.login TypeScript declaration.
              */
             extras: {
               setup: {},
-              featureType: "whatsapp_business_app_onboarding",
-              sessionInfoVersion: "3",
+              featureType:
+                "whatsapp_business_app_onboarding",
+              sessionInfoVersion: 3,
             },
           }
         );

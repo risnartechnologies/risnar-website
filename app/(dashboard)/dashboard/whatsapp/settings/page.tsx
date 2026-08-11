@@ -62,7 +62,7 @@ declare global {
           extras?: {
             setup?: Record<string, unknown>;
             featureType?: string;
-            sessionInfoVersion?: string;
+            sessionInfoVersion?: number;
           };
         }
       ) => void;
@@ -867,8 +867,7 @@ export default function Page() {
             true,
           extras: {
             setup: {},
-            featureType: "",
-            sessionInfoVersion: "3",
+            sessionInfoVersion: 3,
           },
         }
       );
@@ -990,8 +989,7 @@ export default function Page() {
 
             extras: {
               setup: {},
-              featureType: "",
-              sessionInfoVersion: "3",
+              sessionInfoVersion: 3,
             },
           }
         );

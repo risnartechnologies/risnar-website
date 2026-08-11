@@ -86,6 +86,22 @@ const WHATSAPP_CONFIG_ID = "1583260966778990";
 const SIGNUP_CODE_STORAGE_KEY =
   "risnar_whatsapp_signup_code";
 
+  /**
+ * Temporary Embedded Signup diagnostic state.
+ *
+ * These variables exist only to trace whether Meta actually sends
+ * the WA_EMBEDDED_SIGNUP completion message after FB.login().
+ */
+let waEmbeddedSignupMessageCount = 0;
+
+let waEmbeddedSignupLastMessageAt:
+  | number
+  | null = null;
+
+let waEmbeddedSignupWatchdogTimer:
+  | ReturnType<typeof setTimeout>
+  | null = null;
+
 /**
  * Creates a timestamped debug prefix so the browser console
  * shows exactly when each stage happened.
@@ -356,15 +372,74 @@ export default function Page() {
           {
             type: data?.type,
             event: data?.event,
+            origin: event.origin,
+            dataType: typeof event.data,
           }
         );
 
         return;
       }
 
+      waEmbeddedSignupMessageCount += 1;
+
+      waEmbeddedSignupLastMessageAt =
+        Date.now();
+
+      debugLog(
+        "=================================================="
+      );
+
       debugLog(
         "WA_EMBEDDED_SIGNUP MESSAGE RECEIVED.",
+        {
+          count:
+            waEmbeddedSignupMessageCount,
+          event:
+            data?.event,
+          type:
+            data?.type,
+          origin:
+            event.origin,
+          dataType:
+            typeof event.data,
+          isTrusted:
+            event.isTrusted,
+          hasSource:
+            Boolean(event.source),
+          hasPorts:
+            event.ports?.length ?? 0,
+        }
+      );
+
+      debugLog(
+        "WA_EMBEDDED_SIGNUP FULL DATA:",
         data
+      );
+
+      debugLog(
+        "WA_EMBEDDED_SIGNUP TIMESTAMP:",
+        new Date(
+          waEmbeddedSignupLastMessageAt
+        ).toISOString()
+      );
+
+      if (
+        waEmbeddedSignupWatchdogTimer
+      ) {
+        clearTimeout(
+          waEmbeddedSignupWatchdogTimer
+        );
+
+        waEmbeddedSignupWatchdogTimer =
+          null;
+
+        debugLog(
+          "WA_EMBEDDED_SIGNUP watchdog timer CLEARED because a WA_EMBEDDED_SIGNUP message was received."
+        );
+      }
+
+      debugLog(
+        "=================================================="
       );
 
       /**
@@ -975,8 +1050,88 @@ export default function Page() {
             }
 
             debugLog(
+              "=================================================="
+            );
+
+            debugLog(
               "Waiting for WA_EMBEDDED_SIGNUP postMessage completion event..."
             );
+
+            debugLog(
+              "WA_EMBEDDED_SIGNUP WATCHDOG STARTED.",
+              {
+                startedAt:
+                  new Date().toISOString(),
+                currentMessageCount:
+                  waEmbeddedSignupMessageCount,
+                lastMessageAt:
+                  waEmbeddedSignupLastMessageAt
+                    ? new Date(
+                        waEmbeddedSignupLastMessageAt
+                      ).toISOString()
+                    : "(none)",
+                configId:
+                  WHATSAPP_CONFIG_ID,
+                sessionInfoVersion:
+                  3,
+              }
+            );
+
+            if (
+              waEmbeddedSignupWatchdogTimer
+            ) {
+              clearTimeout(
+                waEmbeddedSignupWatchdogTimer
+              );
+
+              debugLog(
+                "Previous WA_EMBEDDED_SIGNUP watchdog timer CLEARED before starting a new one."
+              );
+            }
+
+            waEmbeddedSignupWatchdogTimer =
+              setTimeout(() => {
+                debugError(
+                  "=================================================="
+                );
+
+                debugError(
+                  "WA_EMBEDDED_SIGNUP WATCHDOG FIRED."
+                );
+
+                debugError(
+                  "Meta did NOT deliver a WA_EMBEDDED_SIGNUP message during the watchdog period.",
+                  {
+                    waitedMilliseconds:
+                      15000,
+                    messageCount:
+                      waEmbeddedSignupMessageCount,
+                    lastMessageAt:
+                      waEmbeddedSignupLastMessageAt
+                        ? new Date(
+                            waEmbeddedSignupLastMessageAt
+                          ).toISOString()
+                        : "(none)",
+                    currentTime:
+                      new Date().toISOString(),
+                    configId:
+                      WHATSAPP_CONFIG_ID,
+                    sessionInfoVersion:
+                      3,
+                  }
+                );
+
+                debugError(
+                  "IMPORTANT: The OAuth authorization code was received successfully, but the Embedded Signup completion postMessage was not observed."
+                );
+
+                debugError(
+                  "=================================================="
+                );
+
+                waEmbeddedSignupWatchdogTimer =
+                  null;
+              }, 15000);
           },
           {
             config_id:

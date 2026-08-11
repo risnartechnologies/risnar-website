@@ -254,26 +254,77 @@ export default function Page() {
        * Do NOT treat those as application errors.
        * We log them and safely ignore them.
        */
-      try {
-        data =
-          typeof event.data === "string"
-            ? JSON.parse(event.data)
-            : event.data;
+      /**
+       * Meta sends two different kinds of Facebook messages here:
+       *
+       * 1. OAuth callback strings such as:
+       *    cb=...&domain=...&code=...
+       *
+       * 2. JSON WA_EMBEDDED_SIGNUP messages.
+       *
+       * The OAuth callback string is NOT JSON and must never be
+       * passed to JSON.parse().
+       */
+      if (
+        typeof event.data === "string"
+      ) {
+        const rawData =
+          event.data.trim();
+
+        if (!rawData) {
+          debugLog(
+            "Ignoring empty Facebook postMessage."
+          );
+
+          return;
+        }
+
+        /**
+         * OAuth callback / non-JSON Facebook message.
+         *
+         * These messages start with text such as:
+         * cb=...
+         *
+         * They are NOT Embedded Signup events.
+         */
+        if (
+          !rawData.startsWith("{")
+        ) {
+          debugLog(
+            "Ignoring non-JSON Facebook postMessage. This is not a WA_EMBEDDED_SIGNUP JSON message."
+          );
+
+          return;
+        }
+
+        try {
+          data =
+            JSON.parse(rawData);
+
+          debugLog(
+            "Message JSON parsing SUCCESS.",
+            data
+          );
+        } catch (error) {
+          debugWarn(
+            "Message JSON parsing FAILED for a message that looked like JSON. Ignoring it.",
+            {
+              error,
+            }
+          );
+
+          return;
+        }
+      } else {
+        /**
+         * Meta may provide an object directly.
+         */
+        data = event.data;
 
         debugLog(
-          "Message JSON parsing SUCCESS.",
+          "Message received as an object. JSON parsing not required.",
           data
         );
-      } catch (error) {
-        debugWarn(
-          "Message JSON parsing FAILED. This message is being ignored because it is not valid JSON.",
-          {
-            error,
-            rawData: event.data,
-          }
-        );
-
-        return;
       }
 
       debugLog(

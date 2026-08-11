@@ -146,20 +146,83 @@ export default function Page() {
    * is processed by the RISNAR connection flow.
    */
   useEffect(() => {
+    /**
+     * FULL META MESSAGE DIAGNOSTIC
+     *
+     * IMPORTANT:
+     * We intentionally log every Facebook-origin message first.
+     * This allows us to determine whether Meta is sending:
+     *
+     *   WA_EMBEDDED_SIGNUP
+     *   CANCEL
+     *   ERROR
+     *   FINISH
+     *   FINISH_ONLY_WABA
+     *   FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING
+     *
+     * or another message that the previous listener was silently ignoring.
+     *
+     * Authorization codes and access tokens are NEVER logged.
+     */
     const handleMessage = async (
       event: MessageEvent
     ) => {
       /**
-       * Only accept HTTPS Facebook-owned origins.
+       * STEP 1:
+       * Log every HTTPS Facebook-origin message BEFORE any filtering.
        *
-       * This intentionally allows Facebook subdomains such as:
-       *
-       *   www.facebook.com
-       *   web.facebook.com
-       *   business.facebook.com
-       *
-       * because Embedded Signup may use a Facebook subdomain
-       * other than the primary www host.
+       * This is the most important diagnostic change.
+       */
+      if (
+        typeof event.origin === "string" &&
+        event.origin.startsWith("https://") &&
+        (
+          event.origin.includes("facebook.com") ||
+          event.origin.includes("fbcdn.net")
+        )
+      ) {
+        let diagnosticData: unknown =
+          event.data;
+
+        /**
+         * Never print a potential OAuth authorization
+         * code or access token to the console.
+         */
+        if (
+          typeof diagnosticData === "string"
+        ) {
+          const diagnosticString =
+            diagnosticData
+              .replace(
+                /([?&]code=)[^&]*/gi,
+                "$1[REDACTED]"
+              )
+              .replace(
+                /([?&]access_token=)[^&]*/gi,
+                "$1[REDACTED]"
+              );
+
+          diagnosticData =
+            diagnosticString;
+        }
+
+        console.log(
+          "[RISNAR WhatsApp DEBUG] FACEBOOK POSTMESSAGE RECEIVED",
+          {
+            origin:
+              event.origin,
+            dataType:
+              typeof event.data,
+            data:
+              diagnosticData,
+          }
+        );
+      }
+
+      /**
+       * STEP 2:
+       * Only accept HTTPS Facebook-owned origins for the
+       * actual Embedded Signup processing.
        */
       if (
         !isAllowedFacebookOrigin(
@@ -174,14 +237,14 @@ export default function Page() {
         | null = null;
 
       /**
-       * Meta may send strings that are not JSON.
+       * STEP 3:
+       * Meta may send either:
        *
-       * Example OAuth callback:
+       *   JSON string
        *
-       *   cb=...&domain=...&code=...
+       * or:
        *
-       * That message is NOT the Embedded Signup completion
-       * message and must not be passed to JSON.parse().
+       *   JavaScript object
        */
       if (
         typeof event.data === "string"
@@ -194,21 +257,47 @@ export default function Page() {
         }
 
         /**
-         * Embedded Signup completion messages are JSON.
-         *
-         * Ignore OAuth callback / internal Facebook strings.
+         * OAuth callback messages are ordinary strings
+         * and are not Embedded Signup completion messages.
          */
         if (
           !rawData.startsWith("{")
         ) {
+          console.log(
+            "[RISNAR WhatsApp DEBUG] FACEBOOK STRING MESSAGE IGNORED",
+            {
+              origin:
+                event.origin,
+              data:
+                rawData
+                  .replace(
+                    /([?&]code=)[^&]*/gi,
+                    "$1[REDACTED]"
+                  )
+                  .replace(
+                    /([?&]access_token=)[^&]*/gi,
+                    "$1[REDACTED]"
+                  ),
+            }
+          );
+
           return;
         }
 
         try {
-          data = JSON.parse(
-            rawData
-          ) as EmbeddedSignupMessage;
+          data =
+            JSON.parse(
+              rawData
+            ) as EmbeddedSignupMessage;
         } catch {
+          console.log(
+            "[RISNAR WhatsApp DEBUG] FACEBOOK JSON MESSAGE COULD NOT BE PARSED",
+            {
+              origin:
+                event.origin,
+            }
+          );
+
           return;
         }
       } else if (
@@ -224,21 +313,52 @@ export default function Page() {
       }
 
       /**
-       * Ignore every Facebook message that is not the
-       * WhatsApp Embedded Signup message.
+       * STEP 4:
+       * Log the parsed Meta message.
+       *
+       * No authorization code or access token is present
+       * in this object.
+       */
+      console.log(
+        "[RISNAR WhatsApp DEBUG] PARSED FACEBOOK MESSAGE",
+        {
+          origin:
+            event.origin,
+          type:
+            data.type,
+          event:
+            data.event,
+          data:
+            data.data,
+        }
+      );
+
+      /**
+       * STEP 5:
+       * Only process the WhatsApp Embedded Signup message.
        */
       if (
         data.type !==
         "WA_EMBEDDED_SIGNUP"
       ) {
+        console.log(
+          "[RISNAR WhatsApp DEBUG] FACEBOOK MESSAGE IS NOT WA_EMBEDDED_SIGNUP",
+          {
+            type:
+              data.type,
+            event:
+              data.event,
+          }
+        );
+
         return;
       }
 
       /**
-       * A WA_EMBEDDED_SIGNUP message has now been observed.
+       * STEP 6:
+       * WA_EMBEDDED_SIGNUP has arrived.
        *
-       * Stop the temporary diagnostic watchdog because Meta
-       * successfully delivered the Embedded Signup message.
+       * Therefore the watchdog must be cancelled.
        */
       if (
         waEmbeddedSignupWatchdogTimer.current
@@ -257,39 +377,87 @@ export default function Page() {
       }
 
       /**
-       * Meta can report the normal completion or the
-       * WABA-only completion variant.
+       * STEP 7:
+       * Log the exact Embedded Signup event.
        */
-        if (
-          data.event !==
-          "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING"
-        ) {
-        /**
-         * CANCEL and ERROR both terminate the connection attempt.
-         */
-        if (
-          data.event === "CANCEL" ||
-          data.event === "ERROR"
-        ) {
-          sessionStorage.removeItem(
-            SIGNUP_CODE_STORAGE_KEY
-          );
-
-          setConnecting(false);
-
-          return;
+      console.log(
+        "[RISNAR WhatsApp DEBUG] WA_EMBEDDED_SIGNUP EVENT",
+        {
+          event:
+            data.event,
+          payload:
+            data.data,
         }
+      );
 
-        /**
-         * Unknown Embedded Signup events are ignored safely.
-         */
+      /**
+       * Meta can return any of these successful completion events:
+       *
+       * FINISH
+       * FINISH_ONLY_WABA
+       * FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING
+       */
+      const isSuccessfulCompletion =
+        data.event === "FINISH" ||
+        data.event ===
+          "FINISH_ONLY_WABA" ||
+        data.event ===
+          "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING";
+
+      /**
+       * CANCEL and ERROR terminate the attempt.
+       */
+      if (
+        data.event === "CANCEL" ||
+        data.event === "ERROR"
+      ) {
+        console.error(
+          "[RISNAR WhatsApp DEBUG] META EMBEDDED SIGNUP TERMINATED",
+          {
+            event:
+              data.event,
+            payload:
+              data.data,
+          }
+        );
+
+        sessionStorage.removeItem(
+          SIGNUP_CODE_STORAGE_KEY
+        );
+
+        setConnecting(false);
+
+        alert(
+          `WhatsApp Embedded Signup ended with Meta event: ${data.event}.`
+        );
+
         return;
       }
 
       /**
-       * Retrieve the authorization code returned earlier by FB.login().
+       * Unknown Embedded Signup events are logged instead of
+       * silently discarded.
+       */
+      if (!isSuccessfulCompletion) {
+        console.warn(
+          "[RISNAR WhatsApp DEBUG] UNKNOWN WA_EMBEDDED_SIGNUP EVENT",
+          {
+            event:
+              data.event,
+            payload:
+              data.data,
+          }
+        );
+
+        return;
+      }
+
+      /**
+       * STEP 8:
+       * Retrieve the authorization code returned earlier
+       * by FB.login().
        *
-       * The code is single-use and must be exchanged server-side.
+       * The code itself is NEVER logged.
        */
       const code =
         sessionStorage.getItem(
@@ -297,6 +465,10 @@ export default function Page() {
         );
 
       if (!code) {
+        console.error(
+          "[RISNAR WhatsApp DEBUG] EMBEDDED SIGNUP COMPLETED BUT AUTHORIZATION CODE IS MISSING."
+        );
+
         setConnecting(false);
 
         alert(
@@ -307,6 +479,7 @@ export default function Page() {
       }
 
       /**
+       * STEP 9:
        * Extract the identifiers supplied by Meta.
        */
       const wabaId =
@@ -318,10 +491,31 @@ export default function Page() {
       const businessId =
         data.data?.business_id;
 
+      console.log(
+        "[RISNAR WhatsApp DEBUG] EMBEDDED SIGNUP IDENTIFIERS RECEIVED",
+        {
+          wabaId,
+          phoneNumberId,
+          businessId,
+          event:
+            data.event,
+        }
+      );
+
       /**
        * WABA ID is required by the server-side connection endpoint.
        */
       if (!wabaId) {
+        console.error(
+          "[RISNAR WhatsApp DEBUG] EMBEDDED SIGNUP COMPLETED WITHOUT WABA ID.",
+          {
+            event:
+              data.event,
+            payload:
+              data.data,
+          }
+        );
+
         setConnecting(false);
 
         alert(
@@ -333,12 +527,19 @@ export default function Page() {
 
       try {
         /**
+         * STEP 10:
          * Send the authorization code and Embedded Signup
          * identifiers to the server.
-         *
-         * The server performs the Meta token exchange and
-         * persists the WhatsApp connection.
          */
+        console.log(
+          "[RISNAR WhatsApp DEBUG] SENDING EMBEDDED SIGNUP DATA TO SERVER",
+          {
+            wabaId,
+            phoneNumberId,
+            businessId,
+          }
+        );
+
         const response =
           await fetch(
             "/api/whatsapp/connect",
@@ -358,12 +559,22 @@ export default function Page() {
           );
 
         /**
-         * Read the body as text first so an unexpected HTML,
-         * empty response, or malformed response cannot cause
-         * an unhandled JSON parsing exception.
+         * Read the response as text first.
          */
         const rawResponse =
           await response.text();
+
+        console.log(
+          "[RISNAR WhatsApp DEBUG] SERVER RESPONSE RECEIVED",
+          {
+            status:
+              response.status,
+            ok:
+              response.ok,
+            responseLength:
+              rawResponse.length,
+          }
+        );
 
         let result: {
           success?: boolean;
@@ -379,6 +590,14 @@ export default function Page() {
               ) as typeof result)
             : {};
         } catch {
+          console.error(
+            "[RISNAR WhatsApp DEBUG] SERVER RETURNED INVALID JSON",
+            {
+              status:
+                response.status,
+            }
+          );
+
           setConnecting(false);
 
           alert(
@@ -392,6 +611,16 @@ export default function Page() {
           !response.ok ||
           !result.success
         ) {
+          console.error(
+            "[RISNAR WhatsApp DEBUG] SERVER REJECTED WHATSAPP CONNECTION",
+            {
+              status:
+                response.status,
+              error:
+                result?.error,
+            }
+          );
+
           setConnecting(false);
 
           alert(
@@ -405,8 +634,7 @@ export default function Page() {
         /**
          * Connection succeeded.
          *
-         * The authorization code is now consumed by the
-         * server-side flow, so remove it from sessionStorage.
+         * The authorization code is now consumed.
          */
         sessionStorage.removeItem(
           SIGNUP_CODE_STORAGE_KEY
@@ -414,10 +642,19 @@ export default function Page() {
 
         setConnecting(false);
 
+        console.log(
+          "[RISNAR WhatsApp DEBUG] WHATSAPP CONNECTION COMPLETED SUCCESSFULLY"
+        );
+
         alert(
           "WhatsApp Business connected successfully."
         );
-      } catch {
+      } catch (error) {
+        console.error(
+          "[RISNAR WhatsApp DEBUG] SERVER CONNECTION REQUEST FAILED",
+          error
+        );
+
         setConnecting(false);
 
         alert(
@@ -426,21 +663,23 @@ export default function Page() {
       }
     };
 
+    /**
+     * Register the diagnostic message listener.
+     */
     window.addEventListener(
       "message",
       handleMessage
     );
 
+    /**
+     * Cleanup.
+     */
     return () => {
       window.removeEventListener(
         "message",
         handleMessage
       );
 
-      /**
-       * Prevent the temporary watchdog from surviving
-       * component unmount.
-       */
       if (
         waEmbeddedSignupWatchdogTimer.current
       ) {
@@ -469,7 +708,7 @@ export default function Page() {
         appId: META_APP_ID,
         cookie: true,
         xfbml: true,
-        version: "v25.0",
+        version: "v26.0",
       });
 
       setSdkReady(true);
@@ -554,44 +793,51 @@ window.FB.login(
 
     waEmbeddedSignupWatchdogTimer.current =
       setTimeout(() => {
-        console.log(
+        console.error(
           "[RISNAR WhatsApp DEBUG]",
           "=================================================="
         );
 
-        console.log(
+        console.error(
           "[RISNAR WhatsApp DEBUG]",
           "WA_EMBEDDED_SIGNUP WATCHDOG FIRED."
         );
 
-        console.log(
+        console.error(
           "[RISNAR WhatsApp DEBUG]",
-          "Meta did NOT deliver a WA_EMBEDDED_SIGNUP message during the watchdog period.",
+          "No WA_EMBEDDED_SIGNUP message was received before the watchdog expired.",
           {
             waitedMilliseconds:
-              15000,
+              30000,
             currentTime:
               new Date().toISOString(),
             configId:
               WHATSAPP_CONFIG_ID,
             sessionInfoVersion:
-              "3",
+              3,
           }
         );
 
-        console.log(
+        console.error(
           "[RISNAR WhatsApp DEBUG]",
-          "IMPORTANT: The OAuth authorization code was received successfully, but the Embedded Signup completion postMessage was not observed."
+          "IMPORTANT: OAuth authorization succeeded, but no usable WA_EMBEDDED_SIGNUP message reached the RISNAR page."
         );
 
-        console.log(
+        console.error(
+          "[RISNAR WhatsApp DEBUG]",
+          "Check the FACEBOOK POSTMESSAGE RECEIVED entries immediately above this message."
+        );
+
+        console.error(
           "[RISNAR WhatsApp DEBUG]",
           "=================================================="
         );
 
         waEmbeddedSignupWatchdogTimer.current =
           null;
-      }, 15000);
+
+        setConnecting(false);
+      }, 30000);
 
     console.log(
       "[RISNAR WhatsApp DEBUG]",

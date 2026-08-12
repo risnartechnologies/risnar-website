@@ -8,6 +8,7 @@ import {
   MoreVertical,
   Trash2,
   Eraser,
+  ArrowLeft,
 } from "lucide-react";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
   name: string;
   phone: string;
   onRefresh: () => void;
+  onBack: () => void;
 }
 
 export default function ChatHeader({
@@ -22,9 +24,36 @@ export default function ChatHeader({
   name,
   phone,
   onRefresh,
+  onBack,
 }: Props) {
   const [open, setOpen] =
     useState(false);
+
+    const [longPressTimer, setLongPressTimer] =
+  useState<NodeJS.Timeout | null>(null);
+
+function startLongPress() {
+  const timer = setTimeout(async () => {
+    try {
+      await navigator.clipboard.writeText(phone);
+      alert("Phone number copied");
+    } catch (error) {
+      console.error(
+        "Failed to copy phone number:",
+        error
+      );
+    }
+  }, 600);
+
+  setLongPressTimer(timer);
+}
+
+function cancelLongPress() {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    setLongPressTimer(null);
+  }
+}
 
   async function clearChat() {
     if (
@@ -71,7 +100,15 @@ export default function ChatHeader({
   return (
     <div className="flex h-20 items-center justify-between border-b border-slate-800 bg-slate-950 px-6">
 
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 items-center gap-3">
+
+        <button
+          onClick={onBack}
+          className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 md:hidden"
+          aria-label="Back"
+        >
+          <ArrowLeft size={22} />
+        </button>
 
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600 text-lg font-bold text-white">
           {name.charAt(0).toUpperCase()}
@@ -83,7 +120,16 @@ export default function ChatHeader({
             {name}
           </h2>
 
-          <p className="text-sm text-slate-400">
+          <p
+            className="select-none text-sm text-slate-400"
+            onPointerDown={startLongPress}
+            onPointerUp={cancelLongPress}
+            onPointerLeave={cancelLongPress}
+            onPointerCancel={cancelLongPress}
+            onContextMenu={(e) =>
+              e.preventDefault()
+            }
+          >
             {phone}
           </p>
 

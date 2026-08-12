@@ -27,12 +27,15 @@ interface Props {
   messages: Message[];
 
   onSend: (message: string) => void;
+
+  onBack: () => void;
 }
 
 export default function ChatWindow({
   selectedChat,
   messages,
   onSend,
+  onBack,
 }: Props) {
 const messagesRef =
   useRef<HTMLDivElement>(null);

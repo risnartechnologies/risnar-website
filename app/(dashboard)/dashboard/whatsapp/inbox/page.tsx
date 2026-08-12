@@ -151,23 +151,24 @@ useEffect(() => {
 
         console.table(mapped);
 
-      setSelectedId((current) => {
-        // Keep the currently selected conversation if it still exists.
-        if (
-          current &&
-          mapped.some(
-            (chat) => chat.id === current
-          )
-        ) {
-          return current;
-        }
+    setSelectedId((current) => {
+      // Keep the currently selected conversation.
+      if (
+        current &&
+        mapped.some(
+          (chat) => chat.id === current
+        )
+      ) {
+        return current;
+      }
 
-        // Select the first conversation only on the initial load
-        // or if the previously selected conversation was deleted.
-        return mapped.length > 0
-          ? mapped[0].id
-          : null;
-      });
+      // Desktop: automatically open the first chat.
+      // Mobile: show the chat list first.
+      return window.innerWidth >= 768 &&
+        mapped.length > 0
+        ? mapped[0].id
+        : null;
+    });
     } catch (error) {
       console.error(error);
 
@@ -254,9 +255,16 @@ async function loadMessages(
   return (
     <div className="h-[calc(100vh-140px)] overflow-hidden rounded-2xl border border-slate-800 bg-slate-950">
 
-      <div className="grid h-full grid-cols-[380px_1fr]">
+<div className="grid h-full grid-cols-1 md:grid-cols-[380px_1fr]">
 
-        <div className="flex h-full flex-col border-r border-slate-800 min-h-0">
+
+  <div
+    className={`h-full min-h-0 flex-col border-r border-slate-800 ${
+      selectedId
+        ? "hidden md:flex"
+        : "flex"
+    }`}
+  >
 
       <ChatList
         chats={chats}
@@ -293,11 +301,20 @@ async function loadMessages(
 
         </div>
 
+      <div
+        className={`h-full min-h-0 ${
+          selectedId
+            ? "flex"
+            : "hidden md:flex"
+        }`}
+      >
         <ChatWindow
           selectedChat={selectedChat}
           messages={messages}
           onSend={() => {}}
+          onBack={() => setSelectedId(null)}
         />
+      </div>
 
       </div>
 

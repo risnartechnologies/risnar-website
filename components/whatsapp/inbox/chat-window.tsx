@@ -81,14 +81,15 @@ useEffect(() => {
   return (
     <div className="flex h-full min-h-0 flex-col bg-slate-950">
 
-      <ChatHeader
-        id={selectedChat.id}
-        name={selectedChat.name}
-        phone={selectedChat.phone}
-        onRefresh={() => {
-          window.location.reload();
-        }}
-      />
+        <ChatHeader
+          id={selectedChat.id}
+          name={selectedChat.name}
+          phone={selectedChat.phone}
+          onRefresh={() => {
+            window.location.reload();
+          }}
+          onBack={onBack}
+        />
 
       <div
         ref={messagesRef}

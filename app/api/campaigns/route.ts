@@ -67,12 +67,18 @@ export async function POST(request: Request) {
         // SEND TEMPLATE THROUGH WHATSAPP
         // ---------------------------------------
 
-        const result = await sendTemplateMessage(
-          contact.phone,
-          body.templateName,
-          "en",
-          [contact.name ?? "Customer"]
-        );
+      const result = await sendTemplateMessage(
+        contact.phone,
+        body.templateName,
+        "en",
+        [
+          {
+            name: "customer_name",
+            value: contact.name ?? "Customer",
+          },
+        ],
+        "https://risnar.com/images/jaipur-plot-recommendation.png"
+      );
 
         console.log(
           "=== CAMPAIGN MESSAGE SENT ===",

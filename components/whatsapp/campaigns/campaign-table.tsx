@@ -9,6 +9,8 @@ export interface Campaign {
   templateName: string;
   totalRecipients: number;
   sentCount: number;
+  deliveredCount: number;
+  respondedCount: number;
   failedCount: number;
   status: string;
   recipients: any[];
@@ -23,7 +25,6 @@ export default function CampaignTable({
   campaigns,
   onRowClick,
 }: Props) {
-
   const [selected, setSelected] =
     useState<string[]>([]);
 
@@ -50,7 +51,6 @@ export default function CampaignTable({
   }
 
   async function deleteSelected() {
-
     if (
       !confirm(
         `Delete ${selected.length} campaign(s)?`
@@ -74,25 +74,20 @@ export default function CampaignTable({
     );
 
     window.location.reload();
-
   }
 
   return (
     <div className="space-y-4">
 
       {selected.length > 0 && (
-
         <div className="flex justify-end">
-
           <button
             onClick={deleteSelected}
             className="rounded-xl bg-red-600 px-5 py-3 font-semibold text-white hover:bg-red-500"
           >
             Delete ({selected.length})
           </button>
-
         </div>
-
       )}
 
       <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
@@ -104,16 +99,15 @@ export default function CampaignTable({
             <tr className="text-left text-sm font-semibold text-slate-400">
 
               <th className="px-4 py-4">
-
                 <input
                   type="checkbox"
                   checked={
                     campaigns.length > 0 &&
-                    selected.length === campaigns.length
+                    selected.length ===
+                      campaigns.length
                   }
                   onChange={toggleAll}
                 />
-
               </th>
 
               <th className="px-6 py-4">
@@ -129,7 +123,15 @@ export default function CampaignTable({
               </th>
 
               <th className="px-6 py-4">
+                Sent
+              </th>
+
+              <th className="px-6 py-4">
                 Delivered
+              </th>
+
+              <th className="px-6 py-4">
+                Responded
               </th>
 
               <th className="px-6 py-4">
@@ -147,22 +149,17 @@ export default function CampaignTable({
           <tbody>
 
             {campaigns.length === 0 && (
-
               <tr>
-
                 <td
-                  colSpan={7}
+                  colSpan={9}
                   className="py-20 text-center text-slate-500"
                 >
                   No campaigns found.
                 </td>
-
               </tr>
-
             )}
 
             {campaigns.map((campaign) => (
-
               <tr
                 key={campaign.id}
                 onClick={() =>
@@ -177,7 +174,6 @@ export default function CampaignTable({
                     e.stopPropagation()
                   }
                 >
-
                   <input
                     type="checkbox"
                     checked={selected.includes(
@@ -189,7 +185,6 @@ export default function CampaignTable({
                       )
                     }
                   />
-
                 </td>
 
                 <td className="px-6 py-4 font-medium text-white">
@@ -204,8 +199,16 @@ export default function CampaignTable({
                   {campaign.totalRecipients}
                 </td>
 
-                <td className="px-6 py-4 text-green-400">
+                <td className="px-6 py-4 text-slate-300">
                   {campaign.sentCount}
+                </td>
+
+                <td className="px-6 py-4 text-green-400">
+                  {campaign.deliveredCount}
+                </td>
+
+                <td className="px-6 py-4 text-blue-400">
+                  {campaign.respondedCount}
                 </td>
 
                 <td className="px-6 py-4 text-red-400">
@@ -213,15 +216,12 @@ export default function CampaignTable({
                 </td>
 
                 <td className="px-6 py-4">
-
                   <CampaignStatusBadge
                     status={campaign.status}
                   />
-
                 </td>
 
               </tr>
-
             ))}
 
           </tbody>

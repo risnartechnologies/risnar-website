@@ -101,24 +101,61 @@ export async function POST(request: Request) {
         const metaMessageId =
           result.messages?.[0]?.id ?? null;
 
-        // ---------------------------------------
-        // GET OR CREATE CONVERSATION
-        // ---------------------------------------
+    // ---------------------------------------
+    // SAVE META MESSAGE ID IMMEDIATELY
+    // ---------------------------------------
+    //
+    // IMPORTANT:
+    // Meta can send the SENT / DELIVERED
+    // webhook very quickly after the API
+    // accepts the message.
+    //
+    // Save metaMessageId FIRST so the webhook
+    // can always find this campaign recipient.
+    //
 
-        const conversation =
-          await db.conversation.upsert({
-            where: {
-              contactId: contact.id,
-            },
+    await db.campaignRecipient.update({
+      where: {
+        campaignId_contactId: {
+          campaignId: campaign.id,
+          contactId: contact.id,
+        },
+      },
 
-            create: {
-              contactId: contact.id,
-            },
+      data: {
+        status: "SENT",
+        sentAt: new Date(),
+        metaMessageId,
+      },
+    });
 
-            update: {
-              updatedAt: new Date(),
-            },
-          });
+    console.log(
+      "=== CAMPAIGN RECIPIENT TRACKING SAVED ===",
+      {
+        campaignId: campaign.id,
+        contactId: contact.id,
+        metaMessageId,
+      }
+    );
+
+    // ---------------------------------------
+    // GET OR CREATE CONVERSATION
+    // ---------------------------------------
+
+    const conversation =
+      await db.conversation.upsert({
+        where: {
+          contactId: contact.id,
+        },
+
+        create: {
+          contactId: contact.id,
+        },
+
+        update: {
+          updatedAt: new Date(),
+        },
+      });
 
         // ---------------------------------------
         // SAVE OUTBOUND MESSAGE
@@ -156,25 +193,6 @@ export async function POST(request: Request) {
         console.log(
           "=== OUTBOUND MESSAGE CREATED ==="
         );
-
-        // ---------------------------------------
-        // UPDATE CAMPAIGN RECIPIENT
-        // ---------------------------------------
-
-        await db.campaignRecipient.update({
-          where: {
-            campaignId_contactId: {
-              campaignId: campaign.id,
-              contactId: contact.id,
-            },
-          },
-
-          data: {
-            status: "SENT",
-            sentAt: new Date(),
-            metaMessageId,
-          },
-        });
       } catch (error: any) {
         console.error(
           "Meta Error:",

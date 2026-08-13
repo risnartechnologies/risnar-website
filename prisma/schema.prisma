@@ -58,6 +58,7 @@ model Campaign {
   sentCount       Int                 @default(0)
   deliveredCount  Int                 @default(0)
   readCount       Int                 @default(0)
+  respondedCount  Int                 @default(0)
   failedCount     Int                 @default(0)
   scheduledAt     DateTime?
   startedAt       DateTime?
@@ -76,6 +77,7 @@ model CampaignRecipient {
   sentAt        DateTime?
   deliveredAt   DateTime?
   readAt        DateTime?
+  respondedAt   DateTime?
   failedAt      DateTime?
   errorMessage  String?
   campaign      Campaign      @relation(fields: [campaignId], references: [id], onDelete: Cascade)

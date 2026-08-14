@@ -94,6 +94,8 @@ export async function processMessage(
 
             phone:
               contactData.wa_id,
+
+            isActive: false,
           },
         });
     }

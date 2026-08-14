@@ -22,7 +22,9 @@ export async function GET(
       ?.trim() ?? "";
 
   const where: Prisma.ContactWhereInput =
-    {};
+    {
+      isActive: true,
+    };
 
   if (search) {
     where.OR = [

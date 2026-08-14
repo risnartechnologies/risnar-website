@@ -21,10 +21,10 @@ export async function GET(
       .get("search")
       ?.trim() ?? "";
 
-  const where: Prisma.ContactWhereInput =
-    {
-      isActive: true,
-    };
+const where: Prisma.ContactWhereInput =
+  {
+    source: "MANUAL",
+  };
 
   if (search) {
     where.OR = [
@@ -94,6 +94,7 @@ if (Array.isArray(body.contacts)) {
         state: contact.state ?? null,
         tags: null,
         notes: contact.notes ?? null,
+        source: "MANUAL",
       }))
       .filter(
         (contact: Prisma.ContactCreateManyInput) =>
@@ -199,6 +200,7 @@ if (Array.isArray(body.contacts)) {
           tags: null,
           notes:
             body.notes,
+          source: "MANUAL",
         },
       });
 

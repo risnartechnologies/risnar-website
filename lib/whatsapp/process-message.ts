@@ -80,25 +80,25 @@ export async function processMessage(
         },
       });
 
-    if (!contact) {
-      console.log(
-        "Creating new contact..."
-      );
+if (!contact) {
+  console.log(
+    "Creating new WhatsApp contact..."
+  );
 
-      contact =
-        await db.contact.create({
-          data: {
-            name:
-              contactData.profile?.name ??
-              `+${contactData.wa_id}`,
+  contact =
+    await db.contact.create({
+      data: {
+        name:
+          contactData.profile?.name ??
+          `+${contactData.wa_id}`,
 
-            phone:
-              contactData.wa_id,
+        phone:
+          contactData.wa_id,
 
-            isActive: false,
-          },
-        });
-    }
+        source: "WHATSAPP",
+      },
+    });
+}
 
     console.log(
       "Contact ID:",

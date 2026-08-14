@@ -21,6 +21,7 @@ model Contact {
   notes      String?
   isActive   Boolean             @default(true)
   isBlocked  Boolean             @default(false)
+  source     ContactSource       @default(MANUAL)
   createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   recipients CampaignRecipient[]
@@ -142,6 +143,11 @@ enum MessageType {
   DOCUMENT
   VIDEO
   AUDIO
+}
+
+enum ContactSource {
+  MANUAL
+  WHATSAPP
 }
 
 model WhatsAppConnection {

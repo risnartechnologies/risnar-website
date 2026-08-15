@@ -25,6 +25,44 @@ export async function POST(request: NextRequest) {
       "======================================"
     );
 
+    // ---------------------------------------
+    // Ignore Meta's dummy/test webhook
+    //
+    // Meta can send test payloads containing
+    // dummy phone_number_id / test messages.
+    // Only process webhooks belonging to our
+    // actual WhatsApp Business phone number.
+    // ---------------------------------------
+
+    const webhookPhoneNumberId =
+      body.entry?.[0]?.changes?.[0]?.value
+        ?.metadata?.phone_number_id;
+
+    const configuredPhoneNumberId =
+      process.env.WHATSAPP_PHONE_NUMBER_ID;
+
+    if (
+      webhookPhoneNumberId &&
+      configuredPhoneNumberId &&
+      webhookPhoneNumberId !==
+        configuredPhoneNumberId
+    ) {
+      console.log(
+        "Ignoring webhook for different phone_number_id:",
+        webhookPhoneNumberId
+      );
+
+      return NextResponse.json(
+        {
+          received: true,
+          ignored: true,
+        },
+        {
+          status: 200,
+        }
+      );
+    }
+
     await processMessage(body);
 
     return NextResponse.json(

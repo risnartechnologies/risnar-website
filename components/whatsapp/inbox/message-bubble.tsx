@@ -1,18 +1,24 @@
 interface Props {
   message: string;
+  type: string;
   time: string;
   outgoing: boolean;
+  status: string | null;
 }
 
 export default function MessageBubble({
   message,
+  type,
   time,
   outgoing,
+  status,
 }: Props) {
   return (
     <div
       className={`flex ${
-        outgoing ? "justify-end" : "justify-start"
+        outgoing
+          ? "justify-end"
+          : "justify-start"
       }`}
     >
       <div
@@ -22,6 +28,7 @@ export default function MessageBubble({
             : "bg-slate-800 text-slate-100"
         }`}
       >
+
         <p className="whitespace-pre-wrap text-sm">
           {message}
         </p>
@@ -35,6 +42,7 @@ export default function MessageBubble({
         >
           {time}
         </p>
+
       </div>
     </div>
   );

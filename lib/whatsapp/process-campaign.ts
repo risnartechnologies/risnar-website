@@ -20,10 +20,6 @@ export async function processCampaign(
   );
 
   while (true) {
-    // ---------------------------------------
-    // GET NEXT BATCH OF PENDING RECIPIENTS
-    // ---------------------------------------
-
     const recipientIds =
       await getPendingRecipientIds(
         campaignId,
@@ -38,14 +34,8 @@ export async function processCampaign(
       }
     );
 
-    // ---------------------------------------
-    // NO MORE RECIPIENTS
-    // ---------------------------------------
-
     if (recipientIds.length === 0) {
-      await completeCampaign(
-        campaignId
-      );
+      await completeCampaign(campaignId);
 
       console.log(
         "=== CAMPAIGN WORKFLOW COMPLETED ===",
@@ -61,13 +51,6 @@ export async function processCampaign(
       };
     }
 
-    // ---------------------------------------
-    // PROCESS RECIPIENTS IN PARALLEL
-    //
-    // Maximum 10 WhatsApp API requests
-    // at a time.
-    // ---------------------------------------
-
     await Promise.all(
       recipientIds.map(
         (recipientId) =>
@@ -82,16 +65,9 @@ export async function processCampaign(
       "=== CAMPAIGN BATCH PROCESSED ===",
       {
         campaignId,
-        processed:
-          recipientIds.length,
+        processed: recipientIds.length,
       }
     );
-
-    // ---------------------------------------
-    // LOOP
-    //
-    // Workflow will get the next batch.
-    // ---------------------------------------
   }
 }
 
@@ -122,9 +98,7 @@ async function getPendingRecipientIds(
     );
   }
 
-  if (
-    campaign.status !== "RUNNING"
-  ) {
+  if (campaign.status !== "RUNNING") {
     console.log(
       "Campaign is no longer running.",
       {
@@ -163,10 +137,6 @@ async function getPendingRecipientIds(
 // STEP: PROCESS ONE RECIPIENT
 // ============================================================
 
-// ============================================================
-// STEP: PROCESS ONE RECIPIENT
-// ============================================================
-
 async function processCampaignRecipient(
   campaignId: string,
   recipientId: string
@@ -196,23 +166,13 @@ async function processCampaignRecipient(
     return;
   }
 
-  // ---------------------------------------
-  // SAFETY CHECK
-  //
-  // Another workflow execution may have
-  // already processed this recipient.
-  // ---------------------------------------
-
-  if (
-    recipient.status !== "PENDING"
-  ) {
+  if (recipient.status !== "PENDING") {
     console.log(
       "Recipient already processed.",
       {
         campaignId,
         recipientId,
-        status:
-          recipient.status,
+        status: recipient.status,
       }
     );
 
@@ -225,20 +185,33 @@ async function processCampaignRecipient(
   const campaign =
     recipient.campaign;
 
-  /*
-   * Keep track of the CRM outbound Message
-   * created before sending to Meta.
-   *
-   * This is important because Meta can accept
-   * the message successfully, while a later
-   * database operation could fail.
-   *
-   * By creating the Message first, the CRM
-   * always has a record representing the
-   * outbound campaign message.
-   */
+  // ----------------------------------------------------------
+  // IMPORTANT:
+  //
+  // Create the CRM conversation BEFORE sending.
+  // This guarantees that every campaign recipient has a
+  // conversation available in the CRM, even if Meta rejects
+  // the message.
+  // ----------------------------------------------------------
+
+  const conversation =
+    await db.conversation.upsert({
+      where: {
+        contactId: contact.id,
+      },
+
+      create: {
+        contactId: contact.id,
+      },
+
+      update: {
+        updatedAt: new Date(),
+      },
+    });
+
   let outboundMessageId:
-    string | null = null;
+    | string
+    | null = null;
 
   try {
     console.log(
@@ -246,55 +219,24 @@ async function processCampaignRecipient(
       {
         campaignId,
         recipientId,
-        contactId:
-          contact.id,
-        phone:
-          contact.phone,
+        contactId: contact.id,
+        phone: contact.phone,
         templateName:
           campaign.templateName,
       }
     );
 
-    // ---------------------------------------
-    // GET OR CREATE CONVERSATION
+    // --------------------------------------------------------
+    // CREATE OUTBOUND MESSAGE BEFORE META REQUEST
     //
-    // We do this BEFORE sending so that the
-    // outbound CRM Message can be created
-    // before Meta receives the request.
-    // ---------------------------------------
-
-    const conversation =
-      await db.conversation.upsert({
-        where: {
-          contactId:
-            contact.id,
-        },
-
-        create: {
-          contactId:
-            contact.id,
-        },
-
-        update: {
-          updatedAt:
-            new Date(),
-        },
-      });
-
-    // ---------------------------------------
-    // CREATE OUTBOUND MESSAGE FIRST
-    //
-    // This is the important fix.
-    //
-    // The CRM now has a Message record even
-    // before Meta accepts the WhatsApp request.
-    // ---------------------------------------
+    // The template name is stored here deliberately.
+    // This makes the CRM conversation self-contained.
+    // --------------------------------------------------------
 
     const outboundMessage =
       await db.message.create({
         data: {
-          contactId:
-            contact.id,
+          contactId: contact.id,
 
           conversationId:
             conversation.id,
@@ -323,6 +265,7 @@ async function processCampaignRecipient(
           outboundMessage.id,
 
         campaignId,
+
         recipientId,
 
         templateName:
@@ -330,23 +273,9 @@ async function processCampaignRecipient(
       }
     );
 
-    // ---------------------------------------
-    // SEND TEMPLATE THROUGH WHATSAPP
-    // ---------------------------------------
-
-    console.log(
-      "=== SENDING CAMPAIGN MESSAGE ===",
-      {
-        campaignId,
-        recipientId,
-        contactId:
-          contact.id,
-        phone:
-          contact.phone,
-        templateName:
-          campaign.templateName,
-      }
-    );
+    // --------------------------------------------------------
+    // SEND TEMPLATE THROUGH META
+    // --------------------------------------------------------
 
     const result =
       await sendTemplateMessage(
@@ -375,8 +304,7 @@ async function processCampaignRecipient(
       {
         campaignId,
         recipientId,
-        phone:
-          contact.phone,
+        phone: contact.phone,
         metaMessageId,
       }
     );
@@ -387,15 +315,9 @@ async function processCampaignRecipient(
       );
     }
 
-    // ---------------------------------------
-    // SAVE META MESSAGE ID IMMEDIATELY
-    //
-    // The Message record already exists.
-    // We now attach Meta's message ID to it.
-    //
-    // This allows a very fast Meta status
-    // webhook to find the outbound Message.
-    // ---------------------------------------
+    // --------------------------------------------------------
+    // LINK META MESSAGE TO CRM MESSAGE
+    // --------------------------------------------------------
 
     await db.message.update({
       where: {
@@ -411,25 +333,9 @@ async function processCampaignRecipient(
       },
     });
 
-    console.log(
-      "=== OUTBOUND MESSAGE LINKED TO META ===",
-      {
-        messageId:
-          outboundMessageId,
-
-        metaMessageId,
-
-        templateName:
-          campaign.templateName,
-      }
-    );
-
-    // ---------------------------------------
-    // CHECK RECIPIENT AGAIN
-    //
-    // Meta's webhook may have arrived
-    // extremely quickly.
-    // ---------------------------------------
+    // --------------------------------------------------------
+    // UPDATE CAMPAIGN RECIPIENT
+    // --------------------------------------------------------
 
     const currentRecipient =
       await db.campaignRecipient.findUnique({
@@ -444,10 +350,6 @@ async function processCampaignRecipient(
       );
     }
 
-    // ---------------------------------------
-    // PRESERVE WEBHOOK STATUS
-    // ---------------------------------------
-
     const recipientStatus =
       currentRecipient.status ===
         "DELIVERED" ||
@@ -455,10 +357,6 @@ async function processCampaignRecipient(
         "READ"
         ? currentRecipient.status
         : "SENT";
-
-    // ---------------------------------------
-    // SAVE META MESSAGE ID
-    // ---------------------------------------
 
     await db.campaignRecipient.update({
       where: {
@@ -477,9 +375,9 @@ async function processCampaignRecipient(
       },
     });
 
-    // ---------------------------------------
+    // --------------------------------------------------------
     // UPDATE CAMPAIGN COUNTERS
-    // ---------------------------------------
+    // --------------------------------------------------------
 
     await db.campaign.update({
       where: {
@@ -502,10 +400,8 @@ async function processCampaignRecipient(
       {
         campaignId,
         recipientId,
-        contactId:
-          contact.id,
+        contactId: contact.id,
         metaMessageId,
-
         messageId:
           outboundMessageId,
       }
@@ -516,8 +412,7 @@ async function processCampaignRecipient(
       {
         campaignId,
         recipientId,
-        contactId:
-          contact.id,
+        contactId: contact.id,
 
         error:
           error?.response?.data ??
@@ -526,13 +421,9 @@ async function processCampaignRecipient(
       }
     );
 
-    // ---------------------------------------
-    // MARK CRM OUTBOUND MESSAGE AS FAILED
-    //
-    // If the CRM Message was already created,
-    // keep it as part of the conversation history
-    // instead of losing the campaign message.
-    // ---------------------------------------
+    // --------------------------------------------------------
+    // KEEP FAILED CAMPAIGN MESSAGE IN CRM
+    // --------------------------------------------------------
 
     if (outboundMessageId) {
       try {
@@ -545,6 +436,12 @@ async function processCampaignRecipient(
           data: {
             status:
               "FAILED",
+
+            // IMPORTANT:
+            // Never remove the template name when a
+            // Meta request fails.
+            body:
+              campaign.templateName,
           },
         });
       } catch (
@@ -557,9 +454,9 @@ async function processCampaignRecipient(
       }
     }
 
-    // ---------------------------------------
-    // MARK RECIPIENT FAILED
-    // ---------------------------------------
+    // --------------------------------------------------------
+    // MARK CAMPAIGN RECIPIENT FAILED
+    // --------------------------------------------------------
 
     await db.campaignRecipient.update({
       where: {
@@ -582,9 +479,9 @@ async function processCampaignRecipient(
       },
     });
 
-    // ---------------------------------------
-    // UPDATE CAMPAIGN FAILURE COUNTER
-    // ---------------------------------------
+    // --------------------------------------------------------
+    // UPDATE FAILURE COUNTER
+    // --------------------------------------------------------
 
     await db.campaign.update({
       where: {
@@ -601,16 +498,6 @@ async function processCampaignRecipient(
         },
       },
     });
-
-    // ---------------------------------------
-    // IMPORTANT:
-    //
-    // Do not rethrow here.
-    //
-    // A WhatsApp API failure has already been
-    // recorded as FAILED. The workflow should
-    // continue with the remaining recipients.
-    // ---------------------------------------
 
     console.log(
       "=== RECIPIENT MARKED FAILED ===",

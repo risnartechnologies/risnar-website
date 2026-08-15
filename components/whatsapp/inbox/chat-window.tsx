@@ -13,11 +13,11 @@ import MessageInput from "./message-input";
 /**
  * Message
  *
- * Represents a single message displayed in the
- * WhatsApp conversation window.
+ * Represents one message displayed in the WhatsApp
+ * conversation window.
  *
  * type:
- *   TEXT, IMAGE, VIDEO, AUDIO, DOCUMENT, etc.
+ *   TEXT, TEMPLATE, IMAGE, VIDEO, AUDIO, DOCUMENT, etc.
  *
  * status:
  *   PENDING, SENT, DELIVERED, READ, FAILED
@@ -28,15 +28,10 @@ import MessageInput from "./message-input";
  */
 export interface Message {
   id: string;
-
   body: string;
-
   type: string;
-
   status: string | null;
-
   createdAt: string;
-
   outgoing: boolean;
 }
 
@@ -63,8 +58,7 @@ interface Props {
   onSend: (message: string) => void;
 
   /**
-   * Called when the user presses the back button
-   * on mobile.
+   * Called when the user presses Back on mobile.
    */
   onBack: () => void;
 }
@@ -75,26 +69,28 @@ export default function ChatWindow({
   onSend,
   onBack,
 }: Props) {
-  /*
-   * Reference to the scrollable message container.
+  /**
+   * Scrollable message container.
    */
   const messagesRef =
     useRef<HTMLDivElement>(null);
 
-  /*
-   * Determines whether incoming message updates
-   * should automatically move the conversation
-   * to the bottom.
+  /**
+   * Controls automatic scrolling.
    *
-   * This prevents automatic scrolling when the
-   * user has intentionally scrolled upward.
+   * true:
+   *   User is near the bottom, so new messages
+   *   should move the view to the latest message.
+   *
+   * false:
+   *   User has intentionally scrolled upward.
    */
   const shouldAutoScroll =
     useRef(true);
 
   /**
-   * When switching conversations, always position
-   * the message window at the latest message.
+   * When changing conversations, always show the
+   * latest available message.
    */
   useEffect(() => {
     const container =
@@ -107,13 +103,21 @@ export default function ChatWindow({
     requestAnimationFrame(() => {
       container.scrollTop =
         container.scrollHeight;
+
+      /*
+       * A newly selected conversation should always
+       * start with automatic scrolling enabled.
+       */
+      shouldAutoScroll.current = true;
     });
   }, [selectedChat?.id]);
 
   /**
-   * When messages change, automatically scroll to
-   * the latest message only when the user was already
-   * near the bottom of the conversation.
+   * When the message list changes, scroll to the
+   * latest message only when the user was already
+   * near the bottom.
+   *
+   * This keeps manual scrolling intact.
    */
   useEffect(() => {
     const container =
@@ -132,9 +136,10 @@ export default function ChatWindow({
     });
   }, [messages]);
 
-  /*
+  /**
    * No conversation selected.
-   * Keep the existing empty-chat behaviour intact.
+   *
+   * Preserve the existing empty-chat behaviour.
    */
   if (!selectedChat) {
     return <EmptyChat />;
@@ -143,11 +148,7 @@ export default function ChatWindow({
   return (
     <div className="flex h-full min-h-0 flex-col bg-slate-950">
 
-      {/*
-       * Conversation header.
-       *
-       * The existing refresh behaviour is preserved.
-       */}
+      {/* Conversation header */}
       <ChatHeader
         id={selectedChat.id}
         name={selectedChat.name}
@@ -159,7 +160,16 @@ export default function ChatWindow({
       />
 
       {/*
-       * Scrollable message area.
+       * Message list.
+       *
+       * IMPORTANT:
+       * ChatWindow does not filter messages by type,
+       * direction, status or body.
+       *
+       * Every message returned by the API is passed to
+       * MessageBubble unchanged. This prevents the
+       * ChatWindow from accidentally hiding TEMPLATE,
+       * FAILED, SENT, INBOUND or OUTBOUND messages.
        */}
       <div
         ref={messagesRef}
@@ -167,18 +177,17 @@ export default function ChatWindow({
           const element =
             e.currentTarget;
 
+          const distanceFromBottom =
+            element.scrollHeight -
+            element.scrollTop -
+            element.clientHeight;
+
           /*
-           * Consider the user "near the bottom"
-           * when there are fewer than 60px remaining.
-           *
-           * If the user scrolls upward, automatic
-           * scrolling is temporarily disabled.
+           * Keep automatic scrolling enabled only when
+           * the user is within 60px of the bottom.
            */
           shouldAutoScroll.current =
-            element.scrollHeight -
-              element.scrollTop -
-              element.clientHeight <
-            60;
+            distanceFromBottom < 60;
         }}
         className="
           min-h-0
@@ -190,9 +199,7 @@ export default function ChatWindow({
         "
       >
 
-        {/*
-         * Empty conversation state.
-         */}
+        {/* Empty conversation state */}
         {messages.length === 0 && (
           <div className="mt-20 text-center text-slate-500">
             No messages yet.
@@ -200,11 +207,14 @@ export default function ChatWindow({
         )}
 
         {/*
-         * Render every message in chronological order.
+         * Render every message exactly once.
          *
-         * MessageBubble receives the complete message
-         * information required for direction, type,
-         * timestamp and status rendering.
+         * No message is removed here.
+         * No message is replaced with placeholder text.
+         * No special handling is applied based on direction.
+         *
+         * The MessageBubble component is responsible for
+         * displaying the actual message content.
          */}
         {messages.map((message) => (
           <MessageBubble
@@ -219,9 +229,7 @@ export default function ChatWindow({
 
       </div>
 
-      {/*
-       * Existing message input remains unchanged.
-       */}
+      {/* Existing message input */}
       <MessageInput
         onSend={onSend}
       />

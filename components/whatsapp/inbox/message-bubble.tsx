@@ -1,8 +1,46 @@
+/**
+ * MessageBubble
+ *
+ * Renders a single WhatsApp message inside the inbox.
+ *
+ * Supported message types include:
+ * TEXT, TEMPLATE, IMAGE, VIDEO, AUDIO, DOCUMENT, etc.
+ *
+ * The component intentionally does not filter or replace
+ * message content based on type or status. Whatever body
+ * value is supplied by the parent is displayed as-is.
+ */
+
 interface Props {
+  /**
+   * Actual message content to display.
+   */
   message: string;
+
+  /**
+   * WhatsApp message type.
+   *
+   * Kept available for future type-specific rendering,
+   * but currently does not alter the existing layout.
+   */
   type: string;
+
+  /**
+   * Formatted message time.
+   */
   time: string;
+
+  /**
+   * true  = outbound message sent by us.
+   * false = inbound message received from contact.
+   */
   outgoing: boolean;
+
+  /**
+   * Current WhatsApp message status.
+   *
+   * PENDING, SENT, DELIVERED, READ, FAILED, etc.
+   */
   status: string | null;
 }
 
@@ -13,6 +51,19 @@ export default function MessageBubble({
   outgoing,
   status,
 }: Props) {
+  /*
+   * Keep the supplied message body unchanged.
+   *
+   * In particular, TEMPLATE messages must display the
+   * template name when that value is supplied by the API.
+   *
+   * Do not replace an empty body with placeholder text such
+   * as "this is text message", because that can hide the
+   * actual state of the database/API response.
+   */
+  const displayMessage =
+    message ?? "";
+
   return (
     <div
       className={`flex ${
@@ -29,10 +80,23 @@ export default function MessageBubble({
         }`}
       >
 
+        {/*
+         * Message body.
+         *
+         * whitespace-pre-wrap preserves line breaks
+         * and spacing from WhatsApp text messages.
+         *
+         * The message is rendered exactly as received.
+         */}
         <p className="whitespace-pre-wrap text-sm">
-          {message}
+          {displayMessage}
         </p>
 
+        {/*
+         * Timestamp.
+         *
+         * Existing timestamp styling is preserved.
+         */}
         <p
           className={`mt-2 text-right text-xs ${
             outgoing

@@ -176,32 +176,190 @@ if (!contact) {
       "Saving inbound message..."
     );
 
-    const saved =
-      await db.message.create({
-        data: {
-          contactId:
-            contact.id,
+    /*
+ * =====================================================
+ * EXTRACT INBOUND MESSAGE CONTENT
+ * =====================================================
+ *
+ * Meta does not always send inbound messages through
+ * messageData.text.
+ *
+ * Depending on the WhatsApp message type, the readable
+ * content may be stored in:
+ *
+ *   text
+ *   button
+ *   interactive.button_reply
+ *   interactive.list_reply
+ *   image.caption
+ *   video.caption
+ *   document.caption
+ *   location
+ *   contacts
+ *   reaction
+ *
+ * Never silently convert an unsupported message into
+ * an empty string. Keeping a meaningful fallback makes
+ * the CRM conversation understandable and makes future
+ * debugging much easier.
+ */
 
-          conversationId:
-            conversation.id,
+let messageBody = "";
 
-          metaMessageId:
-            messageData.id,
+switch (messageData.type) {
+  case "text":
+    messageBody =
+      messageData.text?.body ?? "";
+    break;
 
-          direction:
-            "INBOUND",
+  case "button":
+    messageBody =
+      messageData.button?.text ??
+      messageData.button?.payload ??
+      "";
+    break;
 
-          type:
-            "TEXT",
+  case "interactive":
+    messageBody =
+      messageData.interactive?.button_reply
+        ?.title ??
+      messageData.interactive?.list_reply
+        ?.title ??
+      "";
+    break;
 
-          body:
-            messageData.text?.body ??
-            "",
+  case "image":
+    messageBody =
+      messageData.image?.caption ??
+      "[Image]";
+    break;
 
-          status:
-            "DELIVERED",
-        },
-      });
+  case "video":
+    messageBody =
+      messageData.video?.caption ??
+      "[Video]";
+    break;
+
+  case "audio":
+    messageBody = "[Audio]";
+    break;
+
+  case "document":
+    messageBody =
+      messageData.document?.caption ??
+      messageData.document?.filename ??
+      "[Document]";
+    break;
+
+  case "sticker":
+    messageBody = "[Sticker]";
+    break;
+
+  case "location": {
+    const location =
+      messageData.location;
+
+    if (location) {
+      const locationParts = [
+        location.name,
+        location.address,
+        location.latitude !== undefined &&
+        location.longitude !== undefined
+          ? `${location.latitude}, ${location.longitude}`
+          : null,
+      ].filter(Boolean);
+
+      messageBody =
+        locationParts.join(" • ") ||
+        "[Location]";
+    } else {
+      messageBody = "[Location]";
+    }
+
+    break;
+  }
+
+  case "contacts": {
+    const contactNames =
+      messageData.contacts
+        ?.map(
+          (item) =>
+            item.name?.formatted ??
+            [
+              item.name?.first_name,
+              item.name?.last_name,
+            ]
+              .filter(Boolean)
+              .join(" ")
+        )
+        .filter(Boolean);
+
+    messageBody =
+      contactNames &&
+      contactNames.length > 0
+        ? contactNames.join(", ")
+        : "[Contact]";
+    break;
+  }
+
+  case "reaction":
+    messageBody =
+      messageData.reaction?.emoji ??
+      "[Reaction]";
+    break;
+
+  default:
+    /*
+     * Unknown/new Meta message type.
+     *
+     * Do not save an empty string because that makes
+     * the CRM conversation appear as if the customer
+     * sent nothing.
+     */
+    messageBody =
+      `[${messageData.type || "MESSAGE"}]`;
+    break;
+}
+
+console.log(
+  "=== INBOUND MESSAGE CONTENT ===",
+  {
+    metaMessageId:
+      messageData.id,
+
+    type:
+      messageData.type,
+
+    body:
+      messageBody,
+  }
+);
+
+const saved =
+  await db.message.create({
+    data: {
+      contactId:
+        contact.id,
+
+      conversationId:
+        conversation.id,
+
+      metaMessageId:
+        messageData.id,
+
+      direction:
+        "INBOUND",
+
+      type:
+        "TEXT",
+
+      body:
+        messageBody,
+
+      status:
+        "DELIVERED",
+    },
+  });
 
     console.log(
       "Message saved:",

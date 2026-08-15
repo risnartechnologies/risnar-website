@@ -64,6 +64,17 @@ export default function MessageBubble({
   const displayMessage =
     message ?? "";
 
+    console.log(
+  "=== MESSAGE BUBBLE DEBUG ===",
+  {
+    message,
+    type,
+    time,
+    outgoing,
+    status,
+  }
+);
+
   return (
     <div
       className={`flex ${

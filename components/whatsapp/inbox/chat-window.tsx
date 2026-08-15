@@ -144,7 +144,14 @@ export default function ChatWindow({
   if (!selectedChat) {
     return <EmptyChat />;
   }
-
+  console.log(
+  "=== CHAT WINDOW DEBUG ===",
+  {
+    conversationId: selectedChat.id,
+    messageCount: messages.length,
+    messages,
+  }
+);
   return (
     <div className="flex h-full min-h-0 flex-col bg-slate-950">
 

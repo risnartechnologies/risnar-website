@@ -251,7 +251,7 @@ async function processCampaignRecipient(
               "Customer",
           },
         ],
-        "https://risnar.com/images/jaipur-plot-recommendation.png"
+        "https://www.risnar.com/images/jaipur_plot_recommendation.jpeg"
       );
 
     const metaMessageId =

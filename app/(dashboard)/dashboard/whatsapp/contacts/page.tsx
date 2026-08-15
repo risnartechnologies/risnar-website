@@ -48,7 +48,7 @@ const [totalContacts, setTotalContacts] =
   useState(0);
 
 const [limit, setLimit] =
-  useState(25);
+  useState(50);
 
   const [deleteOpen, setDeleteOpen] =
   useState(false);
@@ -292,7 +292,7 @@ async function deleteSelected() {
               <tr>
 
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="py-20 text-center text-slate-500"
                 >
                   No contacts found.
@@ -343,6 +343,86 @@ async function deleteSelected() {
         </table>
 
       </div>
+
+      {/* Pagination */}
+      {totalContacts > 0 && (
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+          <div className="text-sm text-slate-400">
+            Showing{" "}
+            <span className="font-medium text-white">
+              {(page - 1) * limit + 1}
+            </span>
+            {" – "}
+            <span className="font-medium text-white">
+              {Math.min(page * limit, totalContacts)}
+            </span>
+            {" of "}
+            <span className="font-medium text-white">
+              {totalContacts}
+            </span>
+            {" contacts"}
+          </div>
+
+          <div className="flex items-center gap-2">
+
+            <button
+              type="button"
+              disabled={page === 1}
+              onClick={() =>
+                setPage((current) =>
+                  Math.max(1, current - 1)
+                )
+              }
+              className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-green-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center gap-1">
+
+              {Array.from(
+                { length: totalPages },
+                (_, index) => index + 1
+              ).map((pageNumber) => (
+                <button
+                  key={pageNumber}
+                  type="button"
+                  onClick={() =>
+                    setPage(pageNumber)
+                  }
+                  className={`min-w-10 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    page === pageNumber
+                      ? "bg-green-600 text-white"
+                      : "border border-slate-700 bg-slate-900 text-slate-300 hover:border-green-500 hover:text-white"
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+
+            </div>
+
+            <button
+              type="button"
+              disabled={page === totalPages}
+              onClick={() =>
+                setPage((current) =>
+                  Math.min(
+                    totalPages,
+                    current + 1
+                  )
+                )
+              }
+              className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-green-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+            </button>
+
+          </div>
+
+        </div>
+      )}
 
       <AddContactModal
         open={open}

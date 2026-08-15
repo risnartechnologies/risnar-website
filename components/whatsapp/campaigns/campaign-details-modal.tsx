@@ -22,6 +22,7 @@ interface Campaign {
   status: string;
   totalRecipients: number;
   sentCount: number;
+  deliveredCount: number;
   failedCount: number;
   createdAt?: string;
   recipients: Recipient[];
@@ -87,7 +88,7 @@ export default function CampaignDetailsModal({
             </p>
 
             <p className="mt-2 text-3xl font-bold text-green-400">
-              {campaign.sentCount}
+              {campaign.deliveredCount}
             </p>
 
           </div>
@@ -173,17 +174,19 @@ export default function CampaignDetailsModal({
 
                   <td className="px-6 py-4">
 
-                    <span
-                      className={
-                        recipient.status === "SENT"
-                          ? "font-semibold text-green-400"
-                          : recipient.status === "FAILED"
-                          ? "font-semibold text-red-400"
-                          : "font-semibold text-yellow-400"
-                      }
-                    >
-                      {recipient.status}
-                    </span>
+                  <span
+                    className={
+                      recipient.status === "DELIVERED"
+                        ? "font-semibold text-green-400"
+                        : recipient.status === "SENT"
+                        ? "font-semibold text-yellow-400"
+                        : recipient.status === "FAILED"
+                        ? "font-semibold text-red-400"
+                        : "font-semibold text-slate-400"
+                    }
+                  >
+                    {recipient.status}
+                  </span>
 
                   </td>
 

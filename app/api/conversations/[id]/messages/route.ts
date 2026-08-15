@@ -26,12 +26,29 @@ export async function GET(
         },
       });
 
-    return NextResponse.json(
-      messages,
-      {
-        status: 200,
-      }
-    );
+console.log(
+  "=== MESSAGES API DEBUG ===",
+  {
+    conversationId: id,
+    count: messages.length,
+    messages: messages.map((message) => ({
+      id: message.id,
+      direction: message.direction,
+      type: message.type,
+      body: message.body,
+      metaMessageId: message.metaMessageId,
+      status: message.status,
+      createdAt: message.createdAt,
+    })),
+  }
+);
+
+return NextResponse.json(
+  messages,
+  {
+    status: 200,
+  }
+);
   } catch (error) {
     console.error(
       "GET /api/conversations/[id]/messages failed"

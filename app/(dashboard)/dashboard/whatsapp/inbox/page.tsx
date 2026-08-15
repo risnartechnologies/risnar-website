@@ -540,7 +540,15 @@ export default function InboxPage() {
               "OUTBOUND",
           })
         );
-
+        
+        console.log(
+  "=== INBOX MESSAGE DEBUG ===",
+  {
+    conversationId,
+    apiMessages: data,
+    mappedMessages: mapped,
+  }
+);
       setMessages(mapped);
     } catch (error: any) {
       /*

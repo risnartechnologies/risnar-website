@@ -54,17 +54,19 @@ export async function POST(request: Request) {
      * with the wrong contact because of phone-number matching or
      * normalization elsewhere.
      */
-    const requestedContactIds = [
-      ...new Set(
+    const requestedContactIds: string[] = Array.from(
+      new Set(
         body.contacts
           .filter(
             (contactId: unknown): contactId is string =>
               typeof contactId === "string" &&
               contactId.trim().length > 0
           )
-          .map((contactId: string) => contactId.trim())
-      ),
-    ];
+          .map((contactId: string) =>
+            contactId.trim()
+          )
+      )
+    );
 
     if (requestedContactIds.length === 0) {
       return NextResponse.json(

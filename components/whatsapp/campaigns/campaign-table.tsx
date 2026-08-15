@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Download } from "lucide-react";
 import CampaignStatusBadge from "./campaign-status-badge";
 
 export interface Campaign {
@@ -76,17 +77,191 @@ export default function CampaignTable({
     window.location.reload();
   }
 
+function downloadSelectedCsv() {
+  const selectedCampaigns =
+    campaigns.filter((campaign) =>
+      selected.includes(campaign.id)
+    );
+
+  const escapeCsv = (value: unknown) => {
+    const text =
+      value === null ||
+      value === undefined
+        ? ""
+        : String(value);
+
+    return `"${text.replace(/"/g, '""')}"`;
+  };
+
+  const lines: string[] = [];
+
+  selectedCampaigns.forEach(
+    (campaign, campaignIndex) => {
+      /*
+       * =====================================================
+       * CAMPAIGN SUMMARY
+       * =====================================================
+       */
+
+      lines.push(
+        [
+          "Campaign",
+          campaign.name,
+        ]
+          .map(escapeCsv)
+          .join(",")
+      );
+
+      lines.push(
+        [
+          "Template",
+          campaign.templateName,
+        ]
+          .map(escapeCsv)
+          .join(",")
+      );
+
+      lines.push(
+        [
+          "Recipients",
+          campaign.totalRecipients,
+        ]
+          .map(escapeCsv)
+          .join(",")
+      );
+
+      lines.push(
+        [
+          "Delivered",
+          campaign.deliveredCount,
+        ]
+          .map(escapeCsv)
+          .join(",")
+      );
+
+      lines.push(
+        [
+          "Failed",
+          campaign.failedCount,
+        ]
+          .map(escapeCsv)
+          .join(",")
+      );
+
+      lines.push(
+        [
+          "Status",
+          campaign.status,
+        ]
+          .map(escapeCsv)
+          .join(",")
+      );
+
+      /*
+       * =====================================================
+       * RECIPIENT REPORT
+       * =====================================================
+       */
+
+      lines.push("");
+
+      lines.push(
+        [
+          "Recipient Name",
+          "Phone",
+          "Status",
+        ]
+          .map(escapeCsv)
+          .join(",")
+      );
+
+      campaign.recipients.forEach(
+        (recipient: any) => {
+          lines.push(
+            [
+              recipient.contact?.name ?? "",
+              recipient.contact?.phone ?? "",
+              recipient.status ?? "",
+            ]
+              .map(escapeCsv)
+              .join(",")
+          );
+        }
+      );
+
+      /*
+       * Separate multiple selected campaigns.
+       */
+
+      if (
+        campaignIndex <
+        selectedCampaigns.length - 1
+      ) {
+        lines.push("");
+        lines.push("");
+      }
+    }
+  );
+
+  const csv = lines.join("\r\n");
+
+  const blob = new Blob(
+    [csv],
+    {
+      type: "text/csv;charset=utf-8;",
+    }
+  );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
+
+  link.href = url;
+
+  const filename =
+    selectedCampaigns.length === 1
+      ? `campaign-${selectedCampaigns[0].name
+          .replace(/[^a-z0-9]+/gi, "-")
+          .replace(/^-|-$/g, "")
+          .toLowerCase()}-report.csv`
+      : `campaign-report-${new Date()
+          .toISOString()
+          .slice(0, 10)}.csv`;
+
+  link.download = filename;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}
+
   return (
     <div className="space-y-4">
 
       {selected.length > 0 && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-3">
+
+          <button
+            onClick={downloadSelectedCsv}
+            className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white hover:bg-green-500"
+          >
+            <Download size={18} />
+            Download CSV
+          </button>
+
           <button
             onClick={deleteSelected}
             className="rounded-xl bg-red-600 px-5 py-3 font-semibold text-white hover:bg-red-500"
           >
             Delete ({selected.length})
           </button>
+
         </div>
       )}
 

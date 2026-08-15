@@ -34,6 +34,15 @@ export async function processMessage(
 
     if (statuses.length > 0) {
       for (const status of statuses) {
+        console.log(
+          "=== META STATUS WEBHOOK ===",
+          JSON.stringify(
+            status,
+            null,
+            2
+          )
+        );
+
         await processStatus(status);
       }
     }

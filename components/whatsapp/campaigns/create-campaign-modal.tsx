@@ -73,28 +73,109 @@ async function saveCampaign() {
   setErrorMessage("");
 
   try {
-    const response = await fetch("/api/campaigns", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...form,
-        contacts: selectedContacts,
-      }),
-    });
+    // ---------------------------------------
+    // CREATE CAMPAIGN
+    // ---------------------------------------
 
-    const data = await response.json();
+    const response = await fetch(
+      "/api/campaigns",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          ...form,
+          contacts:
+            selectedContacts,
+        }),
+      }
+    );
+
+    const data =
+      await response.json();
 
     if (!response.ok) {
       setErrorMessage(
         data?.message ??
-        data?.error ??
-        "Unable to create campaign."
+          data?.error ??
+          "Unable to create campaign."
       );
+
       setLoading(false);
       return;
     }
+
+    const campaignId =
+      data?.campaign?.id;
+
+    if (!campaignId) {
+      console.error(
+        "Campaign ID missing:",
+        data
+      );
+
+      setErrorMessage(
+        "Campaign was created, but could not be started."
+      );
+
+      setLoading(false);
+      return;
+    }
+
+    console.log(
+      "=== CAMPAIGN CREATED ===",
+      {
+        campaignId,
+      }
+    );
+
+    // ---------------------------------------
+    // START CAMPAIGN WORKFLOW
+    // ---------------------------------------
+
+    const startResponse =
+      await fetch(
+        `/api/campaigns/${campaignId}/start`,
+        {
+          method: "POST",
+        }
+      );
+
+    const startData =
+      await startResponse.json();
+
+    if (!startResponse.ok) {
+      console.error(
+        "Campaign start failed:",
+        startData
+      );
+
+      setErrorMessage(
+        startData?.message ??
+          "Campaign was created but could not be started."
+      );
+
+      setLoading(false);
+      return;
+    }
+
+    console.log(
+      "=== CAMPAIGN WORKFLOW STARTED ===",
+      {
+        campaignId,
+        runId:
+          startData?.runId ??
+          null,
+      }
+    );
+
+    // ---------------------------------------
+    // RESET FORM
+    // ---------------------------------------
 
     setForm({
       name: "",
@@ -105,10 +186,22 @@ async function saveCampaign() {
 
     setLoading(false);
 
+    // ---------------------------------------
+    // REFRESH CAMPAIGN LIST
+    // ---------------------------------------
+
     onSuccess();
+
+    // ---------------------------------------
+    // CLOSE MODAL
+    // ---------------------------------------
+
     onClose();
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(
+      "Create campaign failed:",
+      error
+    );
 
     setLoading(false);
 

@@ -25,231 +25,84 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const campaign = await db.campaign.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        templateName: body.templateName,
-        status: body.status,
-        scheduledAt: null,
-
-        totalRecipients: body.contacts.length,
-        queuedCount: body.contacts.length,
-
-        recipients: {
-          create: body.contacts.map(
-            (contactId: string) => ({
-              contactId,
-            })
-          ),
+    if (
+      !body.name ||
+      !body.templateName ||
+      !Array.isArray(body.contacts) ||
+      body.contacts.length === 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Campaign name, template and contacts are required.",
         },
-      },
-
-      include: {
-        recipients: true,
-      },
-    });
-
-    const contacts = await db.contact.findMany({
-      where: {
-        id: {
-          in: body.contacts,
-        },
-      },
-    });
-
-    let sentCount = 0;
-    let failedCount = 0;
-
-    for (const contact of contacts) {
-      try {
-        // ---------------------------------------
-        // SEND TEMPLATE THROUGH WHATSAPP
-        // ---------------------------------------
-
-      const result = await sendTemplateMessage(
-        contact.phone,
-        body.templateName,
-        "en",
-        [
-          {
-            name: "customer_name",
-            value: contact.name ?? "Customer",
-          },
-        ],
-        "https://risnar.com/images/jaipur-plot-recommendation.png"
+        {
+          status: 400,
+        }
       );
+    }
 
-        console.log(
-          "=== CAMPAIGN MESSAGE SENT ===",
-          {
-            contactId: contact.id,
-            phone: contact.phone,
-            templateName: body.templateName,
-            metaMessageId:
-              result.messages?.[0]?.id ?? null,
-          }
-        );
+    const campaign =
+      await db.campaign.create({
+        data: {
+          name: body.name,
+          description: body.description,
+          templateName: body.templateName,
 
-        console.log(
-          "WhatsApp Response:",
-          JSON.stringify(result, null, 2)
-        );
+          // Campaign is created first.
+          // Sending will happen separately.
+          status: "DRAFT",
 
-        sentCount++;
+          scheduledAt: null,
 
-        const metaMessageId =
-          result.messages?.[0]?.id ?? null;
+          totalRecipients:
+            body.contacts.length,
 
-    // ---------------------------------------
-    // SAVE META MESSAGE ID IMMEDIATELY
-    // ---------------------------------------
-    //
-    // IMPORTANT:
-    // Meta can send the SENT / DELIVERED
-    // webhook very quickly after the API
-    // accepts the message.
-    //
-    // Save metaMessageId FIRST so the webhook
-    // can always find this campaign recipient.
-    //
+          queuedCount:
+            body.contacts.length,
 
-    await db.campaignRecipient.update({
-      where: {
-        campaignId_contactId: {
-          campaignId: campaign.id,
-          contactId: contact.id,
+          sentCount: 0,
+          deliveredCount: 0,
+          readCount: 0,
+          respondedCount: 0,
+          failedCount: 0,
+
+          recipients: {
+            create:
+              body.contacts.map(
+                (contactId: string) => ({
+                  contactId,
+                })
+              ),
+          },
         },
-      },
 
-      data: {
-        status: "SENT",
-        sentAt: new Date(),
-        metaMessageId,
-      },
-    });
+        include: {
+          recipients: true,
+        },
+      });
 
     console.log(
-      "=== CAMPAIGN RECIPIENT TRACKING SAVED ===",
+      "=== CAMPAIGN CREATED ===",
       {
         campaignId: campaign.id,
-        contactId: contact.id,
-        metaMessageId,
+        totalRecipients:
+          campaign.totalRecipients,
+        templateName:
+          campaign.templateName,
       }
     );
 
-    // ---------------------------------------
-    // GET OR CREATE CONVERSATION
-    // ---------------------------------------
-
-    const conversation =
-      await db.conversation.upsert({
-        where: {
-          contactId: contact.id,
-        },
-
-        create: {
-          contactId: contact.id,
-        },
-
-        update: {
-          updatedAt: new Date(),
-        },
-      });
-
-        // ---------------------------------------
-        // SAVE OUTBOUND MESSAGE
-        // ---------------------------------------
-
-        console.log(
-            "=== ABOUT TO CREATE OUTBOUND MESSAGE ===",
-            {
-              contactId: contact.id,
-              conversationId: conversation.id,
-              metaMessageId,
-              templateName: body.templateName,
-            }
-          );
-
-        await db.message.create({
-          data: {
-            contactId: contact.id,
-            conversationId: conversation.id,
-
-            metaMessageId,
-
-            direction: "OUTBOUND",
-            type: "TEMPLATE",
-
-            // Store the template name for now.
-            // We can later store the complete rendered
-            // template text here.
-            body: body.templateName,
-
-            status: "SENT",
-          },
-        });
-
-        console.log(
-          "=== OUTBOUND MESSAGE CREATED ==="
-        );
-      } catch (error: any) {
-        console.error(
-          "Meta Error:",
-          error.response?.data ??
-            error.message ??
-            error
-        );
-
-        failedCount++;
-
-        await db.campaignRecipient.update({
-          where: {
-            campaignId_contactId: {
-              campaignId: campaign.id,
-              contactId: contact.id,
-            },
-          },
-
-          data: {
-            status: "FAILED",
-            failedAt: new Date(),
-
-            errorMessage: JSON.stringify(
-              error.response?.data ??
-                error.message ??
-                error
-            ),
-          },
-        });
+    return NextResponse.json(
+      {
+        success: true,
+        campaign,
+      },
+      {
+        status: 201,
       }
-    }
-
-    // ---------------------------------------
-    // UPDATE CAMPAIGN
-    // ---------------------------------------
-
-    const completedCampaign =
-      await db.campaign.update({
-        where: {
-          id: campaign.id,
-        },
-
-        data: {
-          sentCount,
-          failedCount,
-          queuedCount: 0,
-          status: "COMPLETED",
-          completedAt: new Date(),
-        },
-      });
-
-    return NextResponse.json({
-      success: true,
-      campaign: completedCampaign,
-      sentCount,
-      failedCount,
-    });
+    );
   } catch (error) {
     console.error(
       "POST /api/campaigns failed:",

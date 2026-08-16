@@ -725,11 +725,171 @@ export default function InboxPage() {
               : "hidden md:flex"
           }`}
         >
-          <ChatWindow
-            selectedChat={selectedChat}
-            messages={messages}
-            onSend={() => {}}
-            onBack={() => {
+<ChatWindow
+  selectedChat={selectedChat}
+  messages={messages}
+  onSend={async (message) => {
+    /*
+     * =====================================================
+     * SEND CRM REPLY
+     * =====================================================
+     *
+     * MessageInput passes the typed text here.
+     *
+     * The previous implementation used:
+     *
+     *   onSend={() => {}}
+     *
+     * which silently discarded every CRM reply.
+     *
+     * We now send the message through the existing
+     * /api/whatsapp/send endpoint.
+     */
+
+    if (!selectedChat?.phone) {
+      console.error(
+        "Cannot send WhatsApp message: no selected contact phone."
+      );
+      return;
+    }
+
+    const temporaryId =
+      `temp-${Date.now()}`;
+
+    /*
+     * Optimistically display the message immediately.
+     * This keeps the CRM responsive while Meta processes
+     * the outgoing message.
+     */
+    setMessages((previous) => [
+      ...previous,
+      {
+        id: temporaryId,
+        body: message,
+        type: "TEXT",
+        status: "PENDING",
+        createdAt:
+          new Date().toLocaleTimeString(
+            [],
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+            }
+          ),
+        outgoing: true,
+      },
+    ]);
+
+    try {
+      const response =
+        await fetch(
+          "/api/whatsapp/send",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              phone:
+                selectedChat.phone,
+              message,
+            }),
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error ||
+            "Failed to send WhatsApp message."
+        );
+      }
+
+      /*
+       * The API has already:
+       *
+       * 1. Sent the message through Meta.
+       * 2. Saved the OUTBOUND Message.
+       *
+       * Reload the conversation so the temporary
+       * optimistic message is replaced by the real
+       * database message containing Meta's message ID.
+       */
+      const refreshResponse =
+        await fetch(
+          `/api/conversations/${selectedChat.id}/messages`,
+          {
+            cache: "no-store",
+          }
+        );
+
+      if (
+        refreshResponse.ok &&
+        selectedConversationRef.current ===
+          selectedChat.id
+      ) {
+        const refreshedMessages =
+          await refreshResponse.json();
+
+        const mappedMessages =
+          refreshedMessages.map(
+            (message: any) => ({
+              id: message.id,
+
+              body:
+                message.body ?? "",
+
+              type:
+                message.type,
+
+              status:
+                message.status,
+
+              createdAt:
+                new Date(
+                  message.createdAt
+                ).toLocaleTimeString(
+                  [],
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                ),
+
+              outgoing:
+                message.direction ===
+                "OUTBOUND",
+            })
+          );
+
+        setMessages(
+          mappedMessages
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Failed to send WhatsApp reply:",
+        error
+      );
+
+      /*
+       * Remove the optimistic message because
+       * the actual send failed.
+       */
+      setMessages((previous) =>
+        previous.filter(
+          (item) =>
+            item.id !== temporaryId
+        )
+      );
+    }
+  }}
+  onBack={() => {
               /*
                * Abort the current message request immediately
                * when leaving the conversation.

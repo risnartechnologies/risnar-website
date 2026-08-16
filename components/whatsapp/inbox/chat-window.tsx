@@ -153,7 +153,7 @@ export default function ChatWindow({
   }
 );
   return (
-    <div className="flex h-full min-h-0 flex-col bg-slate-950">
+    <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-slate-950">
 
       {/* Conversation header */}
       <ChatHeader
@@ -196,14 +196,16 @@ export default function ChatWindow({
           shouldAutoScroll.current =
             distanceFromBottom < 60;
         }}
-        className="
-          min-h-0
-          flex-1
-          overflow-y-auto
-          scroll-smooth
-          p-6
-          space-y-4
-        "
+          className="
+            min-h-0
+            min-w-0
+            flex-1
+            overflow-x-hidden
+            overflow-y-auto
+            scroll-smooth
+            p-6
+            space-y-4
+          "
       >
 
         {/* Empty conversation state */}

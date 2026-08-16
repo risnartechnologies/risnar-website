@@ -627,7 +627,7 @@ export default function InboxPage() {
   return (
     <div className="h-[calc(100vh-140px)] overflow-hidden rounded-2xl border border-slate-800 bg-slate-950">
 
-      <div className="grid h-full grid-cols-1 md:grid-cols-[380px_1fr]">
+      <div className="grid h-full min-w-0 grid-cols-1 md:grid-cols-[380px_1fr]">
 
         {/* =================================================
             CHAT LIST
@@ -719,7 +719,7 @@ export default function InboxPage() {
             ================================================= */}
 
         <div
-          className={`h-full min-h-0 ${
+          className={`h-full min-h-0 min-w-0 overflow-hidden ${
             selectedId
               ? "flex"
               : "hidden md:flex"

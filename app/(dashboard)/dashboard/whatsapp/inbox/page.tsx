@@ -6,6 +6,10 @@ import {
   useState,
 } from "react";
 
+import { Trash2 } from "lucide-react";
+
+import ConfirmDeleteModal from "@/components/whatsapp/common/confirm-delete-modal";
+
 import ChatList, {
   Chat,
 } from "@/components/whatsapp/inbox/chat-list";
@@ -88,6 +92,28 @@ export default function InboxPage() {
    */
   const [messages, setMessages] =
     useState<Message[]>([]);
+
+    /**
+   * Conversations selected for bulk deletion.
+   *
+   * This follows the same selection model used by
+   * the Contacts page.
+   */
+  const [selectedChatIds, setSelectedChatIds] =
+    useState<string[]>([]);
+
+  /**
+   * Controls the bulk-delete confirmation dialog.
+   */
+  const [deleteOpen, setDeleteOpen] =
+    useState(false);
+
+  /**
+   * Prevents repeated delete requests while deletion
+   * is already in progress.
+   */
+  const [deleting, setDeleting] =
+    useState(false);
 
   /*
    * =========================================================
@@ -402,6 +428,129 @@ export default function InboxPage() {
     }
   }
 
+    /*
+   * =========================================================
+   * CHAT SELECTION
+   * =========================================================
+   */
+
+  /**
+   * Toggle one conversation in the bulk-selection list.
+   */
+  function toggleChatSelection(id: string) {
+    setSelectedChatIds((previous) =>
+      previous.includes(id)
+        ? previous.filter(
+            (chatId) => chatId !== id
+          )
+        : [...previous, id]
+    );
+  }
+
+  /**
+   * Delete all selected conversations.
+   *
+   * Each conversation uses the existing DELETE endpoint:
+   *
+   * DELETE /api/conversations/[id]/delete
+   *
+   * The existing endpoint already removes the messages
+   * belonging to the conversation before removing the
+   * conversation itself.
+   */
+  async function deleteSelectedChats() {
+    if (selectedChatIds.length === 0) {
+      return;
+    }
+
+    setDeleting(true);
+
+    try {
+      const idsToDelete = [...selectedChatIds];
+
+      /*
+       * Delete all selected conversations.
+       *
+       * Promise.all keeps the operation simple while
+       * allowing the existing single-conversation API
+       * to remain unchanged.
+       */
+      const results =
+        await Promise.all(
+          idsToDelete.map(async (id) => {
+            const response =
+              await fetch(
+                `/api/conversations/${id}/delete`,
+                {
+                  method: "DELETE",
+                }
+              );
+
+            if (!response.ok) {
+              throw new Error(
+                `Failed to delete conversation ${id}.`
+              );
+            }
+
+            return response;
+          })
+        );
+
+      /*
+       * Avoid an unused-variable warning while still
+       * keeping the request results available for
+       * debugging if required later.
+       */
+      void results;
+
+      /*
+       * If the currently open conversation was deleted,
+       * close it immediately.
+       */
+      if (
+        selectedId &&
+        idsToDelete.includes(selectedId)
+      ) {
+        messageAbortController.current?.abort();
+
+        messageAbortController.current =
+          null;
+
+        selectedConversationRef.current =
+          null;
+
+        setSelectedId(null);
+        setMessages([]);
+      }
+
+      /*
+       * Clear selection before refreshing the Inbox.
+       */
+      setSelectedChatIds([]);
+
+      /*
+       * Close confirmation dialog.
+       */
+      setDeleteOpen(false);
+
+      /*
+       * Reload the lead conversation list.
+       */
+      await loadConversations();
+    } catch (error) {
+      console.error(
+        "Failed to delete selected conversations:",
+        error
+      );
+
+      alert(
+        "Unable to delete the selected conversations."
+      );
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   /*
    * =========================================================
    * LOAD MESSAGES
@@ -633,17 +782,51 @@ export default function InboxPage() {
             CHAT LIST
             ================================================= */}
 
-        <div
-          className={`h-full min-h-0 flex-col border-r border-slate-800 ${
-            selectedId
-              ? "hidden md:flex"
-              : "flex"
-          }`}
-        >
-          <ChatList
-            chats={chats}
-            selectedId={selectedId}
-            onSelect={async (id) => {
+<div
+  className={`h-full min-h-0 flex-col border-r border-slate-800 ${
+    selectedId
+      ? "hidden md:flex"
+      : "flex"
+  }`}
+>
+  {/*
+   * =========================================================
+   * BULK DELETE TOOLBAR
+   * =========================================================
+   *
+   * Hidden completely when no conversations are selected.
+   *
+   * This follows the Contacts page behaviour where the
+   * Delete button only appears after one or more items
+   * have been selected.
+   */}
+  {selectedChatIds.length > 0 && (
+    <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 px-4 py-3">
+      <span className="text-sm text-slate-400">
+        {selectedChatIds.length} selected
+      </span>
+
+      <button
+        type="button"
+        disabled={deleting}
+        onClick={() =>
+          setDeleteOpen(true)
+        }
+        className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <Trash2 size={18} />
+
+        Delete
+      </button>
+    </div>
+  )}
+
+  <ChatList
+        chats={chats}
+        selectedId={selectedId}
+        selectedChatIds={selectedChatIds}
+        onToggleSelection={toggleChatSelection}
+        onSelect={async (id) => {
               /*
                * Select the conversation immediately.
                */
@@ -910,6 +1093,15 @@ export default function InboxPage() {
         </div>
 
       </div>
+            <ConfirmDeleteModal
+        open={deleteOpen}
+        count={selectedChatIds.length}
+        loading={deleting}
+        onCancel={() =>
+          setDeleteOpen(false)
+        }
+        onConfirm={deleteSelectedChats}
+      />
 
     </div>
   );

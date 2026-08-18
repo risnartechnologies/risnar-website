@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from "react";
-
 import {
-  Phone,
-  Video,
+  Copy,
   MoreVertical,
   Trash2,
   Eraser,
   ArrowLeft,
 } from "lucide-react";
+
+import { useState } from "react";
 
 interface Props {
   id: string;
@@ -17,6 +16,18 @@ interface Props {
   phone: string;
   onRefresh: () => void;
   onBack: () => void;
+}
+
+function formatPhone(phone: string) {
+  if (phone.startsWith("+")) {
+    return phone;
+  }
+
+  if (phone.startsWith("91")) {
+    return `+${phone}`;
+  }
+
+  return phone;
 }
 
 export default function ChatHeader({
@@ -29,13 +40,15 @@ export default function ChatHeader({
   const [open, setOpen] =
     useState(false);
 
-    const [longPressTimer, setLongPressTimer] =
-  useState<NodeJS.Timeout | null>(null);
+  const formattedPhone =
+    formatPhone(phone);
 
-function startLongPress() {
-  const timer = setTimeout(async () => {
+  async function copyPhone() {
     try {
-      await navigator.clipboard.writeText(phone);
+      await navigator.clipboard.writeText(
+        formattedPhone
+      );
+
       alert("Phone number copied");
     } catch (error) {
       console.error(
@@ -43,17 +56,7 @@ function startLongPress() {
         error
       );
     }
-  }, 600);
-
-  setLongPressTimer(timer);
-}
-
-function cancelLongPress() {
-  if (longPressTimer) {
-    clearTimeout(longPressTimer);
-    setLongPressTimer(null);
   }
-}
 
   async function clearChat() {
     if (
@@ -103,6 +106,7 @@ function cancelLongPress() {
       <div className="flex min-w-0 items-center gap-3">
 
         <button
+          type="button"
           onClick={onBack}
           className="rounded-xl p-2 text-slate-300 hover:bg-slate-800 md:hidden"
           aria-label="Back"
@@ -110,28 +114,34 @@ function cancelLongPress() {
           <ArrowLeft size={22} />
         </button>
 
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600 text-lg font-bold text-white">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-600 text-lg font-bold text-white">
           {name.charAt(0).toUpperCase()}
         </div>
 
-        <div>
+        <div className="min-w-0">
 
-          <h2 className="font-semibold text-white">
+          <h2 className="truncate font-semibold text-white">
             {name}
           </h2>
 
-          <p
-            className="select-none text-sm text-slate-400"
-            onPointerDown={startLongPress}
-            onPointerUp={cancelLongPress}
-            onPointerLeave={cancelLongPress}
-            onPointerCancel={cancelLongPress}
-            onContextMenu={(e) =>
-              e.preventDefault()
-            }
-          >
-            {phone}
-          </p>
+          <div className="flex items-center gap-2">
+
+            <p className="text-sm text-slate-400">
+              {formattedPhone}
+            </p>
+
+            <button
+              type="button"
+              onClick={copyPhone}
+              className="flex shrink-0 items-center gap-1 text-xs text-slate-500 transition hover:text-white"
+              aria-label="Copy phone number"
+              title="Copy phone number"
+            >
+              <Copy size={14} />
+              <span>Copy</span>
+            </button>
+
+          </div>
 
         </div>
 
@@ -139,19 +149,13 @@ function cancelLongPress() {
 
       <div className="relative flex items-center gap-2">
 
-        <button className="rounded-xl border border-slate-700 p-3 text-slate-300 transition hover:border-green-500 hover:text-white">
-          <Phone size={18} />
-        </button>
-
-        <button className="rounded-xl border border-slate-700 p-3 text-slate-300 transition hover:border-green-500 hover:text-white">
-          <Video size={18} />
-        </button>
-
         <button
+          type="button"
           onClick={() =>
             setOpen(!open)
           }
           className="rounded-xl border border-slate-700 p-3 text-slate-300 transition hover:border-green-500 hover:text-white"
+          aria-label="More options"
         >
           <MoreVertical size={18} />
         </button>
@@ -160,23 +164,21 @@ function cancelLongPress() {
           <div className="absolute right-0 top-16 z-50 w-56 overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-2xl">
 
             <button
+              type="button"
               onClick={clearChat}
               className="flex w-full items-center gap-3 px-4 py-3 text-left text-slate-200 transition hover:bg-slate-800"
             >
-              <Eraser
-                size={16}
-              />
+              <Eraser size={16} />
 
               Clear Chat
             </button>
 
             <button
+              type="button"
               onClick={deleteChat}
               className="flex w-full items-center gap-3 px-4 py-3 text-left text-red-400 transition hover:bg-slate-800"
             >
-              <Trash2
-                size={16}
-              />
+              <Trash2 size={16} />
 
               Delete Chat
             </button>

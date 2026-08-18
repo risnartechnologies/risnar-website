@@ -43,20 +43,18 @@ export default function ChatHeader({
   const formattedPhone =
     formatPhone(phone);
 
-  async function copyPhone() {
-    try {
-      await navigator.clipboard.writeText(
-        formattedPhone
-      );
-
-      alert("Phone number copied");
-    } catch (error) {
-      console.error(
-        "Failed to copy phone number:",
-        error
-      );
-    }
+async function copyPhone() {
+  try {
+    await navigator.clipboard.writeText(
+      formattedPhone
+    );
+  } catch (error) {
+    console.error(
+      "Failed to copy phone number:",
+      error
+    );
   }
+}
 
   async function clearChat() {
     if (

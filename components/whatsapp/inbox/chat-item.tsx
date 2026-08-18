@@ -1,5 +1,8 @@
 "use client";
 
+import { Copy } from "lucide-react";
+import { useState } from "react";
+
 interface Props {
   id: string;
   name: string;
@@ -11,16 +14,32 @@ interface Props {
   onClick: () => void;
 }
 
+/**
+ * Formats the stored WhatsApp phone number for display
+ * and clipboard use.
+ *
+ * Database value:
+ *   919821205511
+ *
+ * Display / clipboard value:
+ *   +919821205511
+ *
+ * IMPORTANT:
+ * This does NOT modify the phone number stored in the
+ * database or passed to the WhatsApp API.
+ */
 function formatPhone(phone: string) {
-  if (phone.startsWith("+")) {
-    return phone;
+  const cleanPhone = phone.trim();
+
+  if (cleanPhone.startsWith("+")) {
+    return cleanPhone;
   }
 
-  if (phone.startsWith("91")) {
-    return `+${phone}`;
+  if (cleanPhone.startsWith("91")) {
+    return `+${cleanPhone}`;
   }
 
-  return phone;
+  return cleanPhone;
 }
 
 export default function ChatItem({
@@ -32,11 +51,46 @@ export default function ChatItem({
   active,
   onClick,
 }: Props) {
+  const [copied, setCopied] =
+    useState(false);
+
+  const formattedPhone =
+    formatPhone(phone);
+
+  /**
+   * Copy the explicitly formatted international
+   * phone number to the clipboard.
+   *
+   * stopPropagation() prevents clicking Copy from
+   * opening/selecting the conversation.
+   */
+  async function copyPhone(
+    event: React.MouseEvent<HTMLButtonElement>
+  ) {
+    event.stopPropagation();
+
+    try {
+      await navigator.clipboard.writeText(
+        formattedPhone
+      );
+
+      setCopied(true);
+
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 1500);
+    } catch (error) {
+      console.error(
+        "Failed to copy phone number:",
+        error
+      );
+    }
+  }
+
   return (
-    <button
-      type="button"
+    <div
       onClick={onClick}
-      className={`flex w-full items-start gap-4 p-4 text-left transition ${
+      className={`flex w-full cursor-pointer items-start gap-4 p-4 text-left transition ${
         active
           ? "bg-slate-800"
           : "hover:bg-slate-900"
@@ -57,9 +111,29 @@ export default function ChatItem({
           </span>
         </div>
 
-        <p className="mt-1 text-xs text-slate-500">
-          {formatPhone(phone)}
-        </p>
+        {/*
+         * Phone number and explicit clipboard action.
+         *
+         * Clicking Copy writes +91... directly to
+         * the clipboard instead of relying on browser
+         * text-selection behaviour.
+         */}
+        <div className="mt-1 flex items-center gap-2">
+          <span className="text-xs text-slate-500">
+            {formattedPhone}
+          </span>
+
+          <button
+            type="button"
+            onClick={copyPhone}
+            className="flex items-center gap-1 text-xs text-slate-500 transition hover:text-green-400"
+            title="Copy phone number"
+          >
+            <Copy size={12} />
+
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
 
         <p className="mt-2 truncate text-sm text-slate-400">
           {lastMessage}
@@ -71,6 +145,6 @@ export default function ChatItem({
           {unread}
         </div>
       )}
-    </button>
+    </div>
   );
 }

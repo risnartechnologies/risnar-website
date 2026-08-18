@@ -11,6 +11,18 @@ interface Props {
   onClick: () => void;
 }
 
+function formatPhone(phone: string) {
+  if (phone.startsWith("+")) {
+    return phone;
+  }
+
+  if (phone.startsWith("91")) {
+    return `+${phone}`;
+  }
+
+  return phone;
+}
+
 export default function ChatItem({
   name,
   phone,
@@ -46,7 +58,7 @@ export default function ChatItem({
         </div>
 
         <p className="mt-1 text-xs text-slate-500">
-          {phone}
+          {formatPhone(phone)}
         </p>
 
         <p className="mt-2 truncate text-sm text-slate-400">

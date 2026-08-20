@@ -64,7 +64,8 @@ export default function ImportContactsModal({
     onClose();
   }
 
-  function parseCsv(file: File) {
+    function parseCsv(file: File) {
+    setError("");
     Papa.parse<CsvRow>(file, {
       header: true,
       skipEmptyLines: true,
@@ -269,9 +270,13 @@ return (
         </p>
 
         <button
-          onClick={() =>
-            inputRef.current?.click()
-          }
+          type="button"
+          onClick={() => {
+            if (inputRef.current) {
+              inputRef.current.value = "";
+              inputRef.current.click();
+            }
+          }}
           className="mt-5 rounded-xl bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-500"
         >
           Browse CSV
@@ -279,15 +284,15 @@ return (
 
         <input
           ref={inputRef}
-          hidden
           type="file"
-          accept=".csv"
-          onChange={(e) =>
-            handleFile(
-              e.target.files?.[0] ??
-                null
-            )
-          }
+          accept=".csv,text/csv"
+          className="hidden"
+          onChange={(e) => {
+            const selectedFile =
+              e.target.files?.[0] ?? null;
+
+            handleFile(selectedFile);
+          }}
         />
 
       </div>

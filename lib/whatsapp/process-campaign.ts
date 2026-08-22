@@ -3,6 +3,17 @@ import { sendTemplateMessage } from "@/lib/whatsapp/whatsapp";
 
 const BATCH_SIZE = 10;
 
+function getTemplateImageUrl(templateName: string) {
+  if (
+    templateName ===
+    "luxury_resort_ownership_offer"
+  ) {
+    return "https://www.risnar.com/images/luxury_resort_ownership_offer.png";
+  }
+
+  return "https://www.risnar.com/images/jaipur_plot_recommendation.jpeg";
+}
+
 // ============================================================
 // WORKFLOW
 // ============================================================
@@ -285,14 +296,15 @@ async function processCampaignRecipient(
         [
           {
             name:
-              "customer_name",
-
+              "name",
             value:
               contact.name ??
               "Customer",
           },
         ],
-        "https://www.risnar.com/images/jaipur_plot_recommendation.jpeg"
+        getTemplateImageUrl(
+          campaign.templateName
+        )
       );
 
     const metaMessageId =

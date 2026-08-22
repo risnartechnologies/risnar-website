@@ -68,11 +68,13 @@ export async function sendTemplateMessage(
   templateName: string,
   languageCode: string = "en_US",
   parameters:
-    | string[]
-    | {
-        name: string;
-        value: string;
-      }[] = [],
+    | (
+        | string
+        | {
+            name: string;
+            value: string;
+          }
+      )[] = [],
   headerImageUrl?: string
 ): Promise<WhatsAppResponse> {
   const components: any[] = [];

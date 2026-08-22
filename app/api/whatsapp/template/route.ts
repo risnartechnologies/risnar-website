@@ -6,7 +6,19 @@ const schema = z.object({
   phone: z.string(),
   template: z.string(),
   language: z.string().optional(),
-  parameters: z.array(z.string()).optional(),
+
+  parameters: z
+    .array(
+      z.union([
+        z.string(),
+
+        z.object({
+          name: z.string(),
+          value: z.string(),
+        }),
+      ])
+    )
+    .optional(),
 });
 
 export async function POST(req: NextRequest) {
